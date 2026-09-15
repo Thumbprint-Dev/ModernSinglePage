@@ -17,9 +17,9 @@
         </button>
         <button class="mt-header-btn" type="button"
                 ng-if="user.Permissions.contains('PayByBudgetAccount') && (SpendingAccounts|filter:{ForPurchase:true}).length > 0"
-                ng-class="{active: currentOrder.PaymentMethod == 'BudgetAccount'}"
+                ng-class="{active: currentOrder.BudgetAccountID}"
                 ng-click="setBudgetAccount((SpendingAccounts|filter:{AccountType.PurchaseCredit:true}).length)">
-            <i ng-show="currentOrder.PaymentMethod == 'BudgetAccount'" class="fa fa-check"></i>
+            <i ng-show="currentOrder.BudgetAccountID" class="fa fa-check"></i>
             {{'Spending Account' | r | xlat}}
         </button>
         <button class="mt-header-btn" type="button"
@@ -72,7 +72,7 @@
         {{'The account, ' + (currentBudgetAccount.Label) + ', is not sufficient for the order total.' | xlat}}
     </div>
 
-    <div class="mt-checkout-split-billing" ng-show="isSplitBilling">
+    <div class="mt-checkout-split-billing" ng-class="{'mt-checkout-split-billing-confirmed-state': currentOrder.PaymentMethod != 'BudgetAccount'}" ng-show="isSplitBilling">
         <p ng-show="currentOrder.PaymentMethod == 'BudgetAccount'">
             <span>{{'The account, ' + (currentBudgetAccount.Label) + ', is not sufficient for the order total.' | xlat}}</span>
             <strong>{{'Please select an additional payment type to cover the remaining' | r | xlat}}</strong>
@@ -84,14 +84,13 @@
             </span>
             {{'or remove this spending account from your payment options.' | r | xlat}}
         </p>
-        <p ng-show="currentOrder.PaymentMethod != 'BudgetAccount'">
-            <span>{{('The account, ' | xlat) + (currentBudgetAccount.Label) + (', is not sufficient for the order total.' | xlat)}}</span>
-            <span>{{'This additional payment will cover the remaining' | r | xlat}}</span>
+        <p class="mt-checkout-split-billing-confirmed" ng-show="currentOrder.PaymentMethod != 'BudgetAccount'">
+            <i class="fa fa-check-circle"></i>
             <span ng-show="!user.Permissions.contains('HidePricing')">
-                <strong>{{remainingOrderTotal | currency}}</strong>
+                {{'Using' | r | xlat}} <strong>{{currentBudgetAccount.Label}}</strong> {{'toward this order, plus' | r | xlat}} <strong>{{paymentMethodLabel(currentOrder.PaymentMethod) | r | xlat}}</strong> {{'for the remaining' | r | xlat}} <strong>{{remainingOrderTotal | currency}}</strong>.
             </span>
             <span ng-show="user.Permissions.contains('HidePricing')">
-                {{'balance or remove this spending account from your payment options.' | r | xlat}}
+                {{'Using' | r | xlat}} <strong>{{currentBudgetAccount.Label}}</strong> {{'toward this order, plus' | r | xlat}} <strong>{{paymentMethodLabel(currentOrder.PaymentMethod) | r | xlat}}</strong> {{'for the remaining balance.' | r | xlat}}
             </span>
         </p>
         <button type="button" class="mt-header-btn" ng-click="currentOrder.BudgetAccountID = null; isSplitBilling = null; currentOrder.PaymentMethod = (currentOrder.PaymentMethod == 'BudgetAccount') ? null : currentOrder.PaymentMethod;">{{'Remove' | xlat}} {{currentBudgetAccount.Label}} {{' as payment' | r | xlat}}</button>

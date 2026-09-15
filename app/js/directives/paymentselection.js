@@ -6,6 +6,15 @@ four51.app.directive('paymentselector', function() {
 	       $scope.paymentSelection = {};
 	       $scope.isSplitBilling = false;
 
+	       var PAYMENT_METHOD_LABELS = {
+		       PurchaseOrder: 'Purchase Order',
+		       CreditCard: 'Credit Card',
+		       Undetermined: 'Approval Order'
+	       };
+	       $scope.paymentMethodLabel = function(method) {
+		       return PAYMENT_METHOD_LABELS[method] || method;
+	       };
+
 	       // Handles PaymentMethod already being 'BudgetAccount' and SpendingAccounts already being
 	       // loaded arriving in either order - whichever happens second is what actually needs to
 	       // derive/recompute the account, since a $watch on an unchanged value only fires once.

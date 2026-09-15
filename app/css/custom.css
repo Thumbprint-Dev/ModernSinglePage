@@ -2044,6 +2044,23 @@ body {
     margin-top: 6px;
 }
 
+/* Called out (not just another plain summary line) so it's obvious a spending account is
+   covering part of this order and the Total below has already been reduced to reflect it. */
+.mt-checkout-spendingaccount-applied {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    padding: 10px 12px;
+    margin: 4px 0 10px;
+    background: var(--mt-color-bg);
+    border: 1px solid var(--mt-color-accent);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--mt-color-accent);
+}
+
 .mt-checkout-security-link {
     margin-top: 16px;
     width: 100%;
@@ -2447,6 +2464,23 @@ body {
 
 .mt-checkout-split-billing p {
     margin: 0 0 10px;
+}
+
+/* Once a second payment method has actually been chosen to cover the remainder, this reads as a
+   calm confirmation, not a warning - the warm/orange treatment above is for the "still needs a
+   decision" state only. */
+.mt-checkout-split-billing-confirmed-state {
+    background: var(--mt-color-bg);
+    border-color: var(--mt-color-accent);
+    color: var(--mt-color-text);
+}
+
+.mt-checkout-split-billing-confirmed {
+    color: var(--mt-color-accent);
+}
+
+.mt-checkout-split-billing-confirmed .fa-check-circle {
+    margin-right: 4px;
 }
 
 .mt-checkout-creditcard {
