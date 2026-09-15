@@ -49,7 +49,6 @@
     <p class="mt-pdp-meta" ng-show="currentOrder.BudgetAccountID && currentBudgetAccount && !(user.Permissions.contains('HidePricing'))">
         {{'Remaining balance to be charged to your other payment method.' | r | xlat}}
     </p>
-    <p class="mt-pdp-meta" ng-if="user.Company.TaxMethod != 'NoTax' && !user.Permissions.contains('HidePricing')">{{('Shipping' | r) + ', handling and tax may be added to this subtotal.' | xlat}}</p>
 
     <button type="button" class="mt-btn-accent mt-cart-checkout-btn" ng-click="submitOrder()"
             ng-disabled="submitClicked">
