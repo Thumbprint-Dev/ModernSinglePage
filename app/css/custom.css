@@ -1332,7 +1332,7 @@ body {
 .mt-lightbox-modal-image {
     max-width: 100%;
     height: auto;
-    border-radius: 8px;
+    border-radius: 10px;
 }
 
 /* Restyle the spec-form fields (Location/Size dropdowns from customSelectionField.html,
