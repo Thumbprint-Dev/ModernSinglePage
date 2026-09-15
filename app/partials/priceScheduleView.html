@@ -1,12 +1,9 @@
 <section class="mt-price-schedule">
-    <button id="451qa_btn_showhide_psched" class="mt-price-schedule-toggle" type="button" ng-show="ps.PriceBreaks.length > 5" ng-init="showPS = false" ng-click="showPS = !showPS">
+    <button id="451qa_btn_showhide_psched" class="mt-price-schedule-toggle" type="button" ng-init="showPS = true" ng-click="showPS = !showPS">
         {{'Price Schedule' | r | xlat}}
         <i class="fa" ng-class="showPS ? 'fa-caret-up' : 'fa-caret-down'"></i>
     </button>
-    <div id="451qa_list_pric_schd" class="mt-price-schedule-table" ng-show="ps && p && showPS || ps.PriceBreaks.length <= 5">
-        <h4 class="mt-price-schedule-title" ng-hide="ps.PriceBreaks.length > 5">
-            {{'Price Schedule' | r | xlat}}
-        </h4>
+    <div id="451qa_list_pric_schd" class="mt-price-schedule-table" ng-show="ps && p && showPS">
         <div class="mt-price-schedule-row mt-price-schedule-head">
             <div class="mt-price-schedule-col">
                 {{'Quantity' | r | xlat}}
