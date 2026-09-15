@@ -357,6 +357,14 @@ body {
     overflow: hidden;
 }
 
+/* .mt-real-photo's shared base is object-fit:cover, which crops a photo to fill the card's fixed
+   4:3 box (.mt-placeholder-photo) - fine for photos already shot close to that ratio, but it was
+   cropping into taller/differently-proportioned product photos. Show the whole photo instead,
+   scaled to fit within the box rather than filling and cropping it. */
+.mt-product-card .mt-real-photo {
+    object-fit: contain;
+}
+
 .mt-fav-btn {
     -webkit-appearance: none;
     -moz-appearance: none;
