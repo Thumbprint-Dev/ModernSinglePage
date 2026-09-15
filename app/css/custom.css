@@ -994,6 +994,7 @@ body {
    priceScheduleView.html), reused on the PDP, kit views and line-item history. Previously raw
    Bootstrap .row/.col-xs-6/.text-info markup with the framework's default grid styling. */
 .mt-price-schedule {
+    max-width: 320px;
     margin: 0 0 20px;
 }
 
