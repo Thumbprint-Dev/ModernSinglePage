@@ -1304,6 +1304,12 @@ body {
     position: relative;
     background: var(--mt-color-white);
     padding: 20px;
+    /* Matches .modal-content's own border-radius (bootstrap-451.css) - this body has no
+       modal-header above it (the close button is absolutely positioned inside it instead), so
+       its opaque background sits flush against modal-content's top edge. Without a matching
+       radius here it squares off modal-content's rounded top corners, leaving only the bottom
+       two visibly rounded. */
+    border-radius: 6px;
 }
 
 .mt-lightbox-close {
