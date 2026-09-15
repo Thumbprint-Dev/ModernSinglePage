@@ -78,3 +78,18 @@ four51.app.filter('paginate', function() {
 		return input.slice(start);
 	}
 });
+
+// An Order's embedded LineItem.Product.LargeImageUrl comes back as .../images/Product/<guid>.jpg
+// (capital P) while the live catalog's Product.LargeImageUrl for the exact same product/image is
+// .../images/product/<guid>.jpg (lowercase) - only the lowercase path actually resolves on
+// four51.com's image host. Confirmed by loading both URLs directly against a real order: the
+// capitalized path errors, the lowercase path loads fine for the same GUID. Only affects
+// LargeImageUrl; SmallImageUrl's file genuinely lives under a different path (productThumbnail)
+// that an order snapshot doesn't reference at all, so there's no equivalent fix for that field -
+// use LargeImageUrl for any order-context image.
+four51.app.filter('orderImageUrl', function() {
+	return function(url) {
+		if (!url) return url;
+		return url.replace(/\/images\/product\//i, '/images/product/');
+	}
+});
