@@ -219,7 +219,6 @@ body {
     cursor: default;
 }
 
-.mt-quick-actions .mt-tile,
 .mt-dept-tile,
 .mt-product-card-link {
     display: block;
@@ -231,6 +230,8 @@ body {
     display: flex;
     align-items: center;
     gap: 14px;
+    text-decoration: none;
+    color: inherit;
     border: 1px solid var(--mt-color-border);
     background: var(--mt-color-white);
     border-radius: 12px;
