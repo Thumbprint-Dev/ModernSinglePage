@@ -73,9 +73,16 @@
          Angular-driven equivalent in this app, so it's safe to add - this lets an admin paste
          stock Bootstrap 3 modal markup (data-toggle="modal") directly into a product's
          Description field (e.g. a per-product Size Chart popup) and have it work with no theme
-         code changes needed for that specific content. -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/transition.js" data-group="cdn"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/modal.js" data-group="cdn"></script>
+         code changes needed for that specific content.
+         Self-hosted (lib/bootstrap/) rather than CDN-loaded: cdnjs's twitter-bootstrap 3.4.1
+         package only publishes the full bundled js/bootstrap.js, not these two files
+         individually - the previous cdnjs URLs for transition.js/modal.js 404'd, silently
+         leaving Bootstrap modal markup inert. Fetched from the real bootstrap@3.4.1 npm package
+         (verified version header + syntax) and vendored locally instead, matching how this app
+         already self-hosts most of its other libraries (lib/store.js, lib/angular_ui/*, lib/oc/*)
+         rather than depending on a CDN's exact file layout. -->
+    <script src="lib/bootstrap/transition.js" data-group="resources"></script>
+    <script src="lib/bootstrap/modal.js" data-group="resources"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js" data-group="cdn"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular-sanitize.min.js" data-group="cdn"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular-cookies.min.js" data-group="cdn"></script>
