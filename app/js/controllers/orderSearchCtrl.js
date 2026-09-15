@@ -46,6 +46,16 @@ four51.app.controller('OrderSearchCtrl', ['$scope', '$location', 'OrderSearchCri
 			Query(criteria);
 		};
 
+		// The Status dropdown is bound to the real criteria bucket object (Type/DisplayName/etc,
+		// whatever fields Four51 actually returned) rather than a plain string, since that's the
+		// only thing confirmed to filter correctly server-side (see OrderSearch.searchAll's
+		// comment). Merge it with the typed fields (Order ID, address, dates) into one request.
+		$scope.runSearch = function($event) {
+			if ($event) $event.preventDefault();
+			var combined = angular.extend({}, $scope.selectedStatus || {}, $scope.criteria || {});
+			$scope.OrderSearch(null, combined);
+		};
+
 		function _hasType(data, type) {
 			var hasType = false;
 			angular.forEach(data, function(o) {
