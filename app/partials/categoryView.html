@@ -27,20 +27,20 @@
         <div class="row mt-quick-actions">
             <div ng-class="allProductsCategory ? 'col-sm-4' : 'col-sm-6'">
                 <a href="order" class="mt-tile">
-                    <div class="mt-tile-header">
-                        <span class="mt-tile-icon"><i class="fa fa-clock-o"></i></span>
+                    <div class="mt-tile-icon"><i class="fa fa-clock-o"></i></div>
+                    <div class="mt-tile-body">
                         <p class="mt-tile-title">{{'Past Orders' | r | xlat}}</p>
+                        <p class="mt-tile-sub">{{'Check status and reorder your recent orders' | r | xlat}}</p>
                     </div>
-                    <p class="mt-tile-sub">{{'Check status and reorder your recent orders' | r | xlat}}</p>
                 </a>
             </div>
             <div ng-class="allProductsCategory ? 'col-sm-4' : 'col-sm-6'">
                 <a href="favoriteproducts" class="mt-tile">
-                    <div class="mt-tile-header">
-                        <span class="mt-tile-icon"><i class="fa fa-heart-o"></i></span>
+                    <div class="mt-tile-icon"><i class="fa fa-heart-o"></i></div>
+                    <div class="mt-tile-body">
                         <p class="mt-tile-title">{{'Favorite Products' | r | xlat}}</p>
+                        <p class="mt-tile-sub">{{'Find and reorder your favorite products' | r | xlat}}</p>
                     </div>
-                    <p class="mt-tile-sub">{{'Find and reorder your favorite products' | r | xlat}}</p>
                 </a>
             </div>
             <!-- Only appears when a top-level category with InteropID exactly
@@ -49,11 +49,11 @@
                  nothing to link to, since Four51 has no unscoped whole-catalog view. -->
             <div class="col-sm-4" ng-if="allProductsCategory">
                 <a ng-href="catalog/{{allProductsCategory.InteropID}}" class="mt-tile">
-                    <div class="mt-tile-header">
-                        <span class="mt-tile-icon"><i class="fa fa-book"></i></span>
+                    <div class="mt-tile-icon"><i class="fa fa-book"></i></div>
+                    <div class="mt-tile-body">
                         <p class="mt-tile-title">{{'Browse full catalog' | r | xlat}}</p>
+                        <p class="mt-tile-sub">{{'Your team\'s approved products' | r | xlat}}</p>
                     </div>
-                    <p class="mt-tile-sub">{{'Your team\'s approved products' | r | xlat}}</p>
                 </a>
             </div>
         </div>
