@@ -229,8 +229,8 @@ body {
 
 .mt-tile {
     display: flex;
-    align-items: center;
-    gap: 14px;
+    flex-direction: column;
+    gap: 8px;
     border: 1px solid var(--mt-color-border);
     background: var(--mt-color-white);
     border-radius: 12px;
@@ -239,21 +239,23 @@ body {
     margin-bottom: 16px;
 }
 
+.mt-tile-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 .mt-tile-icon {
-    flex: 0 0 40px;
+    flex: 0 0 32px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
     border: 1px solid var(--mt-color-border);
     border-radius: 50%;
     color: var(--mt-color-text);
-    font-size: 16px;
-}
-
-.mt-tile-body {
-    min-width: 0;
+    font-size: 14px;
 }
 
 .mt-tile:hover {
@@ -265,7 +267,7 @@ body {
 .mt-tile-title {
     font-size: 15px;
     font-weight: 600;
-    margin: 0 0 6px;
+    margin: 0;
 }
 
 .mt-tile-sub {
