@@ -16,7 +16,7 @@ function ($location, $route, $scope, $451, $timeout, User, SpendingAccount, AppC
     $scope.$watch('user', function(user) {
         if (user && user.Type == 'Customer' && user.Permissions.contains('PayByBudgetAccount')) {
             SpendingAccount.query(function(accounts) {
-                $scope.primarySpendingAccount = (accounts || []).filter(function(a) { return a.ForPurchase; })[0];
+                $scope.purchaseSpendingAccounts = (accounts || []).filter(function(a) { return a.ForPurchase; });
             });
         }
     });
