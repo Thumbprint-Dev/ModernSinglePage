@@ -3613,6 +3613,14 @@ body {
     padding-top: 0;
 }
 
+/* Thumbnail + name/sku row inside each line item - reuses the same .mt-cart-item-photo/
+   .mt-cart-item-name/.mt-cart-item-info/.mt-pdt-sku classes as the cart page for a consistent
+   look between "what I'm buying" and "what I bought". */
+.mt-order-line-item-row {
+    display: flex;
+    gap: 16px;
+}
+
 /* Line item detail page */
 .mt-line-item-detail-layout {
     display: flex;
