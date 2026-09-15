@@ -75,9 +75,6 @@
 
         <div class="mt-checkout-card mt-orders-results-card" ng-show="orders">
             <h2 class="mt-checkout-card-title">
-                <span ng-show="orderSearchStat.Type">
-                    {{(orderSearchStat.Type) + ' ' + ('Orders' | rl) | xlat}}:
-                </span>
                 {{orderSearchStat.DisplayName | r | xlat}}
                 <span ng-show="!orderSearchStat.Type && !orderSearchStat.DisplayName">
                     {{'Search' | r | xlat}}
