@@ -1,39 +1,24 @@
-<section>
-    <div class="panel-body" ng-show="ps.PriceBreaks.length > 5">
-        <button id="451qa_btn_showhide_psched" class="btn btn-default btn-block" type="button"  ng-init="showPS = false" ng-click="showPS = !showPS">
+<section class="mt-price-schedule">
+    <button id="451qa_btn_showhide_psched" class="mt-price-schedule-toggle" type="button" ng-show="ps.PriceBreaks.length > 5" ng-init="showPS = false" ng-click="showPS = !showPS">
+        {{'Price Schedule' | r | xlat}}
+        <i class="fa" ng-class="showPS ? 'fa-caret-up' : 'fa-caret-down'"></i>
+    </button>
+    <div id="451qa_list_pric_schd" class="mt-price-schedule-table" ng-show="ps && p && showPS || ps.PriceBreaks.length <= 5">
+        <h4 class="mt-price-schedule-title" ng-hide="ps.PriceBreaks.length > 5">
             {{'Price Schedule' | r | xlat}}
-            <i class="fa fa-caret-up" ng-show="showPS"></i>
-            <i class="fa fa-caret-down" ng-show="!showPS"></i>
-        </button>
-    </div>
-    <div id="451qa_list_pric_schd" class="panel-table" ng-show="ps && p && showPS || ps.PriceBreaks.length <= 5">
-        <div class="row" ng-hide="ps.PriceBreaks.length > 5">
-            <div class="col-xs-12">
-                <h4>
-                    {{'Price Schedule' | r | xlat}}
-                </h4>
+        </h4>
+        <div class="mt-price-schedule-row mt-price-schedule-head">
+            <div class="mt-price-schedule-col">
+                {{'Quantity' | r | xlat}}
+                <span ng-show="p.QuantityMultiplier > 1 && !ps.RestrictedQuantity">(x {{p.QuantityMultiplier}})</span>
+            </div>
+            <div class="mt-price-schedule-col mt-price-schedule-col-price">
+                {{'Price' | r | xlat}}
+                <span ng-show="p.QuantityMultiplier > 1 && !ps.RestrictedQuantity">(per {{p.QuantityMultiplier}})</span>
             </div>
         </div>
-        <div class="row">
-            <div class="col-xs-6">
-                <span class="text-info">
-                    {{'Quantity' | r | xlat}}
-                </span>
-                <span ng-show="p.QuantityMultiplier > 1 && !ps.RestrictedQuantity">
-                    (x {{p.QuantityMultiplier}})
-                </span>
-            </div>
-            <div class="col-xs-6">
-                <span class="text-info">
-                    {{'Price' | r | xlat}}
-                </span>
-                <span ng-show="p.QuantityMultiplier > 1 && !ps.RestrictedQuantity" >
-                    (per {{p.QuantityMultiplier}})
-                </span>
-            </div>
-        </div>
-        <div class="451qa_list_pricebreaks row" ng-repeat="pb in ps.PriceBreaks">
-            <div class="col-xs-6">
+        <div class="451qa_list_pricebreaks mt-price-schedule-row" ng-repeat="pb in ps.PriceBreaks">
+            <div class="mt-price-schedule-col">
                 {{pb.Quantity * (ps.RestrictedQuantity ? p.QuantityMultiplier : 1)}}
                 <span ng-show="!ps.RestrictedQuantity">
                     <span ng-show="ps.PriceBreaks[$index + 1].Quantity"> - {{ ps.PriceBreaks[$index + 1].Quantity - 1  }}</span>
@@ -41,7 +26,7 @@
                     <span ng-show="$last && !ps.MaxQuantity"> +</span>
                 </span>
             </div>
-            <div class="col-xs-6">
+            <div class="mt-price-schedule-col mt-price-schedule-col-price">
                 {{pb.Price * (ps.RestrictedQuantity ? pb.Quantity : 1)| culturecurrency}}
             </div>
         </div>

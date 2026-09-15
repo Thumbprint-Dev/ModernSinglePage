@@ -990,6 +990,80 @@ body {
     margin: 0 0 20px;
 }
 
+/* Price schedule table - rendered by the pricescheduletable directive (partials/
+   priceScheduleView.html), reused on the PDP, kit views and line-item history. Previously raw
+   Bootstrap .row/.col-xs-6/.text-info markup with the framework's default grid styling. */
+.mt-price-schedule {
+    margin: 0 0 20px;
+}
+
+.mt-price-schedule-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #E8E4DA;
+    border-radius: 8px;
+    background: #fff;
+    color: #262420;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.mt-price-schedule-toggle:hover,
+.mt-price-schedule-toggle:focus {
+    border-color: #0F6B63;
+    color: #0F6B63;
+}
+
+.mt-price-schedule-table {
+    border: 1px solid #E8E4DA;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 8px;
+}
+
+.mt-price-schedule-title {
+    margin: 0;
+    padding: 12px 16px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #262420;
+    border-bottom: 1px solid #E8E4DA;
+}
+
+.mt-price-schedule-row {
+    display: flex;
+    padding: 10px 16px;
+    border-bottom: 1px solid #F0EDE4;
+    font-size: 14px;
+    color: #262420;
+}
+
+.mt-price-schedule-row:last-child {
+    border-bottom: none;
+}
+
+.mt-price-schedule-head {
+    background: #FAF8F4;
+    color: #726D5F;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.mt-price-schedule-col {
+    flex: 1;
+}
+
+.mt-price-schedule-col-price {
+    text-align: right;
+    font-weight: 600;
+}
+
 .mt-order-panel {
     border-top: 1px solid #E8E4DA;
     padding-top: 20px;
