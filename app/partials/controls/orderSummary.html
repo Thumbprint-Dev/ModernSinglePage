@@ -37,10 +37,18 @@
         </div>
     </div>
 
+    <div class="mt-checkout-spendingaccount-applied" ng-show="currentOrder.BudgetAccountID && currentBudgetAccount && !(user.Permissions.contains('HidePricing'))">
+        <span>{{currentBudgetAccount.Label}}</span>
+        <span>{{(currentOrder.Total - (remainingOrderTotal > 0 ? remainingOrderTotal : 0)) * -1 | culturecurrency}}</span>
+    </div>
+
     <div class="mt-cart-summary-row" ng-if="!(user.Permissions.contains('HidePricing'))">
         <span>{{'Total' | r | xlat}}</span>
-        <span>{{currentOrder.Total | culturecurrency}}</span>
+        <span>{{(currentOrder.BudgetAccountID && currentBudgetAccount ? (remainingOrderTotal > 0 ? remainingOrderTotal : 0) : currentOrder.Total) | culturecurrency}}</span>
     </div>
+    <p class="mt-pdp-meta" ng-show="currentOrder.BudgetAccountID && currentBudgetAccount && !(user.Permissions.contains('HidePricing'))">
+        {{'Remaining balance to be charged to your other payment method.' | r | xlat}}
+    </p>
     <p class="mt-pdp-meta" ng-if="user.Company.TaxMethod != 'NoTax' && !user.Permissions.contains('HidePricing')">{{('Shipping' | r) + ', handling and tax may be added to this subtotal.' | xlat}}</p>
 
     <button type="button" class="mt-btn-accent mt-cart-checkout-btn" ng-click="submitOrder()"
