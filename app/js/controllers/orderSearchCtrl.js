@@ -14,8 +14,25 @@ four51.app.controller('OrderSearchCtrl', ['$scope', '$location', 'OrderSearchCri
 			// Show the full order list (any status) right away instead of requiring the
 			// shopper to click a specific status first - the status is already visible per
 			// row via the status pill, so there's nothing gained by starting empty.
-			if ($scope.hasStandardTypes || $scope.hasReplenishmentTypes || $scope.hasPriceRequestTypes) {
-				$scope.OrderSearch(null, { DisplayName: 'All Orders' });
+			//
+			// There's no single "any status" filter the server understands - each criteria
+			// entry above is its own real Type+Status bucket, and that's the only field
+			// combination confirmed to filter correctly (see OrderSearch.searchAll). So fetch
+			// every non-empty bucket and merge them, rather than sending a made-up criteria
+			// object that the server would likely just ignore.
+			var bucketsWithOrders = [];
+			angular.forEach(data, function(c) {
+				if (c.Count > 0) bucketsWithOrders.push(c);
+			});
+			if (bucketsWithOrders.length) {
+				$scope.pagedIndicator = true;
+				OrderSearch.searchAll(bucketsWithOrders, function(list, count) {
+					$scope.orders = list;
+					$scope.settings.listCount = count;
+					$scope.showNoResults = list.length == 0;
+					$scope.pagedIndicator = false;
+				});
+				$scope.orderSearchStat = { DisplayName: 'All Orders' };
 			}
 		});
 
