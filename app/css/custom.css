@@ -535,6 +535,20 @@ body {
     cursor: pointer;
 }
 
+.mt-search-close {
+    display: none;
+    border: none;
+    background: transparent;
+    padding: 0;
+    color: #8A8378;
+    cursor: pointer;
+}
+
+.mt-search-close:hover,
+.mt-search-close:focus {
+    color: #262420;
+}
+
 .mt-header-actions {
     display: flex;
     align-items: center;
@@ -719,9 +733,33 @@ body {
         background: #fff;
         border-bottom: 1px solid #E8E4DA;
         z-index: 999;
+        align-items: center;
+        gap: 8px;
     }
     .mt-search.mt-search-open {
-        display: block;
+        display: flex;
+    }
+    /* On the mobile dropdown the submit/close buttons sit in the flex row next to the input
+       instead of absolutely overlaying it (the desktop layout) - position:absolute would
+       otherwise anchor to the form's padding edge and ignore its own left/right padding,
+       pinning the icon flush against the screen edge instead of inset from it. */
+    .mt-search.mt-search-open input {
+        padding: 10px 14px;
+    }
+    .mt-search.mt-search-open .mt-search-submit {
+        position: static;
+        width: 36px;
+        height: 36px;
+        flex: 0 0 36px;
+    }
+    .mt-search-close {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        flex: 0 0 36px;
+        font-size: 16px;
     }
 }
 
