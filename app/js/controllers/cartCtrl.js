@@ -1,5 +1,5 @@
-four51.app.controller('CartViewCtrl', ['$scope', '$routeParams', '$location', '$451', 'Order', 'OrderConfig', 'User',
-function ($scope, $routeParams, $location, $451, Order, OrderConfig, User) {
+four51.app.controller('CartViewCtrl', ['$scope', '$routeParams', '$location', '$451', '$timeout', 'Order', 'OrderConfig', 'User',
+function ($scope, $routeParams, $location, $451, $timeout, Order, OrderConfig, User) {
 	$scope.isEditforApproval = $routeParams.id != null && $scope.user.Permissions.contains('EditApprovalOrder');
 	if ($scope.isEditforApproval) {
 		Order.get($routeParams.id, function(order) {
@@ -89,6 +89,18 @@ function ($scope, $routeParams, $location, $451, Order, OrderConfig, User) {
 		}
 	};
 
+	// The manual "Save Order" button is hidden in favor of autosaving edits (quantity, date
+	// needed, cost center) as the shopper makes them - debounced so rapid edits (e.g. typing a
+	// quantity digit by digit) don't fire a save per keystroke.
+	var autoSaveTimer;
+	$scope.autoSave = function(lineitem) {
+		if (lineitem && lineitem.qtyError) return;
+		if (autoSaveTimer) $timeout.cancel(autoSaveTimer);
+		autoSaveTimer = $timeout(function() {
+			$scope.saveChanges();
+		}, 800);
+	};
+
 	$scope.removeItem = function(item) {
 		if (confirm('Are you sure you wish to remove this item from your cart?') == true) {
 			Order.deletelineitem($scope.currentOrder.ID, item.ID,
@@ -159,12 +171,14 @@ function ($scope, $routeParams, $location, $451, Order, OrderConfig, User) {
 		angular.forEach($scope.currentOrder.LineItems, function(n) {
 			n.DateNeeded = $scope.currentOrder.LineItems[0].DateNeeded;
 		});
+		$scope.autoSave();
 	};
 
 	$scope.copyCostCenterToAll = function() {
 		angular.forEach($scope.currentOrder.LineItems, function(n) {
 			n.CostCenter = $scope.currentOrder.LineItems[0].CostCenter;
 		});
+		$scope.autoSave();
 	};
 
 	$scope.onPrint = function()  {
