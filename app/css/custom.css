@@ -5,6 +5,62 @@ Version: 1.0
 Template: Howdy
 */
 
+/* ===== Table of contents =====
+   Section line numbers below are approximate (they shift a little as the file changes) -
+   use them as a starting point for a find, not an exact jump target.
+   - ModernTheme: Branding / Design Tokens                                  (line 32)
+   - ModernTheme: Footer                                                    (line 101)
+   - ModernTheme: Home page (v1, placeholder pass)                          (line 138)
+   - ModernTheme: shared header/nav (v1)                                    (line 504)
+   - ModernTheme: category/product listing (PLP, v1)                        (line 828)
+   - ModernTheme: PDT / Product Detail Page (v1)                            (line 974)
+   - ModernTheme: login screen (v1)                                         (line 1281)
+   - ModernTheme: cart (v1)                                                 (line 1398)
+   - ModernTheme: checkout (v1, shell + order summary only)                 (line 1825)
+   - ModernTheme: checkout order details (always-open card, no accordion)   (line 1952)
+   - ModernTheme: checkout order shipping (always-open card, no accordion)  (line 2103)
+   - ModernTheme: checkout order billing + payment selection (always-open card, no accordion) (line 2225)
+   - ModernTheme: checkout order approvals (always-open card, no accordion) (line 2375)
+   - ModernTheme: quick-add options modal                                   (line 2416)
+   - ModernTheme: Kit product pages (v1)                                    (line 2489)
+   - ModernTheme: Account / Addresses (v1)                                  (line 2639)
+   - ModernTheme: Search / Messages / Contact (v1)                          (line 2925)
+   - ModernTheme: Legal pages (Security / Conditions) (v1)                  (line 3070)
+   - ModernTheme: Order History / Favorites (v1)                            (line 3188)
+   - ModernTheme: Reports (v1)                                              (line 3526)
+*/
+
+/* ===== ModernTheme: Branding / Design Tokens ===== */
+/* Single source of truth for the theme's core palette and typography - change a value here and
+   it updates everywhere that value is used. Rare one-off shades (hover-state variants, gradient
+   stops, etc. used once or twice) are left as literals rather than tokenized, since they aren't
+   really "the brand," just local tweaks. */
+:root {
+    /* Text */
+    --mt-color-text: #262420;
+    --mt-color-text-strong: #211F19;
+    --mt-color-text-soft: #4A463C;
+    --mt-color-muted: #726D5F;
+
+    /* Accent (links, buttons, active states) */
+    --mt-color-accent: #0F6B63;
+    --mt-color-accent-dark: #0C544E;
+
+    /* Surfaces */
+    --mt-color-bg: #FAF8F4;
+    --mt-color-white: #fff;
+    --mt-color-border: #E8E4DA;
+    --mt-color-divider: #F0EDE4;
+
+    /* Semantic */
+    --mt-color-danger: #B3261E;
+    --mt-color-warning: #A85D00;
+
+    /* Typography */
+    --mt-font-body: 'Inter', 'Droid Sans', sans-serif;
+}
+
+
 /* Stock Four51 theme (bootstrap-451.css) puts a fixed 100px gray margin below every page - with
    ModernTheme's generously-spaced pages this read as a huge empty gray gap before the footer. */
 body {
@@ -40,13 +96,13 @@ body {
        leaving a visible gray gap of unstyled default background between the content and the
        footer. Setting the same color here as a fallback fill closes that gap on every page
        instead of chasing it page-by-page. */
-    background: #FAF8F4;
+    background: var(--mt-color-bg);
 }
 
 /* ===== ModernTheme: Footer ===== */
 .mt-footer {
-    background: #fff;
-    border-top: 1px solid #E8E4DA;
+    background: var(--mt-color-white);
+    border-top: 1px solid var(--mt-color-border);
     padding: 16px 0;
 }
 
@@ -61,16 +117,16 @@ body {
 .mt-footer-line {
     margin: 0;
     font-size: 12px;
-    color: #726D5F;
+    color: var(--mt-color-muted);
 }
 
 .mt-footer-line a {
-    color: #726D5F;
+    color: var(--mt-color-muted);
 }
 
 .mt-footer-link {
     font-size: 12px;
-    color: #0F6B63;
+    color: var(--mt-color-accent);
     font-weight: 600;
 }
 
@@ -84,9 +140,9 @@ body {
 /* Scoped to .mt-home so it doesn't affect any other page while we validate the approach. */
 
 .mt-home {
-    font-family: 'Inter', 'Droid Sans', sans-serif;
-    color: #262420;
-    background: #FAF8F4;
+    font-family: var(--mt-font-body);
+    color: var(--mt-color-text);
+    background: var(--mt-color-bg);
     margin: -20px -5px 0;
 }
 
@@ -113,7 +169,7 @@ body {
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #726D5F;
+    color: var(--mt-color-muted);
     margin: 0 0 18px;
 }
 
@@ -129,20 +185,20 @@ body {
     margin: 0 0 16px;
     max-width: 640px;
     line-height: 1.1;
-    color: #211F19;
+    color: var(--mt-color-text-strong);
 }
 
 .mt-hero-sub {
     font-size: 16px;
-    color: #4A463C;
+    color: var(--mt-color-text-soft);
     max-width: 480px;
     margin: 0 0 24px;
 }
 
 .mt-btn-accent {
     display: inline-block;
-    background: #0F6B63;
-    color: #fff;
+    background: var(--mt-color-accent);
+    color: var(--mt-color-white);
     border: none;
     border-radius: 8px;
     padding: 13px 24px;
@@ -153,8 +209,8 @@ body {
 
 .mt-btn-accent:hover,
 .mt-btn-accent:focus {
-    background: #0C544E;
-    color: #fff;
+    background: var(--mt-color-accent-dark);
+    color: var(--mt-color-white);
     text-decoration: none;
 }
 
@@ -172,8 +228,8 @@ body {
 }
 
 .mt-tile {
-    border: 1px solid #E8E4DA;
-    background: #fff;
+    border: 1px solid var(--mt-color-border);
+    background: var(--mt-color-white);
     border-radius: 12px;
     padding: 20px;
     min-height: 100px;
@@ -181,7 +237,7 @@ body {
 }
 
 .mt-tile:hover {
-    border-color: #0F6B63;
+    border-color: var(--mt-color-accent);
     text-decoration: none;
     color: inherit;
 }
@@ -194,7 +250,7 @@ body {
 
 .mt-tile-sub {
     font-size: 13px;
-    color: #726D5F;
+    color: var(--mt-color-muted);
     margin: 0;
 }
 
@@ -265,7 +321,7 @@ body {
 }
 
 .mt-dept-tile:focus-visible {
-    outline: 2px solid #0F6B63;
+    outline: 2px solid var(--mt-color-accent);
     outline-offset: 3px;
 }
 
@@ -280,7 +336,7 @@ body {
     font-size: 17px;
     font-weight: 600;
     letter-spacing: -0.01em;
-    color: #fff;
+    color: var(--mt-color-white);
     /* No background scrim behind the text - keeps the photo clean and flat. A soft text-shadow
        (not a box-shadow on the tile) is enough to keep the name legible over a bright photo
        without darkening the image itself. */
@@ -293,8 +349,8 @@ body {
     flex-direction: column;
     height: 100%;
     box-sizing: border-box;
-    border: 1px solid #E8E4DA;
-    background: #fff;
+    border: 1px solid var(--mt-color-border);
+    background: var(--mt-color-white);
     border-radius: 12px;
     padding: 14px;
     margin-bottom: 32px;
@@ -334,7 +390,7 @@ body {
 .mt-fav-btn:hover,
 .mt-fav-btn:focus {
     transform: scale(1.08);
-    background: #fff;
+    background: var(--mt-color-white);
 }
 
 .mt-product-card-link {
@@ -355,7 +411,7 @@ body {
 
 .mt-product-price {
     font-size: 14px;
-    color: #0F6B63;
+    color: var(--mt-color-accent);
     font-weight: 600;
     margin: 0;
 }
@@ -378,7 +434,7 @@ body {
 
 .mt-product-card-note {
     font-size: 12px;
-    color: #726D5F;
+    color: var(--mt-color-muted);
     margin: 6px 0 0;
 }
 
@@ -450,9 +506,9 @@ body {
 /* Replaces the legacy .navbar-default top nav on every page. Not scoped to .mt-home. */
 
 .mt-header {
-    font-family: 'Inter', 'Droid Sans', sans-serif;
-    background: #fff;
-    border-bottom: 1px solid #E8E4DA;
+    font-family: var(--mt-font-body);
+    background: var(--mt-color-white);
+    border-bottom: 1px solid var(--mt-color-border);
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -472,7 +528,7 @@ body {
     font-size: 20px;
     font-weight: 700;
     letter-spacing: -0.02em;
-    color: #262420;
+    color: var(--mt-color-text);
     text-decoration: none;
     white-space: nowrap;
 }
@@ -480,7 +536,7 @@ body {
 .mt-brand:hover,
 .mt-brand:focus {
     text-decoration: none;
-    color: #262420;
+    color: var(--mt-color-text);
 }
 
 .mt-brand-logo {
@@ -497,9 +553,9 @@ body {
 .mt-search input {
     width: 100%;
     padding: 10px 40px 10px 14px;
-    border: 1px solid #E8E4DA;
+    border: 1px solid var(--mt-color-border);
     border-radius: 8px;
-    background: #FAF8F4;
+    background: var(--mt-color-bg);
     font-size: 14px;
 }
 
@@ -521,7 +577,7 @@ body {
 
 .mt-search-submit:hover,
 .mt-search-submit:focus {
-    color: #262420;
+    color: var(--mt-color-text);
 }
 
 .mt-search-toggle {
@@ -531,7 +587,7 @@ body {
     padding: 8px;
     font-size: 16px;
     line-height: 1;
-    color: #262420;
+    color: var(--mt-color-text);
     cursor: pointer;
 }
 
@@ -546,7 +602,7 @@ body {
 
 .mt-search-close:hover,
 .mt-search-close:focus {
-    color: #262420;
+    color: var(--mt-color-text);
 }
 
 .mt-header-actions {
@@ -561,14 +617,14 @@ body {
     flex-direction: column;
     align-items: flex-end;
     font-size: 11px;
-    color: #726D5F;
+    color: var(--mt-color-muted);
     line-height: 1.3;
     margin-right: 4px;
 }
 
 .mt-budget-value {
     font-weight: 600;
-    color: #262420;
+    color: var(--mt-color-text);
     font-size: 13px;
 }
 
@@ -576,13 +632,13 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    border: 1px solid #E8E4DA;
-    background: #fff;
+    border: 1px solid var(--mt-color-border);
+    background: var(--mt-color-white);
     border-radius: 8px;
     padding: 8px 14px;
     font-size: 13px;
     font-weight: 500;
-    color: #262420;
+    color: var(--mt-color-text);
     text-decoration: none;
     cursor: pointer;
 }
@@ -590,13 +646,13 @@ body {
 .mt-header-btn:hover,
 .mt-header-btn:focus {
     text-decoration: none;
-    color: #262420;
-    border-color: #0F6B63;
+    color: var(--mt-color-text);
+    border-color: var(--mt-color-accent);
 }
 
 .mt-cart-badge {
-    background: #0F6B63;
-    color: #fff;
+    background: var(--mt-color-accent);
+    color: var(--mt-color-white);
     font-size: 11px;
     font-weight: 700;
     border-radius: 999px;
@@ -613,14 +669,14 @@ body {
 }
 
 .mt-account .dropdown-menu {
-    font-family: 'Inter', 'Droid Sans', sans-serif;
+    font-family: var(--mt-font-body);
     border-radius: 8px;
-    border-color: #E8E4DA;
+    border-color: var(--mt-color-border);
     margin-top: 6px;
 }
 
 .mt-cat-nav {
-    border-top: 1px solid #E8E4DA;
+    border-top: 1px solid var(--mt-color-border);
 }
 
 .mt-cat-nav-row {
@@ -637,21 +693,21 @@ body {
     display: inline-block;
     padding: 10px 2px;
     font-size: 13px;
-    color: #4A463C;
+    color: var(--mt-color-text-soft);
     text-decoration: none;
     white-space: nowrap;
     border-bottom: 2px solid transparent;
 }
 
 .mt-cat-nav a:hover {
-    color: #262420;
+    color: var(--mt-color-text);
     text-decoration: none;
 }
 
 .mt-cat-nav a.active {
-    color: #262420;
+    color: var(--mt-color-text);
     font-weight: 600;
-    border-bottom-color: #0F6B63;
+    border-bottom-color: var(--mt-color-accent);
 }
 
 .mt-cat-nav-item {
@@ -664,8 +720,8 @@ body {
     position: absolute;
     top: 100%;
     left: 0;
-    background: #fff;
-    border: 1px solid #E8E4DA;
+    background: var(--mt-color-white);
+    border: 1px solid var(--mt-color-border);
     border-radius: 8px;
     padding: 6px 0;
     min-width: 180px;
@@ -682,15 +738,15 @@ body {
     display: block;
     padding: 8px 16px;
     font-size: 13px;
-    color: #4A463C;
+    color: var(--mt-color-text-soft);
     text-decoration: none;
     border-bottom: none;
     white-space: nowrap;
 }
 
 .mt-cat-dropdown a:hover {
-    background: #FAF8F4;
-    color: #0F6B63;
+    background: var(--mt-color-bg);
+    color: var(--mt-color-accent);
     text-decoration: none;
 }
 
@@ -730,8 +786,8 @@ body {
         max-width: none;
         margin: 0;
         padding: 10px 16px;
-        background: #fff;
-        border-bottom: 1px solid #E8E4DA;
+        background: var(--mt-color-white);
+        border-bottom: 1px solid var(--mt-color-border);
         z-index: 999;
         align-items: center;
         gap: 8px;
@@ -773,9 +829,9 @@ body {
 /* ===== ModernTheme: category/product listing (PLP, v1) ===== */
 
 .mt-plp {
-    font-family: 'Inter', 'Droid Sans', sans-serif;
-    color: #262420;
-    background: #FAF8F4;
+    font-family: var(--mt-font-body);
+    color: var(--mt-color-text);
+    background: var(--mt-color-bg);
     margin: -20px -5px 0;
     padding-bottom: 40px;
 }
@@ -790,12 +846,12 @@ body {
 
 .mt-breadcrumb {
     font-size: 12px;
-    color: #726D5F;
+    color: var(--mt-color-muted);
     margin: 0 0 8px;
 }
 
 .mt-breadcrumb a {
-    color: #726D5F;
+    color: var(--mt-color-muted);
 }
 
 .mt-plp-title-row {
@@ -811,11 +867,11 @@ body {
     font-weight: 400;
     letter-spacing: -0.01em;
     margin: 0;
-    color: #211F19;
+    color: var(--mt-color-text-strong);
 }
 
 .mt-sidebar {
-    border-right: 1px solid #E8E4DA;
+    border-right: 1px solid var(--mt-color-border);
     padding-right: 20px;
     margin-bottom: 20px;
 }
@@ -841,18 +897,18 @@ body {
     display: block;
     padding: 8px 0;
     font-size: 13px;
-    color: #4A463C;
+    color: var(--mt-color-text-soft);
     text-decoration: none;
-    border-bottom: 1px solid #F0EDE4;
+    border-bottom: 1px solid var(--mt-color-divider);
 }
 
 .mt-sidebar-tree [class~="451_cat_item"] > a:hover {
-    color: #0F6B63;
+    color: var(--mt-color-accent);
     text-decoration: none;
 }
 
 .mt-sidebar-tree [class~="451_cat_item"].active > a {
-    color: #0F6B63;
+    color: var(--mt-color-accent);
     font-weight: 600;
 }
 
@@ -864,12 +920,12 @@ body {
 
 .mt-sidebar-tree [class~="451_cat_item"] ul [class~="451_cat_item"] > a {
     font-size: 12px;
-    color: #726D5F;
+    color: var(--mt-color-muted);
 }
 
 .mt-category-desc {
     font-size: 14px;
-    color: #4A463C;
+    color: var(--mt-color-text-soft);
     margin-bottom: 20px;
 }
 
@@ -890,7 +946,7 @@ body {
 
 .mt-plp-count {
     font-size: 13px;
-    color: #726D5F;
+    color: var(--mt-color-muted);
     margin: 0;
 }
 
@@ -902,10 +958,10 @@ body {
 }
 
 .mt-sort select {
-    border: 1px solid #E8E4DA;
+    border: 1px solid var(--mt-color-border);
     border-radius: 8px;
     padding: 6px 10px;
-    background: #fff;
+    background: var(--mt-color-white);
     font-size: 13px;
 }
 
@@ -916,15 +972,15 @@ body {
 /* Product grid now uses the shared partials/controls/mtProductCard.html include (.mt-product-card,
    defined in the Home section above) instead of the legacy shortproductviewgallery markup. */
 
-/* ===== ModernTheme: PDP (v1) ===== */
+/* ===== ModernTheme: PDT / Product Detail Page (v1) ===== */
 /* Markup lives in the Four51 admin's Product Detail Template editor, not this repo -
    see pdt-templates/ModernTheme-PDP.html for the reference copy. This CSS still loads on
    every page via custom.css, so it reaches the PDT-rendered markup the same as anywhere else. */
 
 .mt-pdt {
-    font-family: 'Inter', 'Droid Sans', sans-serif;
-    color: #262420;
-    background: #FAF8F4;
+    font-family: var(--mt-font-body);
+    color: var(--mt-color-text);
+    background: var(--mt-color-bg);
     margin: -20px -5px 0;
     padding-bottom: 60px;
 }
@@ -974,19 +1030,19 @@ body {
     font-weight: 400;
     letter-spacing: -0.01em;
     margin: 0 0 4px;
-    color: #211F19;
+    color: var(--mt-color-text-strong);
 }
 
 .mt-pdt-sku {
     font-size: 13px;
-    color: #726D5F;
+    color: var(--mt-color-muted);
     margin: 0 0 16px;
 }
 
 .mt-pdp-price {
     font-size: 26px;
     font-weight: 700;
-    color: #0F6B63;
+    color: var(--mt-color-accent);
     margin: 0 0 20px;
 }
 
@@ -1004,10 +1060,10 @@ body {
     justify-content: space-between;
     width: 100%;
     padding: 10px 14px;
-    border: 1px solid #E8E4DA;
+    border: 1px solid var(--mt-color-border);
     border-radius: 8px;
-    background: #fff;
-    color: #262420;
+    background: var(--mt-color-white);
+    color: var(--mt-color-text);
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
@@ -1015,12 +1071,12 @@ body {
 
 .mt-price-schedule-toggle:hover,
 .mt-price-schedule-toggle:focus {
-    border-color: #0F6B63;
-    color: #0F6B63;
+    border-color: var(--mt-color-accent);
+    color: var(--mt-color-accent);
 }
 
 .mt-price-schedule-table {
-    border: 1px solid #E8E4DA;
+    border: 1px solid var(--mt-color-border);
     border-radius: 10px;
     overflow: hidden;
     margin-top: 8px;
@@ -1031,16 +1087,16 @@ body {
     padding: 12px 16px;
     font-size: 15px;
     font-weight: 700;
-    color: #262420;
-    border-bottom: 1px solid #E8E4DA;
+    color: var(--mt-color-text);
+    border-bottom: 1px solid var(--mt-color-border);
 }
 
 .mt-price-schedule-row {
     display: flex;
     padding: 10px 16px;
-    border-bottom: 1px solid #F0EDE4;
+    border-bottom: 1px solid var(--mt-color-divider);
     font-size: 14px;
-    color: #262420;
+    color: var(--mt-color-text);
 }
 
 .mt-price-schedule-row:last-child {
@@ -1048,8 +1104,8 @@ body {
 }
 
 .mt-price-schedule-head {
-    background: #FAF8F4;
-    color: #726D5F;
+    background: var(--mt-color-bg);
+    color: var(--mt-color-muted);
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.02em;
@@ -1066,7 +1122,7 @@ body {
 }
 
 .mt-order-panel {
-    border-top: 1px solid #E8E4DA;
+    border-top: 1px solid var(--mt-color-border);
     padding-top: 20px;
     margin-bottom: 20px;
 }
@@ -1087,7 +1143,7 @@ body {
 
 .mt-variant-search input {
     flex: 1;
-    border: 1px solid #E8E4DA;
+    border: 1px solid var(--mt-color-border);
     border-radius: 8px;
     padding: 8px 12px;
 }
@@ -1099,7 +1155,7 @@ body {
 }
 
 .mt-variant-row {
-    border: 1px solid #E8E4DA;
+    border: 1px solid var(--mt-color-border);
     border-radius: 8px;
     padding: 12px;
     margin-bottom: 10px;
@@ -1111,7 +1167,7 @@ body {
 
 .mt-pdp-meta {
     font-size: 13px;
-    color: #726D5F;
+    color: var(--mt-color-muted);
     margin: 0 0 8px;
 }
 
@@ -1132,16 +1188,16 @@ body {
     font-weight: 600;
     letter-spacing: 0.02em;
     text-transform: uppercase;
-    color: #726D5F;
+    color: var(--mt-color-muted);
 }
 
 .mt-order-row label.required {
-    color: #726D5F;
+    color: var(--mt-color-muted);
 }
 
 .mt-order-row label.required:after {
     content: ' *';
-    color: #0F6B63;
+    color: var(--mt-color-accent);
 }
 
 .mt-pdt-add-btn {
@@ -1155,11 +1211,11 @@ body {
 }
 
 .mt-pdt-description {
-    border-top: 1px solid #E8E4DA;
+    border-top: 1px solid var(--mt-color-border);
     padding-top: 24px;
     margin-top: 24px;
     font-size: 14px;
-    color: #4A463C;
+    color: var(--mt-color-text-soft);
 }
 
 /* Restyle the spec-form fields (Location/Size dropdowns from customSelectionField.html,
@@ -1176,29 +1232,29 @@ body {
     font-weight: 600;
     letter-spacing: 0.02em;
     text-transform: uppercase;
-    color: #726D5F;
+    color: var(--mt-color-muted);
     margin-bottom: 6px;
 }
 
 .mt-pdt .view-form-icon label.required:after {
     content: " *";
-    color: #0F6B63;
+    color: var(--mt-color-accent);
 }
 
 .mt-pdt .view-form-icon .form-control {
-    border: 1px solid #E8E4DA;
+    border: 1px solid var(--mt-color-border);
     border-radius: 8px;
     padding: 10px 12px;
-    background: #fff;
+    background: var(--mt-color-white);
     font-size: 14px;
-    color: #262420;
+    color: var(--mt-color-text);
     box-shadow: none;
     height: auto;
     max-width: 360px;
 }
 
 .mt-pdt .view-form-icon .form-control:focus {
-    border-color: #0F6B63;
+    border-color: var(--mt-color-accent);
     box-shadow: none;
 }
 
@@ -1207,19 +1263,19 @@ body {
 }
 
 .mt-pdt .quantity .form-control {
-    border: 1px solid #E8E4DA;
+    border: 1px solid var(--mt-color-border);
     border-radius: 8px;
     padding: 10px 12px;
-    background: #fff;
+    background: var(--mt-color-white);
     font-size: 14px;
-    color: #262420;
+    color: var(--mt-color-text);
     box-shadow: none;
     height: auto;
     max-width: 120px;
 }
 
 .mt-pdt .quantity .form-control:focus {
-    border-color: #0F6B63;
+    border-color: var(--mt-color-accent);
     box-shadow: none;
 }
 
@@ -1232,8 +1288,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #FAF8F4;
-    font-family: 'Inter', 'Droid Sans', sans-serif;
+    background: var(--mt-color-bg);
+    font-family: var(--mt-font-body);
     margin: -20px -5px 0;
     padding: 40px 20px;
 }
@@ -1241,8 +1297,8 @@ body {
 .mt-login-card {
     width: 100%;
     max-width: 380px;
-    background: #fff;
-    border: 1px solid #E8E4DA;
+    background: var(--mt-color-white);
+    border: 1px solid var(--mt-color-border);
     border-radius: 12px;
     padding: 40px 32px;
 }
@@ -1261,7 +1317,7 @@ body {
     font-size: 20px;
     font-weight: 700;
     letter-spacing: -0.02em;
-    color: #262420;
+    color: var(--mt-color-text);
 }
 
 .mt-login-title {
@@ -1270,13 +1326,13 @@ body {
     letter-spacing: -0.01em;
     text-align: center;
     margin: 0 0 24px;
-    color: #211F19;
+    color: var(--mt-color-text-strong);
 }
 
 .mt-login-alert {
     font-size: 13px;
-    background: #F0EDE4;
-    color: #4A463C;
+    background: var(--mt-color-divider);
+    color: var(--mt-color-text-soft);
     border-radius: 8px;
     padding: 10px 14px;
     margin: 0 0 16px;
@@ -1288,7 +1344,7 @@ body {
     text-align: center;
     background: none;
     border: none;
-    color: #0F6B63;
+    color: var(--mt-color-accent);
     font-size: 13px;
     font-weight: 500;
     padding: 8px 0 16px;
@@ -1321,31 +1377,31 @@ body {
     font-weight: 600;
     letter-spacing: 0.02em;
     text-transform: uppercase;
-    color: #726D5F;
+    color: var(--mt-color-muted);
     margin-bottom: 6px;
 }
 
 .mt-login .mt-field input {
     width: 100%;
-    border: 1px solid #E8E4DA;
+    border: 1px solid var(--mt-color-border);
     border-radius: 8px;
     padding: 10px 12px;
     font-size: 14px;
-    color: #262420;
+    color: var(--mt-color-text);
     box-sizing: border-box;
 }
 
 .mt-login .mt-field input:focus {
-    border-color: #0F6B63;
+    border-color: var(--mt-color-accent);
     outline: none;
 }
 
 /* ===== ModernTheme: cart (v1) ===== */
 
 .mt-cart {
-    font-family: 'Inter', 'Droid Sans', sans-serif;
-    color: #262420;
-    background: #FAF8F4;
+    font-family: var(--mt-font-body);
+    color: var(--mt-color-text);
+    background: var(--mt-color-bg);
     margin: -20px -5px 0;
     padding-bottom: 60px;
 }
@@ -1363,25 +1419,25 @@ body {
 
 .mt-cart-count {
     font-size: 13px;
-    color: #726D5F;
+    color: var(--mt-color-muted);
     margin: 0 0 20px;
 }
 
 .mt-cart-list {
-    border-top: 1px solid #E8E4DA;
+    border-top: 1px solid var(--mt-color-border);
 }
 
 .mt-cart-item {
     display: flex;
     gap: 20px;
     padding: 20px 0;
-    border-bottom: 1px solid #E8E4DA;
+    border-bottom: 1px solid var(--mt-color-border);
 }
 
 .mt-cart-item-pending {
-    background: #FAF8F4;
-    border: 1px dashed #E8E4DA;
-    border-bottom: 1px dashed #E8E4DA;
+    background: var(--mt-color-bg);
+    border: 1px dashed var(--mt-color-border);
+    border-bottom: 1px dashed var(--mt-color-border);
     border-radius: 10px;
     padding: 20px;
 }
@@ -1424,14 +1480,14 @@ body {
 }
 
 .mt-cart-item-link:hover .mt-cart-item-name {
-    color: #0F6B63;
+    color: var(--mt-color-accent);
 }
 
 .mt-cart-item-name {
     display: block;
     font-size: 15px;
     font-weight: 600;
-    color: #262420;
+    color: var(--mt-color-text);
     margin-bottom: 2px;
 }
 
@@ -1456,13 +1512,13 @@ body {
     font-weight: 600;
     letter-spacing: 0.02em;
     text-transform: uppercase;
-    color: #726D5F;
+    color: var(--mt-color-muted);
     margin-bottom: 6px;
 }
 
 .mt-cart .mt-field label.required:after {
     content: " *";
-    color: #0F6B63;
+    color: var(--mt-color-accent);
 }
 
 .mt-field-row {
@@ -1473,18 +1529,18 @@ body {
 
 .mt-cart .mt-field-row input,
 .mt-cart .mt-field-row select {
-    border: 1px solid #E8E4DA;
+    border: 1px solid var(--mt-color-border);
     border-radius: 8px;
     padding: 8px 10px;
     font-size: 13px;
-    color: #262420;
+    color: var(--mt-color-text);
     flex: 1;
     min-width: 0;
 }
 
 .mt-cart .mt-field-row input:focus,
 .mt-cart .mt-field-row select:focus {
-    border-color: #0F6B63;
+    border-color: var(--mt-color-accent);
     outline: none;
 }
 
@@ -1498,7 +1554,7 @@ body {
     list-style: none;
     margin: 10px 0 0;
     padding: 12px;
-    background: #FAF8F4;
+    background: var(--mt-color-bg);
     border-radius: 8px;
     font-size: 13px;
 }
@@ -1520,16 +1576,16 @@ body {
     padding: 0;
     font-size: 13px;
     font-weight: 600;
-    color: #0F6B63;
+    color: var(--mt-color-accent);
     cursor: pointer;
 }
 
 .mt-cart-kit-toggle:hover {
-    color: #0C544E;
+    color: var(--mt-color-accent-dark);
 }
 
 .mt-cart-kit-count {
-    color: #726D5F;
+    color: var(--mt-color-muted);
     font-weight: 400;
 }
 
@@ -1541,7 +1597,7 @@ body {
 
 .mt-cart-kit-row {
     padding: 10px 12px;
-    background: #FAF8F4;
+    background: var(--mt-color-bg);
     border-radius: 8px;
     margin-bottom: 8px;
 }
@@ -1560,14 +1616,14 @@ body {
 
 .mt-cart-kit-name {
     font-weight: 600;
-    color: #262420;
+    color: var(--mt-color-text);
 }
 
 .mt-cart-kit-row .mt-cart-item-specs {
-    /* the row itself is already the cream #FAF8F4 tint - white here keeps the nested
+    /* the row itself is already the cream var(--mt-color-bg) tint - white here keeps the nested
        spec block from blending invisibly into its parent */
     margin-top: 8px;
-    background: #fff;
+    background: var(--mt-color-white);
 }
 
 .mt-cart-item-qty {
@@ -1580,7 +1636,7 @@ body {
     font-weight: 600;
     letter-spacing: 0.02em;
     text-transform: uppercase;
-    color: #726D5F;
+    color: var(--mt-color-muted);
     margin-bottom: 6px;
 }
 
@@ -1591,7 +1647,7 @@ body {
 }
 
 .mt-cart-item-qty .form-control {
-    border: 1px solid #E8E4DA;
+    border: 1px solid var(--mt-color-border);
     border-radius: 8px;
     padding: 8px 10px;
     font-size: 14px;
@@ -1650,12 +1706,12 @@ body {
     font-weight: 600;
     letter-spacing: 0.02em;
     text-transform: uppercase;
-    color: #726D5F;
+    color: var(--mt-color-muted);
     margin-bottom: 6px;
 }
 
 .mt-giftcard-form .mt-field-row input {
-    border: 1px solid #E8E4DA;
+    border: 1px solid var(--mt-color-border);
     border-radius: 8px;
     padding: 10px 12px;
     font-size: 14px;
@@ -1700,9 +1756,9 @@ body {
 }
 
 .mt-cart-summary-card {
-    border: 1px solid #E8E4DA;
+    border: 1px solid var(--mt-color-border);
     border-radius: 12px;
-    background: #fff;
+    background: var(--mt-color-white);
     padding: 24px;
 }
 
@@ -1711,7 +1767,7 @@ body {
     font-weight: 400;
     letter-spacing: -0.01em;
     margin: 0 0 16px;
-    color: #211F19;
+    color: var(--mt-color-text-strong);
 }
 
 .mt-cart-summary-row {
@@ -1741,7 +1797,7 @@ body {
     gap: 10px;
     flex-wrap: wrap;
     padding: 20px 0;
-    border-top: 1px solid #E8E4DA;
+    border-top: 1px solid var(--mt-color-border);
 }
 
 @media (max-width: 767px) {
@@ -1773,9 +1829,9 @@ body {
    reusing .mt-cart-summary-card/.mt-cart-summary-title/.mt-cart-summary-row from cart. */
 
 .mt-checkout {
-    font-family: 'Inter', 'Droid Sans', sans-serif;
-    color: #262420;
-    background: #FAF8F4;
+    font-family: var(--mt-font-body);
+    color: var(--mt-color-text);
+    background: var(--mt-color-bg);
     margin: -20px -5px 0;
     padding-bottom: 60px;
 }
@@ -1809,13 +1865,13 @@ body {
     display: flex;
     justify-content: space-between;
     font-size: 13px;
-    color: #4A463C;
+    color: var(--mt-color-text-soft);
     margin-bottom: 6px;
 }
 
 .mt-checkout-coupon {
-    border-top: 1px solid #E8E4DA;
-    border-bottom: 1px solid #E8E4DA;
+    border-top: 1px solid var(--mt-color-border);
+    border-bottom: 1px solid var(--mt-color-border);
     padding: 16px 0;
     margin: 12px 0;
 }
@@ -1826,12 +1882,12 @@ body {
     font-weight: 600;
     letter-spacing: 0.02em;
     text-transform: uppercase;
-    color: #726D5F;
+    color: var(--mt-color-muted);
     margin-bottom: 6px;
 }
 
 .mt-checkout-coupon .mt-field-row input {
-    border: 1px solid #E8E4DA;
+    border: 1px solid var(--mt-color-border);
     border-radius: 8px;
     padding: 10px 12px;
     font-size: 14px;
@@ -1863,24 +1919,24 @@ body {
     font-weight: 600;
     letter-spacing: 0.02em;
     text-transform: uppercase;
-    color: #726D5F;
+    color: var(--mt-color-muted);
     margin-bottom: 6px;
 }
 
 .mt-checkout .mt-field input,
 .mt-checkout .mt-field select {
     width: 100%;
-    border: 1px solid #E8E4DA;
+    border: 1px solid var(--mt-color-border);
     border-radius: 8px;
     padding: 10px 12px;
     font-size: 14px;
-    color: #262420;
+    color: var(--mt-color-text);
     box-sizing: border-box;
 }
 
 .mt-checkout .mt-field input:focus,
 .mt-checkout .mt-field select:focus {
-    border-color: #0F6B63;
+    border-color: var(--mt-color-accent);
     outline: none;
 }
 
@@ -1897,9 +1953,9 @@ body {
 /* ===== ModernTheme: checkout order details (always-open card, no accordion) ===== */
 
 .mt-checkout-card {
-    border: 1px solid #E8E4DA;
+    border: 1px solid var(--mt-color-border);
     border-radius: 12px;
-    background: #fff;
+    background: var(--mt-color-white);
     padding: 24px;
     margin-bottom: 20px;
 }
@@ -1909,7 +1965,7 @@ body {
     font-weight: 400;
     letter-spacing: -0.01em;
     margin: 0 0 20px;
-    color: #211F19;
+    color: var(--mt-color-text-strong);
 }
 
 .mt-checkout-card .mt-field,
@@ -1929,31 +1985,31 @@ body {
     font-weight: 600;
     letter-spacing: 0.02em;
     text-transform: uppercase;
-    color: #726D5F;
+    color: var(--mt-color-muted);
     margin-bottom: 6px;
 }
 
 .mt-checkout-card label.required:after,
 .mt-checkout-card .view-form-icon label.required:after {
     content: ' *';
-    color: #B3261E;
+    color: var(--mt-color-danger);
 }
 
 .mt-checkout-card .form-control {
     width: 100%;
     height: auto;
-    border: 1px solid #E8E4DA;
+    border: 1px solid var(--mt-color-border);
     border-radius: 8px;
     padding: 10px 12px;
     font-size: 14px;
-    color: #262420;
+    color: var(--mt-color-text);
     box-sizing: border-box;
     font-family: inherit;
     box-shadow: none;
 }
 
 .mt-checkout-card .form-control:focus {
-    border-color: #0F6B63;
+    border-color: var(--mt-color-accent);
     outline: none;
     box-shadow: none;
 }
@@ -1998,10 +2054,10 @@ body {
     display: flex;
     align-items: center;
     padding: 10px 12px;
-    border: 1px solid #E8E4DA;
+    border: 1px solid var(--mt-color-border);
     background: #F5F3EE;
     font-size: 13px;
-    color: #4A463C;
+    color: var(--mt-color-text-soft);
 }
 
 .mt-checkout-card .input-group-addon:first-child {
@@ -2030,7 +2086,7 @@ body {
     gap: 6px;
     font-size: 12px;
     font-weight: 600;
-    color: #4A463C;
+    color: var(--mt-color-text-soft);
     text-transform: none;
     white-space: nowrap;
     margin-bottom: 0 !important;
@@ -2041,7 +2097,7 @@ body {
 }
 
 .mt-checkout-orderfields {
-    border-top: 1px solid #E8E4DA;
+    border-top: 1px solid var(--mt-color-border);
     padding-top: 16px;
 }
 
@@ -2062,7 +2118,7 @@ body {
 }
 
 .mt-checkout-shipto-toggle .mt-header-btn.active {
-    border-color: #0F6B63;
+    border-color: var(--mt-color-accent);
     background: #EAF3F1;
 }
 
@@ -2078,13 +2134,13 @@ body {
 }
 
 .mt-checkout-address-display {
-    background: #FAF8F4;
-    border: 1px solid #E8E4DA;
+    background: var(--mt-color-bg);
+    border: 1px solid var(--mt-color-border);
     border-radius: 8px;
     padding: 16px;
     margin-bottom: 16px;
     font-size: 13px;
-    color: #4A463C;
+    color: var(--mt-color-text-soft);
 }
 
 .mt-checkout-address-display p {
@@ -2096,7 +2152,7 @@ body {
     font-weight: 600;
     letter-spacing: 0.02em;
     text-transform: uppercase;
-    color: #726D5F;
+    color: var(--mt-color-muted);
     margin-bottom: 6px !important;
 }
 
@@ -2121,7 +2177,7 @@ body {
 }
 
 .mt-checkout-shipto-item {
-    border-top: 1px solid #E8E4DA;
+    border-top: 1px solid var(--mt-color-border);
     padding: 16px 0;
     display: flex;
     gap: 24px;
@@ -2140,14 +2196,14 @@ body {
 
 .mt-checkout-shipto-item-date {
     font-size: 12px;
-    color: #0F6B63;
+    color: var(--mt-color-accent);
     font-weight: 600;
     margin: 0 0 4px;
 }
 
 .mt-checkout-shipto-item-product {
     font-size: 13px;
-    color: #262420;
+    color: var(--mt-color-text);
     margin: 0 0 8px;
 }
 
@@ -2206,11 +2262,11 @@ body {
 
 .mt-checkout-budget-balance {
     background: #EAF3F1;
-    border: 1px solid #0F6B63;
+    border: 1px solid var(--mt-color-accent);
     border-radius: 8px;
     padding: 12px 16px;
     font-size: 13px;
-    color: #0C544E;
+    color: var(--mt-color-accent-dark);
 }
 
 .mt-checkout-saved-card-row {
@@ -2249,7 +2305,7 @@ body {
     padding: 16px;
     margin-bottom: 16px;
     font-size: 13px;
-    color: #4A463C;
+    color: var(--mt-color-text-soft);
 }
 
 .mt-checkout-split-billing p {
@@ -2303,7 +2359,7 @@ body {
     gap: 6px;
     font-size: 13px;
     font-weight: 600;
-    color: #4A463C;
+    color: var(--mt-color-text-soft);
     text-transform: none;
     margin-top: 4px;
 }
@@ -2331,15 +2387,15 @@ body {
     font-weight: 600;
     letter-spacing: 0.02em;
     text-transform: uppercase;
-    color: #726D5F;
+    color: var(--mt-color-muted);
     padding: 8px 10px;
-    border-bottom: 1px solid #E8E4DA;
+    border-bottom: 1px solid var(--mt-color-border);
 }
 
 .mt-checkout-approval-table td {
     padding: 10px;
-    border-bottom: 1px solid #E8E4DA;
-    color: #262420;
+    border-bottom: 1px solid var(--mt-color-border);
+    color: var(--mt-color-text);
     vertical-align: top;
 }
 
@@ -2361,8 +2417,8 @@ body {
 /* ===== ModernTheme: quick-add options modal ===== */
 
 .mt-quickadd-modal-body {
-    font-family: 'Inter', 'Droid Sans', sans-serif;
-    color: #262420;
+    font-family: var(--mt-font-body);
+    color: var(--mt-color-text);
 }
 
 
@@ -2390,28 +2446,28 @@ body {
     font-weight: 600;
     letter-spacing: 0.02em;
     text-transform: uppercase;
-    color: #726D5F;
+    color: var(--mt-color-muted);
     margin-bottom: 6px;
 }
 
 .mt-quickadd-modal-body .view-form-icon label.required:after {
     content: " *";
-    color: #0F6B63;
+    color: var(--mt-color-accent);
 }
 
 .mt-quickadd-modal-body .view-form-icon .form-control {
-    border: 1px solid #E8E4DA;
+    border: 1px solid var(--mt-color-border);
     border-radius: 8px;
     padding: 10px 12px;
-    background: #fff;
+    background: var(--mt-color-white);
     font-size: 14px;
-    color: #262420;
+    color: var(--mt-color-text);
     box-shadow: none;
     height: auto;
 }
 
 .mt-quickadd-modal-body .view-form-icon .form-control:focus {
-    border-color: #0F6B63;
+    border-color: var(--mt-color-accent);
     box-shadow: none;
 }
 
@@ -2420,12 +2476,12 @@ body {
 }
 
 .mt-quickadd-modal-body .quantity .form-control {
-    border: 1px solid #E8E4DA;
+    border: 1px solid var(--mt-color-border);
     border-radius: 8px;
     padding: 10px 12px;
-    background: #fff;
+    background: var(--mt-color-white);
     font-size: 14px;
-    color: #262420;
+    color: var(--mt-color-text);
     box-shadow: none;
     height: auto;
     max-width: 160px;
@@ -2447,9 +2503,9 @@ body {
 }
 
 .mt-kit-items {
-    border: 1px solid #E8E4DA;
+    border: 1px solid var(--mt-color-border);
     border-radius: 12px;
-    background: #fff;
+    background: var(--mt-color-white);
     overflow: hidden;
     margin-top: 16px;
 }
@@ -2458,8 +2514,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: #0F6B63;
-    color: #fff;
+    background: var(--mt-color-accent);
+    color: var(--mt-color-white);
     padding: 14px 18px;
 }
 
@@ -2469,7 +2525,7 @@ body {
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: #fff;
+    color: var(--mt-color-white);
 }
 
 .mt-kit-items-count {
@@ -2488,12 +2544,12 @@ body {
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    border: 1px solid #E8E4DA;
+    border: 1px solid var(--mt-color-border);
     border-radius: 8px;
     padding: 12px 14px;
     margin-bottom: 8px;
     cursor: pointer;
-    background: #FAF8F4;
+    background: var(--mt-color-bg);
 }
 
 .mt-kit-item-row:last-child {
@@ -2505,21 +2561,21 @@ body {
 }
 
 .mt-kit-item-row.mt-kit-item-active {
-    border-color: #0F6B63;
+    border-color: var(--mt-color-accent);
     background: #EAF4F2;
 }
 
 .mt-kit-item-name {
     font-size: 14px;
     font-weight: 600;
-    color: #211F19;
+    color: var(--mt-color-text-strong);
 }
 
 .mt-kit-item-qty {
     display: block;
     font-size: 12px;
     font-weight: 400;
-    color: #726D5F;
+    color: var(--mt-color-muted);
     margin-top: 2px;
 }
 
@@ -2538,35 +2594,35 @@ body {
 
 .mt-kit-pill-muted {
     background: #EFEDE6;
-    color: #726D5F;
+    color: var(--mt-color-muted);
 }
 
 .mt-kit-pill-warn {
     background: #FCEFD8;
-    color: #A85D00;
+    color: var(--mt-color-warning);
 }
 
 .mt-kit-pill-active {
-    background: #0F6B63;
-    color: #fff;
+    background: var(--mt-color-accent);
+    color: var(--mt-color-white);
 }
 
 .mt-kit-pill-done {
     background: #E3F1EE;
-    color: #0F6B63;
+    color: var(--mt-color-accent);
 }
 
 .mt-kit-config-card {
-    border: 1px solid #E8E4DA;
+    border: 1px solid var(--mt-color-border);
     border-radius: 12px;
-    background: #fff;
+    background: var(--mt-color-white);
     overflow: hidden;
     margin-bottom: 24px;
 }
 
 .mt-kit-config-card-header {
-    background: #0F6B63;
-    color: #fff;
+    background: var(--mt-color-accent);
+    color: var(--mt-color-white);
     padding: 14px 20px;
 }
 
@@ -2574,7 +2630,7 @@ body {
     margin: 4px 0 0;
     font-size: 18px;
     font-weight: 600;
-    color: #fff;
+    color: var(--mt-color-white);
 }
 
 .mt-kit-config-card-body {
@@ -2584,7 +2640,7 @@ body {
 /* ===== ModernTheme: Account / Addresses (v1) ===== */
 
 .mt-account-page {
-    background: #FAF8F4;
+    background: var(--mt-color-bg);
     min-height: 70vh;
     padding-bottom: 48px;
 }
@@ -2624,7 +2680,7 @@ body {
 }
 
 .mt-account-alert {
-    color: #726D5F;
+    color: var(--mt-color-muted);
     font-size: 14px;
     margin: 0 0 16px;
 }
@@ -2635,13 +2691,13 @@ body {
 }
 
 .mt-account-security-warning {
-    background: #FAF8F4;
-    border: 1px solid #E8E4DA;
+    background: var(--mt-color-bg);
+    border: 1px solid var(--mt-color-border);
     border-radius: 8px;
     padding: 16px 20px;
     margin-top: 16px;
     font-size: 13px;
-    color: #262420;
+    color: var(--mt-color-text);
 }
 
 .mt-account-security-warning ul {
@@ -2673,7 +2729,7 @@ body {
 }
 
 .mt-addresses {
-    background: #FAF8F4;
+    background: var(--mt-color-bg);
     min-height: 70vh;
     padding-bottom: 48px;
 }
@@ -2702,18 +2758,18 @@ body {
     flex: 1 1 auto;
     width: auto;
     min-width: 0;
-    border: 1px solid #E8E4DA;
+    border: 1px solid var(--mt-color-border);
     border-radius: 8px 0 0 8px;
     border-right: 0;
     padding: 10px 12px;
     font-size: 14px;
-    color: #262420;
+    color: var(--mt-color-text);
     box-shadow: none;
     height: auto;
 }
 
 .mt-addresses-search .form-control:focus {
-    border-color: #0F6B63;
+    border-color: var(--mt-color-accent);
     outline: none;
     box-shadow: none;
 }
@@ -2753,17 +2809,17 @@ body {
     font-weight: 600;
     letter-spacing: 0.02em;
     text-transform: uppercase;
-    color: #726D5F;
+    color: var(--mt-color-muted);
     padding: 10px 12px;
-    border-bottom: 1px solid #E8E4DA;
+    border-bottom: 1px solid var(--mt-color-border);
     background: transparent;
 }
 
 .mt-addresses-table td {
     padding: 12px;
     font-size: 14px;
-    color: #262420;
-    border-top: 1px solid #E8E4DA;
+    color: var(--mt-color-text);
+    border-top: 1px solid var(--mt-color-border);
     vertical-align: middle;
 }
 
@@ -2772,19 +2828,19 @@ body {
 }
 
 .mt-addresses-link {
-    color: #0F6B63;
+    color: var(--mt-color-accent);
     font-weight: 600;
     text-decoration: none;
 }
 
 .mt-addresses-link:hover,
 .mt-addresses-link:focus {
-    color: #0C544E;
+    color: var(--mt-color-accent-dark);
     text-decoration: underline;
 }
 
 .mt-addresses-table .fa-check {
-    color: #0F6B63;
+    color: var(--mt-color-accent);
 }
 
 .mt-addresses-footer {
@@ -2814,7 +2870,7 @@ body {
 }
 
 .mt-address-edit {
-    background: #FAF8F4;
+    background: var(--mt-color-bg);
     min-height: 70vh;
     padding-bottom: 48px;
 }
@@ -2837,29 +2893,29 @@ body {
     font-weight: 600;
     letter-spacing: 0.02em;
     text-transform: uppercase;
-    color: #726D5F;
+    color: var(--mt-color-muted);
     margin-bottom: 6px;
 }
 
 .mt-account-page .view-form-icon label.required:after {
     content: " *";
-    color: #0F6B63;
+    color: var(--mt-color-accent);
 }
 
 .mt-account-page .view-form-icon .form-control {
-    border: 1px solid #E8E4DA;
+    border: 1px solid var(--mt-color-border);
     border-radius: 8px;
     padding: 10px 12px;
-    background: #fff;
+    background: var(--mt-color-white);
     font-size: 14px;
-    color: #262420;
+    color: var(--mt-color-text);
     box-shadow: none;
     height: auto;
     margin-bottom: 16px;
 }
 
 .mt-account-page .view-form-icon .form-control:focus {
-    border-color: #0F6B63;
+    border-color: var(--mt-color-accent);
     box-shadow: none;
 }
 
@@ -2870,9 +2926,9 @@ body {
 /* ===== ModernTheme: Search / Messages / Contact (v1) ===== */
 
 .mt-search-results {
-    font-family: 'Inter', 'Droid Sans', sans-serif;
-    color: #262420;
-    background: #FAF8F4;
+    font-family: var(--mt-font-body);
+    color: var(--mt-color-text);
+    background: var(--mt-color-bg);
     margin: -20px -5px 0;
     padding-bottom: 40px;
 }
@@ -2883,18 +2939,18 @@ body {
 }
 
 .mt-search-form .mt-field-row input {
-    border: 1px solid #E8E4DA;
+    border: 1px solid var(--mt-color-border);
     border-radius: 8px;
     padding: 10px 12px;
     font-size: 14px;
-    color: #262420;
+    color: var(--mt-color-text);
     flex: 1;
     min-width: 0;
     box-shadow: none;
 }
 
 .mt-search-form .mt-field-row input:focus {
-    border-color: #0F6B63;
+    border-color: var(--mt-color-accent);
     outline: none;
 }
 
@@ -2904,9 +2960,9 @@ body {
 }
 
 .mt-messages {
-    font-family: 'Inter', 'Droid Sans', sans-serif;
-    color: #262420;
-    background: #FAF8F4;
+    font-family: var(--mt-font-body);
+    color: var(--mt-color-text);
+    background: var(--mt-color-bg);
     margin: -20px -5px 0;
     padding-bottom: 60px;
 }
@@ -2931,15 +2987,15 @@ body {
     font-weight: 600;
     letter-spacing: 0.02em;
     text-transform: uppercase;
-    color: #726D5F;
+    color: var(--mt-color-muted);
     padding: 8px 10px;
-    border-bottom: 1px solid #E8E4DA;
+    border-bottom: 1px solid var(--mt-color-border);
 }
 
 .mt-messages-table td {
     padding: 12px 10px;
-    border-bottom: 1px solid #E8E4DA;
-    color: #262420;
+    border-bottom: 1px solid var(--mt-color-border);
+    color: var(--mt-color-text);
     vertical-align: middle;
 }
 
@@ -2948,19 +3004,19 @@ body {
 }
 
 .mt-messages-subject-link {
-    color: #262420;
+    color: var(--mt-color-text);
     text-decoration: none;
     font-weight: 600;
 }
 
 .mt-messages-subject-link:hover,
 .mt-messages-subject-link:focus {
-    color: #0F6B63;
+    color: var(--mt-color-accent);
     text-decoration: underline;
 }
 
 .mt-messages-date {
-    color: #726D5F;
+    color: var(--mt-color-muted);
     white-space: nowrap;
 }
 
@@ -2976,11 +3032,11 @@ body {
     font-family: inherit;
     white-space: pre-wrap;
     word-wrap: break-word;
-    background: #FAF8F4;
-    border: 1px solid #E8E4DA;
+    background: var(--mt-color-bg);
+    border: 1px solid var(--mt-color-border);
     border-radius: 8px;
     padding: 16px;
-    color: #262420;
+    color: var(--mt-color-text);
     margin: 0 0 20px;
 }
 
@@ -2997,9 +3053,9 @@ body {
 }
 
 .mt-contact {
-    font-family: 'Inter', 'Droid Sans', sans-serif;
-    color: #262420;
-    background: #FAF8F4;
+    font-family: var(--mt-font-body);
+    color: var(--mt-color-text);
+    background: var(--mt-color-bg);
     margin: -20px -5px 0;
     padding-bottom: 60px;
 }
@@ -3015,9 +3071,9 @@ body {
 /* ===== ModernTheme: Legal pages (Security / Conditions) (v1) ===== */
 
 .mt-legal {
-    font-family: 'Inter', 'Droid Sans', sans-serif;
-    color: #262420;
-    background: #FAF8F4;
+    font-family: var(--mt-font-body);
+    color: var(--mt-color-text);
+    background: var(--mt-color-bg);
     margin: -20px -5px 0;
     padding-bottom: 60px;
 }
@@ -3029,8 +3085,8 @@ body {
 .mt-legal-body {
     max-width: 760px;
     margin: 0 auto;
-    background: #fff;
-    border: 1px solid #E8E4DA;
+    background: var(--mt-color-white);
+    border: 1px solid var(--mt-color-border);
     border-radius: 12px;
     padding: 48px 56px;
 }
@@ -3047,11 +3103,11 @@ body {
     font-size: 17px;
     font-weight: 600;
     line-height: 1.5;
-    color: #211F19;
+    color: var(--mt-color-text-strong);
     padding: 14px 18px;
     margin: 0 0 32px;
-    background: #FAF8F4;
-    border-left: 3px solid #0F6B63;
+    background: var(--mt-color-bg);
+    border-left: 3px solid var(--mt-color-accent);
     border-radius: 4px;
 }
 
@@ -3059,7 +3115,7 @@ body {
     font-size: 19px;
     font-weight: 700;
     letter-spacing: -0.01em;
-    color: #211F19;
+    color: var(--mt-color-text-strong);
     margin: 32px 0 12px;
 }
 
@@ -3070,7 +3126,7 @@ body {
 .mt-legal-body p {
     font-size: 15px;
     line-height: 1.75;
-    color: #262420;
+    color: var(--mt-color-text);
     margin: 0 0 18px;
 }
 
@@ -3083,22 +3139,22 @@ body {
 .mt-legal-body li {
     font-size: 15px;
     line-height: 1.75;
-    color: #262420;
+    color: var(--mt-color-text);
     margin-bottom: 8px;
 }
 
 .mt-legal-body a {
-    color: #0F6B63;
+    color: var(--mt-color-accent);
     text-decoration: underline;
 }
 
 .mt-legal-body a:hover,
 .mt-legal-body a:focus {
-    color: #0C544E;
+    color: var(--mt-color-accent-dark);
 }
 
 .mt-legal-body strong {
-    color: #211F19;
+    color: var(--mt-color-text-strong);
 }
 
 .mt-legal-table {
@@ -3112,7 +3168,7 @@ body {
     vertical-align: top;
     font-size: 15px;
     line-height: 1.75;
-    color: #262420;
+    color: var(--mt-color-text);
 }
 
 .mt-legal-table td p {
@@ -3136,9 +3192,9 @@ body {
 .mt-order-detail,
 .mt-line-item-detail,
 .mt-favorites {
-    font-family: 'Inter', 'Droid Sans', sans-serif;
-    color: #262420;
-    background: #FAF8F4;
+    font-family: var(--mt-font-body);
+    color: var(--mt-color-text);
+    background: var(--mt-color-bg);
     margin: -20px -5px 0;
     padding-bottom: 60px;
 }
@@ -3156,14 +3212,14 @@ body {
 }
 
 .mt-orders-empty-message {
-    color: #726D5F;
+    color: var(--mt-color-muted);
     font-size: 14px;
     margin: 0 0 16px;
 }
 
 .mt-orders-alert-error {
     display: block;
-    color: #B3261E;
+    color: var(--mt-color-danger);
     font-size: 13px;
     margin-top: 12px;
 }
@@ -3192,7 +3248,7 @@ body {
     align-items: center;
     gap: 12px;
     padding: 12px 0;
-    border-bottom: 1px solid #F0EDE4;
+    border-bottom: 1px solid var(--mt-color-divider);
 }
 
 .mt-orders-row:last-child {
@@ -3200,12 +3256,12 @@ body {
 }
 
 .mt-orders-row-head {
-    color: #726D5F;
+    color: var(--mt-color-muted);
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.02em;
     text-transform: uppercase;
-    border-bottom: 1px solid #E8E4DA;
+    border-bottom: 1px solid var(--mt-color-border);
 }
 
 .mt-orders-col-id,
@@ -3224,7 +3280,7 @@ body {
     font-weight: 600;
     letter-spacing: 0.02em;
     text-transform: uppercase;
-    color: #726D5F;
+    color: var(--mt-color-muted);
     margin-bottom: 2px;
 }
 
@@ -3248,28 +3304,28 @@ body {
     border-radius: 999px;
     padding: 5px 10px;
     background: #EFEDE6;
-    color: #726D5F;
+    color: var(--mt-color-muted);
 }
 
 .mt-orders-status-pill-open,
 .mt-orders-status-pill-approved {
     background: #E3F1EE;
-    color: #0F6B63;
+    color: var(--mt-color-accent);
 }
 
 .mt-orders-status-pill-pending {
     background: #FCEFD8;
-    color: #A85D00;
+    color: var(--mt-color-warning);
 }
 
 .mt-orders-status-pill-unsubmitted {
     background: #EFEDE6;
-    color: #726D5F;
+    color: var(--mt-color-muted);
 }
 
 .mt-orders-status-pill-declined {
     background: #FBE7E5;
-    color: #B3261E;
+    color: var(--mt-color-danger);
 }
 
 /* Order detail page */
@@ -3310,7 +3366,7 @@ body {
 }
 
 .mt-order-detail-card-footer {
-    border-top: 1px solid #E8E4DA;
+    border-top: 1px solid var(--mt-color-border);
     margin-top: 20px;
     padding-top: 20px;
 }
@@ -3320,7 +3376,7 @@ body {
 }
 
 .mt-order-detail-shipment {
-    border-top: 1px solid #E8E4DA;
+    border-top: 1px solid var(--mt-color-border);
     margin-top: 20px;
     padding-top: 16px;
     font-size: 14px;
@@ -3353,7 +3409,7 @@ body {
 }
 
 .mt-order-detail-side p .text-info {
-    color: #726D5F;
+    color: var(--mt-color-muted);
     flex-shrink: 0;
 }
 
@@ -3363,7 +3419,7 @@ body {
 
 .mt-order-detail-side hr {
     border: none;
-    border-top: 1px solid #E8E4DA;
+    border-top: 1px solid var(--mt-color-border);
     margin: 16px 0;
 }
 
@@ -3377,7 +3433,7 @@ body {
    (partials/Reporting/lineItemHistoryGridView.html) renders a .panel-order-history block per
    line item inside .mt-order-detail-main - style those generically the same way. */
 .mt-order-detail-main .panel-order-history {
-    border-top: 1px solid #E8E4DA;
+    border-top: 1px solid var(--mt-color-border);
     padding: 20px 0;
 }
 
@@ -3447,15 +3503,15 @@ body {
     font-weight: 600;
     letter-spacing: 0.02em;
     text-transform: uppercase;
-    color: #726D5F;
+    color: var(--mt-color-muted);
     padding: 8px 10px;
-    border-bottom: 1px solid #E8E4DA;
+    border-bottom: 1px solid var(--mt-color-border);
 }
 
 .mt-favorites-table td {
     padding: 10px;
-    border-bottom: 1px solid #F0EDE4;
-    color: #262420;
+    border-bottom: 1px solid var(--mt-color-divider);
+    color: var(--mt-color-text);
     vertical-align: middle;
 }
 
@@ -3472,9 +3528,9 @@ body {
 
 .mt-reports,
 .mt-report-view {
-    font-family: 'Inter', 'Droid Sans', sans-serif;
-    color: #262420;
-    background: #FAF8F4;
+    font-family: var(--mt-font-body);
+    color: var(--mt-color-text);
+    background: var(--mt-color-bg);
     margin: -20px -5px 0;
     padding-bottom: 60px;
 }
@@ -3508,16 +3564,16 @@ body {
     font-weight: 600;
     letter-spacing: 0.02em;
     text-transform: uppercase;
-    color: #726D5F;
+    color: var(--mt-color-muted);
     padding: 10px 12px;
-    border-bottom: 1px solid #E8E4DA;
+    border-bottom: 1px solid var(--mt-color-border);
     white-space: nowrap;
 }
 
 .mt-report-table td {
     padding: 10px 12px;
-    border-bottom: 1px solid #F0EDE4;
-    color: #262420;
+    border-bottom: 1px solid var(--mt-color-divider);
+    color: var(--mt-color-text);
     vertical-align: middle;
 }
 
@@ -3551,16 +3607,16 @@ body {
 }
 
 .mt-reports-new-menu {
-    font-family: 'Inter', 'Droid Sans', sans-serif;
+    font-family: var(--mt-font-body);
     border-radius: 8px;
-    border-color: #E8E4DA;
+    border-color: var(--mt-color-border);
     margin-top: 6px;
 }
 
 .mt-reports-new-menu > li > a:hover,
 .mt-reports-new-menu > li > a:focus {
-    background: #FAF8F4;
-    color: #0F6B63;
+    background: var(--mt-color-bg);
+    color: var(--mt-color-accent);
 }
 
 .mt-reports-footer {
@@ -3569,14 +3625,14 @@ body {
 
 /* Report viewer shell (Reporting/reportView.html) */
 .mt-report-tabset .nav-tabs {
-    border-bottom: 1px solid #E8E4DA;
+    border-bottom: 1px solid var(--mt-color-border);
     margin-bottom: 20px;
 }
 
 .mt-report-tabset .nav-tabs > li > a {
     border: none;
     background: transparent;
-    color: #726D5F;
+    color: var(--mt-color-muted);
     font-size: 14px;
     font-weight: 600;
     padding: 10px 4px;
@@ -3588,7 +3644,7 @@ body {
 .mt-report-tabset .nav-tabs > li > a:hover,
 .mt-report-tabset .nav-tabs > li > a:focus {
     background: transparent;
-    color: #211F19;
+    color: var(--mt-color-text-strong);
     border-color: transparent;
 }
 
@@ -3596,8 +3652,8 @@ body {
 .mt-report-tabset .nav-tabs > li.active > a:hover,
 .mt-report-tabset .nav-tabs > li.active > a:focus {
     background: transparent;
-    color: #0F6B63;
-    border-bottom-color: #0F6B63;
+    color: var(--mt-color-accent);
+    border-bottom-color: var(--mt-color-accent);
 }
 
 .mt-report-tabset .nav-tabs > li.disabled > a {
@@ -3627,7 +3683,7 @@ body {
 .mt-report-conditions .mt-report-name-row {
     padding-bottom: 20px;
     margin-bottom: 20px;
-    border-bottom: 1px solid #E8E4DA;
+    border-bottom: 1px solid var(--mt-color-border);
 }
 
 .mt-report-columns {
@@ -3654,7 +3710,7 @@ body {
 
 .mt-report-col hr {
     border: none;
-    border-top: 1px solid #E8E4DA;
+    border-top: 1px solid var(--mt-color-border);
     margin: 16px 0;
 }
 
@@ -3665,7 +3721,7 @@ body {
     font-size: 13px;
     font-weight: 400;
     text-transform: none;
-    color: #262420;
+    color: var(--mt-color-text);
     margin: 0;
     cursor: pointer;
 }
