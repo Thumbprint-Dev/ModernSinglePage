@@ -2,20 +2,24 @@
     <a href="{{item.ProofUrl}}" target="_blank" title="{{'Download' | r | xlat}}" ng-if="order.Status != 'AwaitingApproval' && (item.Product.Type == 'VariableText' && item.ProofUrl)"><i class="fa fa-download"></i></a>
     <a href="" title="{{'Download' | r | xlat}}" ng-click="downloadProof(item)" ng-if="order.Status == 'AwaitingApproval' && (item.Variant.IsMpowerVariant)"><i class="fa fa-download"></i></a>
     <div class="col-sm-6">
-        <h3 class="text-primary">
-            {{item.ProductIDText}}
-        </h3>
-        <span>{{item.Product.Name}}</span>
-        <ul ng-show="item.Specs | filter:{'CanSetForLineItem':true}.length > 0">
-            <li class="text-center" ng-repeat="spec in item.Specs | onproperty:{Property: 'CanSetForLineItem', Value: true} ">
-                <span class="text-info">{{spec.Name}}</span>
-                <span ng-if="spec.ControlType == 'File'"><a ng-href="{{spec.File.Url}}">{{spec.File.OriginalName + Extension}}</a></span>
-                <span ng-if="spec.ControlType != 'File'">{{spec.Value || ('(unspecified)' | xlat)}}</span>
-            </li>
-        </ul>
-        <a ng-if="item.ProductionURL" class="btn btn-primary printable-pdf-link" href="{{item.ProductionURL}}" target="_blank">
-            <span><i class="fa fa-download"></i> {{'Download Printable File' | r | xlat}}</span>
-        </a>
+        <div class="mt-order-line-item-row">
+            <img class="mt-cart-item-photo mt-real-photo" ng-show="item.Variant.LargeImageUrl || item.Product.SmallImageUrl" ng-src="{{item.Variant.LargeImageUrl || item.Product.SmallImageUrl}}" />
+            <div class="mt-placeholder-photo mt-cart-item-photo" ng-hide="item.Variant.LargeImageUrl || item.Product.SmallImageUrl">{{'[product photo]' | r | xlat}}</div>
+            <div class="mt-cart-item-info">
+                <span class="mt-cart-item-name">{{item.Product.Name}}</span>
+                <span class="mt-pdt-sku">{{item.ProductIDText}}</span>
+                <ul ng-show="item.Specs | filter:{'CanSetForLineItem':true}.length > 0">
+                    <li class="text-center" ng-repeat="spec in item.Specs | onproperty:{Property: 'CanSetForLineItem', Value: true} ">
+                        <span class="text-info">{{spec.Name}}</span>
+                        <span ng-if="spec.ControlType == 'File'"><a ng-href="{{spec.File.Url}}">{{spec.File.OriginalName + Extension}}</a></span>
+                        <span ng-if="spec.ControlType != 'File'">{{spec.Value || ('(unspecified)' | xlat)}}</span>
+                    </li>
+                </ul>
+                <a ng-if="item.ProductionURL" class="btn btn-primary printable-pdf-link" href="{{item.ProductionURL}}" target="_blank">
+                    <span><i class="fa fa-download"></i> {{'Download Printable File' | r | xlat}}</span>
+                </a>
+            </div>
+        </div>
     </div>
     <div class="col-sm-6">
         <div class="row">
