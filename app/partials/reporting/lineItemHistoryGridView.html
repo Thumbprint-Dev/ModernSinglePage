@@ -3,8 +3,6 @@
     <a href="" title="{{'Download' | r | xlat}}" ng-click="downloadProof(item)" ng-if="order.Status == 'AwaitingApproval' && (item.Variant.IsMpowerVariant)"><i class="fa fa-download"></i></a>
     <div class="col-sm-6">
         <div class="mt-order-line-item-row">
-            <img class="mt-cart-item-photo mt-real-photo" ng-show="item.Variant.LargeImageUrl || item.Product.SmallImageUrl" ng-src="{{item.Variant.LargeImageUrl || item.Product.SmallImageUrl}}" />
-            <div class="mt-placeholder-photo mt-cart-item-photo" ng-hide="item.Variant.LargeImageUrl || item.Product.SmallImageUrl">{{'[product photo]' | r | xlat}}</div>
             <div class="mt-cart-item-info">
                 <span class="mt-cart-item-name">{{item.Product.Name}}</span>
                 <span class="mt-pdt-sku">{{item.ProductIDText}}</span>
