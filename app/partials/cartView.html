@@ -38,7 +38,7 @@
                                     <div class="mt-field" ng-if="user.Permissions.contains('DateNeededRequired') || user.Permissions.contains('DateNeededOptional')">
                                         <label ng-class="{required: user.Permissions.contains('DateNeededRequired')}">{{'Date' | r | xlat}}</label>
                                         <div class="mt-field-row">
-                                            <input name="dateneeded" placeholder="{{'Date' | xlat}}" ng-model="item.DateNeeded" ng-required="user.Permissions.contains('DateNeededRequired')"
+                                            <input name="dateneeded" placeholder="{{'Date' | xlat}}" ng-model="item.DateNeeded" ng-required="user.Permissions.contains('DateNeededRequired')" ng-change="autoSave()"
                                                    type="text" datepicker-popup="{{user.Culture.DateFormat.short}}" is-open="item.dateOpened" min="currentDate" />
                                             <button type="button" title="{{'copy to all' | r | xlat}}" class="mt-header-btn" ng-click="copyAddressToAll()" ng-show="item.DateNeeded" ng-if="$index == 0 && currentOrder.LineItems.length > 1 && user.CostCenters.length != 1">
                                                 <i class="fa fa-copy"></i>
@@ -49,10 +49,10 @@
                                         <label class="required" ng-if="user.CostCenters.length > 1 && !user.Permissions.contains('FreeFormCostCenter')">{{'Cost Center' | r | xlat}}</label>
                                         <div class="mt-field-row">
                                             <select name="costcenter" required ng-if="user.CostCenters.length > 1 && !user.Permissions.contains('FreeFormCostCenter')"
-                                                    ng-options="center.Name as center.Name for center in user.CostCenters" ng-model="item.CostCenter">
+                                                    ng-options="center.Name as center.Name for center in user.CostCenters" ng-model="item.CostCenter" ng-change="autoSave()">
                                                 <option value=""></option>
                                             </select>
-                                            <input name="costcenter" ng-if="user.Permissions.contains('FreeFormCostCenter')" ng-model="item.CostCenter" type="text" required placeholder="{{'Cost Center' | r | xlat}}" />
+                                            <input name="costcenter" ng-if="user.Permissions.contains('FreeFormCostCenter')" ng-model="item.CostCenter" ng-change="autoSave()" type="text" required placeholder="{{'Cost Center' | r | xlat}}" />
                                             <span ng-if="user.CostCenters.length == 1 && !user.Permissions.contains('FreeFormCostCenter')">{{item.CostCenter}}</span>
                                             <button type="button" title="{{'copy to all' | r | xlat}}" class="mt-header-btn" ng-click="copyCostCenterToAll()" ng-show="item.CostCenter" ng-hide="user.CostCenters.length == 1 && !user.Permissions.contains('FreeFormCostCenter')" ng-if="$index == 0 && currentOrder.LineItems.length > 1">
                                                 <i class="fa fa-copy"></i>
@@ -101,7 +101,7 @@
                             <div class="mt-cart-item-qty" ng-if="!(item.IsKitParent && item.KitIsInvalid)">
                                 <label>{{'Quantity' | r | xlat}}</label>
                                 <div class="mt-cart-qty-row">
-                                    <quantityfield required="true" lineitem="item" class="quantity"></quantityfield>
+                                    <quantityfield required="true" lineitem="item" calculated="autoSave" class="quantity"></quantityfield>
                                     <button type="button" class="mt-cart-remove-link" ng-click="removeItem(item)">{{'Remove' | r | xlat}}</button>
                                 </div>
                             </div>
@@ -126,10 +126,6 @@
                         <button type="button" class="mt-header-btn" ng-click="currentOrder.Status == 'AwaitingApproval' ? cancelEdit() : cancelOrder()">
                             <span ng-if="currentOrder.Status != 'AwaitingApproval'">{{('Clear' | r) + ' ' + ('Cart' | r) | xlat}}</span>
                             <span ng-if="currentOrder.Status == 'AwaitingApproval'">{{('Cancel' | r) + ' ' + ('Edit' | r) | xlat}}</span>
-                        </button>
-                        <button type="submit" class="mt-header-btn" ng-click="saveChanges()">
-                            <loadingindicator ng-show="displayLoadingIndicator"></loadingindicator>
-                            {{('Save' | r) + ' ' + ('Order' | r) | xlat}}
                         </button>
                     </div>
                 </div>
