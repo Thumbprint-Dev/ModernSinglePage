@@ -8,97 +8,62 @@
             <button type="button" class="mt-btn-accent" redirect="catalog">{{'Continue Shopping' | r}}</button>
         </div>
 
-        <div class="mt-orders-type-row">
-            <div class="mt-checkout-card mt-orders-type-card" ng-show="hasStandardTypes">
-                <h2 class="mt-checkout-card-title">{{'Orders' | r | xlat}}</h2>
-                <ul class="mt-orders-type-list">
-                    <li ng-repeat="criteria in OrderSearchCriteria | filter:{Type:'Standard'}" ng-show="criteria.Count">
-                        <a ng-href="#" ng-click="OrderSearch($event,{{criteria}})">{{criteria.DisplayName | r | xlat}} <span class="mt-orders-type-count">{{criteria.Count}}</span></a>
-                    </li>
-                </ul>
-            </div>
-            <div class="mt-checkout-card mt-orders-type-card" ng-show="hasReplenishmentTypes">
-                <h2 class="mt-checkout-card-title">{{('Replenishment' | r) + ' ' + ('Orders' | r) | xlat}}</h2>
-                <ul class="mt-orders-type-list">
-                    <li ng-repeat="criteria in OrderSearchCriteria | filter:{Type:'Replenishment'}" ng-show="criteria.Count">
-                        <a ng-href="#" ng-click="OrderSearch($event,{{criteria}})">{{criteria.DisplayName | r | xlat}} <span class="mt-orders-type-count">{{criteria.Count}}</span></a>
-                    </li>
-                </ul>
-            </div>
-            <div class="mt-checkout-card mt-orders-type-card" ng-show="hasPriceRequestTypes">
-                <h2 class="mt-checkout-card-title">{{'Price Request' | r | xlat}}</h2>
-                <ul class="mt-orders-type-list">
-                    <li ng-repeat="criteria in OrderSearchCriteria | filter:{Type:'PriceRequest'}" ng-show="criteria.Count">
-                        <a ng-href="#" ng-click="OrderSearch($event,{{criteria}})">{{criteria.DisplayName | r | xlat}} <span class="mt-orders-type-count">{{criteria.Count}}</span></a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
         <div class="mt-checkout-card" ng-show="hasStandardTypes || hasReplenishmentTypes || hasPriceRequestTypes">
             <h2 class="mt-checkout-card-title">{{('Search' | r) + ' ' + ('Orders' | r) | xlat}}</h2>
-            <div class="mt-orders-search-row">
-                <div class="mt-orders-search-fields">
-                    <div class="view-form-icon">
-                        <div class="form-group">
-                            <label ng-show="criteria.OrderID">{{'Order ID' | r | xlat}}</label>
-                            <input class="form-control" type="text" ng-model="criteria.OrderID" placeholder="{{('Order' | r) + ' ' + ('ID' | r) | xlat}}" autocomplete="off" />
-                            <i class="fa">#</i>
-                        </div>
-                        <div class="form-group">
-                            <label ng-show="criteria.ShippingAddress">{{('Shipping' | r) + ' ' + ('Address' | r) | xlat}}</label>
-                            <input class="form-control" type="text" ng-model="criteria.ShippingAddress" placeholder="{{('Shipping' | r) + ' ' + ('Address' | r) | xlat}}" autocomplete="off" />
-                            <i class="fa fa-map-marker"></i>
-                        </div>
-                        <div class="form-group">
-                            <label ng-show="criteria.DateRangeFrom">{{('Start' | r) + ' ' + ('Date' | r) | xlat}}</label>
-                            <div class="btn btn-default btn-block btn-date hidden-lg hidden-md"
-                                 ng-click="$event.preventDefault();$event.stopPropagation();startopened = !startopened;"
-                                 style="margin:0; height:40px; padding-top:8px;">
-                                {{criteria.DateRangeFrom ? '' : 'Tap'}}
-                                <span class="text-info">{{criteria.DateRangeFrom | date:user.Culture.DateFormat.short}}</span>
-                            </div>
-                            <input name="daterangefrom" placeholder="{{('Start' | r) + ' ' + ('Date' | r) | xlat}}" ng-model="criteria.DateRangeFrom"
-                                   type="text"
-                                   class="form-control"
-                                   datepicker-popup="{{user.Culture.DateFormat.short}}"
-                                   is-open="startopened"/>
-                            <i class="fa fa-calendar"></i>
-                        </div>
-                        <div class="form-group">
-                            <label ng-show="criteria.DateRangeTo">{{('End' | r) + ' ' + ('Date' | r) | xlat}}</label>
-                            <div class="btn btn-default btn-block btn-date hidden-lg hidden-md"
-                                 ng-click="$event.preventDefault();$event.stopPropagation();endopened = !endopened;"
-                                 style="margin:0; height:40px; padding-top:8px;">
-                                {{criteria.DateRangeTo ? '' : 'Tap'}}
-                                <span class="text-info">{{criteria.DateRangeTo | date:user.Culture.DateFormat.short}}</span>
-                            </div>
-                            <input name="daterangeto" placeholder="{{('End' | r) + ' ' + ('Date' | r) | xlat}}" ng-model="criteria.DateRangeTo"
-                                   type="text"
-                                   class="form-control"
-                                   datepicker-popup="{{user.Culture.DateFormat.short}}"
-                                   is-open="endopened"
-                                   min="criteria.DateRangeFrom"/>
-                            <i class="fa fa-calendar"></i>
-                        </div>
+            <div class="mt-orders-search-fields">
+                <div class="view-form-icon">
+                    <div class="form-group">
+                        <label ng-show="criteria.OrderID">{{'Order ID' | r | xlat}}</label>
+                        <input class="form-control" type="text" ng-model="criteria.OrderID" placeholder="{{('Order' | r) + ' ' + ('ID' | r) | xlat}}" autocomplete="off" />
+                        <i class="fa">#</i>
                     </div>
-                </div>
-                <div class="mt-orders-search-lastn">
-                    <div class="mt-orders-search-lastn-inner">
-                        <i class="fa fa-info-circle"></i>
-                        {{'Only display last' | r | xlat}}
-                        <div class="view-form-icon">
-                            <div>
-                                <label ng-show="criteria.LastN"># {{'of' | xlat}} {{'Orders' | r | xlat}}</label>
-                                <input class="form-control" type="text" ng-model="criteria.LastN" placeholder="# {{'of' | xlat}} {{'Orders' | r | xlat}}" autocomplete="off" />
-                                <i class="fa fa-edit"></i>
-                            </div>
+                    <div class="form-group">
+                        <label ng-show="criteria.ShippingAddress">{{('Shipping' | r) + ' ' + ('Address' | r) | xlat}}</label>
+                        <input class="form-control" type="text" ng-model="criteria.ShippingAddress" placeholder="{{('Shipping' | r) + ' ' + ('Address' | r) | xlat}}" autocomplete="off" />
+                        <i class="fa fa-map-marker"></i>
+                    </div>
+                    <div class="form-group">
+                        <label ng-show="selectedStatus">{{'Status' | r | xlat}}</label>
+                        <select class="form-control" ng-model="selectedStatus" ng-options="c as c.DisplayName for c in OrderSearchCriteria">
+                            <option value="">{{'All Statuses' | r | xlat}}</option>
+                        </select>
+                        <i class="fa fa-flag"></i>
+                    </div>
+                    <div class="form-group">
+                        <label ng-show="criteria.DateRangeFrom">{{('Start' | r) + ' ' + ('Date' | r) | xlat}}</label>
+                        <div class="btn btn-default btn-block btn-date hidden-lg hidden-md"
+                             ng-click="$event.preventDefault();$event.stopPropagation();startopened = !startopened;"
+                             style="margin:0; height:40px; padding-top:8px;">
+                            {{criteria.DateRangeFrom ? '' : 'Tap'}}
+                            <span class="text-info">{{criteria.DateRangeFrom | date:user.Culture.DateFormat.short}}</span>
                         </div>
+                        <input name="daterangefrom" placeholder="{{('Start' | r) + ' ' + ('Date' | r) | xlat}}" ng-model="criteria.DateRangeFrom"
+                               type="text"
+                               class="form-control"
+                               datepicker-popup="{{user.Culture.DateFormat.short}}"
+                               is-open="startopened"/>
+                        <i class="fa fa-calendar"></i>
+                    </div>
+                    <div class="form-group">
+                        <label ng-show="criteria.DateRangeTo">{{('End' | r) + ' ' + ('Date' | r) | xlat}}</label>
+                        <div class="btn btn-default btn-block btn-date hidden-lg hidden-md"
+                             ng-click="$event.preventDefault();$event.stopPropagation();endopened = !endopened;"
+                             style="margin:0; height:40px; padding-top:8px;">
+                            {{criteria.DateRangeTo ? '' : 'Tap'}}
+                            <span class="text-info">{{criteria.DateRangeTo | date:user.Culture.DateFormat.short}}</span>
+                        </div>
+                        <input name="daterangeto" placeholder="{{('End' | r) + ' ' + ('Date' | r) | xlat}}" ng-model="criteria.DateRangeTo"
+                               type="text"
+                               class="form-control"
+                               datepicker-popup="{{user.Culture.DateFormat.short}}"
+                               is-open="endopened"
+                               min="criteria.DateRangeFrom"/>
+                        <i class="fa fa-calendar"></i>
                     </div>
                 </div>
             </div>
             <div class="mt-orders-search-actions">
-                <button type="submit" class="mt-btn-accent" ng-click="OrderSearch($event, criteria)">{{'Search' | r | xlat}}</button>
+                <button type="submit" class="mt-btn-accent" ng-click="runSearch($event)">{{'Search' | r | xlat}}</button>
             </div>
         </div>
 
