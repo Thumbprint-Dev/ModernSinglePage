@@ -65,6 +65,17 @@
 
     <!--<script type="text/javascript" src="//dl1d2m8ri9v3j.cloudfront.net/releases/1.2.4/tracker.js" data-customer="bfec7bded14d43a7ace2697594e1369d"></script>-->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js" data-group="cdn"></script>
+    <!-- Bootstrap's own transition/modal JS only (not the full bundle, and specifically not
+         dropdown.js) - the account/report/order-type dropdowns already work via ui-bootstrap's
+         Angular dropdownToggle directive on the same .dropdown-toggle/data-toggle="dropdown"
+         markup, so loading Bootstrap's own dropdown.js on top would have both independently
+         react to the same click and fight over the open/closed state. Modal has no such existing
+         Angular-driven equivalent in this app, so it's safe to add - this lets an admin paste
+         stock Bootstrap 3 modal markup (data-toggle="modal") directly into a product's
+         Description field (e.g. a per-product Size Chart popup) and have it work with no theme
+         code changes needed for that specific content. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/transition.js" data-group="cdn"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/modal.js" data-group="cdn"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js" data-group="cdn"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular-sanitize.min.js" data-group="cdn"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular-cookies.min.js" data-group="cdn"></script>
