@@ -1750,6 +1750,12 @@ body {
     color: var(--mt-color-text);
 }
 
+/* .mt-pdt-sku's shared base carries a 16px bottom margin meant for the roomier main cart-item
+   layout it was designed for - too much space in this compact kit-contents row. */
+.mt-cart-kit-row .mt-pdt-sku {
+    margin: 2px 0 0;
+}
+
 .mt-cart-kit-row .mt-cart-item-specs {
     /* the row itself is already the cream var(--mt-color-bg) tint - white here keeps the nested
        spec block from blending invisibly into its parent */

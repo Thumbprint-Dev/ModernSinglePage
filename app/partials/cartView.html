@@ -27,11 +27,11 @@
                                 <a class="mt-cart-item-link" ng-if="currentOrder.Status != 'AwaitingApproval' || isEditforApproval" ng-href="{{(item.Product.Type == 'Kit' ? 'kit' : 'cart') + '/' + (item.Product.InteropID) + '/' + (isEditforApproval ? (currentOrder.ID + '/') : '') + ($index)}}">
                                     <i ng-show="item.KitIsInvalid" class="fa fa-exclamation-triangle"></i>
                                     <span class="mt-cart-item-name">{{item.Product.Name}}</span>
-                                    <span class="mt-pdt-sku">{{item.ProductIDText}}</span>
+                                    <span class="mt-pdt-sku">{{'Item ID' | r | xlat}}: {{item.Product.ExternalID}}<span ng-if="item.Variant.ExternalID">, {{'Variant ID' | r | xlat}}: {{item.Variant.ExternalID}}</span></span>
                                 </a>
                                 <div ng-if="currentOrder.Status == 'AwaitingApproval' && !isEditforApproval">
                                     <span class="mt-cart-item-name">{{item.Product.Name}}</span>
-                                    <span class="mt-pdt-sku">{{item.ProductIDText}}</span>
+                                    <span class="mt-pdt-sku">{{'Item ID' | r | xlat}}: {{item.Product.ExternalID}}<span ng-if="item.Variant.ExternalID">, {{'Variant ID' | r | xlat}}: {{item.Variant.ExternalID}}</span></span>
                                 </div>
 
                                 <div class="mt-cart-item-fields" ng-if="(user.Permissions.contains('DateNeededRequired') || user.Permissions.contains('DateNeededOptional')) || user.Permissions.contains('CostCenterPerLine')">
@@ -83,9 +83,10 @@
                                     <ul class="mt-cart-kit-list" ng-show="item.kitContentsOpen">
                                         <li class="mt-cart-kit-row" ng-repeat="child in item.KitChildren">
                                             <div class="mt-cart-kit-row-main">
-                                                <span class="mt-cart-kit-name">{{child.Variant.ExternalID || child.Product.Name}}</span>
+                                                <span class="mt-cart-kit-name">{{child.Product.Name}}</span>
                                                 <span class="mt-pdp-meta">{{'Qty' | r | xlat}}: {{child.Quantity}}</span>
                                             </div>
+                                            <p class="mt-pdt-sku">{{'Item ID' | r | xlat}}: {{child.Product.ExternalID}}<span ng-if="child.Variant.ExternalID">, {{'Variant ID' | r | xlat}}: {{child.Variant.ExternalID}}</span></p>
                                             <ul ng-show="child.SpecsLength > 0" class="mt-cart-item-specs">
                                                 <li ng-repeat="spec in child.Specs | filter:{'CanSetForLineItem':true}">
                                                     <span class="mt-pdp-meta">{{spec.Label || spec.Name}}:</span>
