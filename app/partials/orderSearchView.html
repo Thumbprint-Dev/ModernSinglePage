@@ -24,7 +24,7 @@
                     </div>
                     <div class="form-group">
                         <label ng-show="selectedStatus">{{'Status' | r | xlat}}</label>
-                        <select class="form-control" ng-model="selectedStatus" ng-options="c as c.DisplayName for c in OrderSearchCriteria">
+                        <select class="form-control" ng-model="selectedStatus" ng-options="c as (c.DisplayName + ' (' + c.Count + ')') for c in OrderSearchCriteria">
                             <option value="">{{'All Statuses' | r | xlat}}</option>
                         </select>
                         <i class="fa fa-flag"></i>
