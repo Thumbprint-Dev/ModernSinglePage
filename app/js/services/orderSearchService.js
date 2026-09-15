@@ -40,11 +40,11 @@ four51.app.factory('OrderSearch', ['$resource', '$451', '$q', function($resource
 	// per-bucket criteria objects are the only field combinations confirmed to filter
 	// correctly), so this fetches each bucket with its own real criteria and combines them
 	// client-side instead of guessing at a single unfiltered request.
-	var _searchAll = function(criteriaList, success, pagesize) {
+	var _searchAll = function(criteriaList, success, extra, pagesize) {
 		pagesize = pagesize || 100;
 		var calls = [];
 		angular.forEach(criteriaList, function(c) {
-			var stat = angular.copy(c);
+			var stat = angular.extend({}, c, extra || {});
 			stat.page = 1;
 			stat.pagesize = pagesize;
 			calls.push($resource($451.api('order')).get(stat).$promise);

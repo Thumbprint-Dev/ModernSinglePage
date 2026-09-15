@@ -1525,14 +1525,24 @@ body {
     flex: 0 0 64px;
 }
 
-/* The restricted-quantity variant renders a native <select> instead of a text input - its
-   browser-drawn arrow needs its own room on the right, which the shared centered/64px sizing
-   above doesn't leave, crowding the value against the arrow. */
+/* The restricted-quantity variant renders a native <select> instead of a text input. Sizing this
+   against the browser's own native dropdown arrow proved unreliable across a few attempts (the
+   OS-drawn arrow reserves its own width regardless of our padding, so the same padding/width
+   combo clipped 4-digit values in one browser and left excess gap in another) - stripping the
+   native appearance and drawing a fixed-size arrow ourselves makes the available text width
+   (and the gap before it) deterministic instead of guessed. */
 .mt-cart-item-qty select.form-control {
-    width: 72px;
-    flex: 0 0 72px;
-    padding: 8px 20px 8px 6px;
+    width: 84px;
+    flex: 0 0 84px;
+    padding: 8px 26px 8px 8px;
     text-align: left;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath fill='%23726D5F' d='M6 8 0 0h12z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 10px 7px;
 }
 
 .mt-cart-remove-link {

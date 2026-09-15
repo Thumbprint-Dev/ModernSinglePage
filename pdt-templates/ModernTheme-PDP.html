@@ -58,7 +58,7 @@
             <div class="col-md-7">
                 <h1 class="mt-pdp-title" ng-hide="LineItem.Variant.ExternalID">{{LineItem.Product.Name}}</h1>
                 <h1 class="mt-pdp-title" ng-show="LineItem.Variant.ExternalID">{{LineItem.Variant.ExternalID}}</h1>
-                <p class="mt-pdp-sku" ng-show="LineItem.Product.ExternalID">{{'SKU' | r | xlat}} {{LineItem.Product.ExternalID}}</p>
+                <p class="mt-pdp-sku" ng-show="LineItem.Product.ExternalID">{{LineItem.Product.ExternalID}}</p>
 
                 <p class="mt-pdp-price" ng-show="LineItem.PriceSchedule.PriceBreaks.length == 1" ng-if="!(user.Permissions.contains('HidePricing'))">
                     {{LineItem.PriceSchedule.PriceBreaks[0].Price | culturecurrency}}
