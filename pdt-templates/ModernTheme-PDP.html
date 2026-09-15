@@ -27,18 +27,13 @@
         <div class="row">
             <!-- PRODUCT IMAGE -->
             <div class="col-md-5">
-                <div class="mt-pdt-image-wrap">
+                <div class="mt-pdt-image-wrap" ng-controller="LightboxCtrl">
                     <button type="button" class="mt-fav-btn mt-pdt-fav-btn" ng-if="user.Type == 'Customer'"
                             title="{{($root.isFavorite(LineItem.Product.InteropID) ? 'Remove Favorite' : 'Add Favorite') | r | xlat}}"
                             ng-click="$root.isFavorite(LineItem.Product.InteropID) ? $root.removeFavorite(LineItem.Product.InteropID) : $root.addFavorite(LineItem.Product.InteropID)">
                         <i class="fa" ng-class="{'fa-heart text-danger': $root.isFavorite(LineItem.Product.InteropID), 'fa-heart-o': !$root.isFavorite(LineItem.Product.InteropID)}"></i>
                     </button>
-                    <loadingindicator ng-show="loadingImage && LineItem.Variant.IsMpowerVariant"></loadingindicator>
-                    <img id="451_img_prod_lg" class="mt-placeholder-photo mt-real-photo mt-pdt-image" ng-src="{{LineItem.Variant.PreviewUrl || LineItem.Variant.LargeImageUrl || LineItem.Product.LargeImageUrl}}"
-                         ng-show="LineItem.Variant.PreviewUrl || LineItem.Variant.LargeImageUrl || LineItem.Product.LargeImageUrl" imageonload />
-                    <div class="mt-placeholder-photo mt-pdt-image" ng-hide="LineItem.Variant.PreviewUrl || LineItem.Variant.LargeImageUrl || LineItem.Product.LargeImageUrl">
-                        {{'[product photo]' | r | xlat}}
-                    </div>
+                    <productlightbox></productlightbox>
                 </div>
 
                 <div class="mt-pdt-variant-actions" ng-show="LineItem.Product.Type=='VariableText' && LineItem.Variant">
