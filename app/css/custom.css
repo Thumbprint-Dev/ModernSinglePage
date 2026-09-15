@@ -1228,6 +1228,113 @@ body {
     margin: 0 0 12px;
 }
 
+/* Product image lightbox (js/directives/productLightbox.js - <productlightbox> element,
+   LightboxCtrl). All images render in the DOM at once (for preloading) with only the active one
+   shown, toggled by the "active" class the directive already puts on the current image/thumb. */
+.mt-lightbox-thumbnail-panel {
+    position: relative;
+}
+
+.mt-lightbox-images {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.mt-lightbox-images a {
+    cursor: pointer;
+}
+
+.mt-lightbox-no-click {
+    cursor: default;
+    pointer-events: none;
+}
+
+.mt-lightbox-image-large {
+    display: none;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.mt-lightbox-images a.active .mt-lightbox-image-large {
+    display: block;
+}
+
+.mt-lightbox-thumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+}
+
+.mt-lightbox-thumb {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border: 1px solid var(--mt-color-border);
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.mt-lightbox-thumbs a.active .mt-lightbox-thumb {
+    border-color: var(--mt-color-accent);
+}
+
+/* The modal itself - windowClass "mt-lightbox-modal" scopes these to just this modal instead of
+   leaking into every other modal in the app (the quick-add modal, or an admin-authored modal
+   pasted into a product's Description field - see the Bootstrap modal.js addition to
+   index.html). */
+.mt-lightbox-modal .modal-dialog {
+    margin: 40px auto;
+}
+
+.mt-lightbox-modal-body {
+    position: relative;
+    background: var(--mt-color-white);
+    padding: 20px;
+}
+
+.mt-lightbox-close {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    z-index: 2;
+    font-size: 24px;
+    line-height: 1;
+}
+
+.mt-lightbox-nav {
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.mt-lightbox-image-container {
+    position: relative;
+    text-align: center;
+}
+
+.mt-lightbox-image-caption {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 8px 12px;
+    padding: 4px 8px;
+    background: rgba(255, 255, 255, 0.85);
+    color: var(--mt-color-text);
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.mt-lightbox-modal-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
 /* Restyle the spec-form fields (Location/Size dropdowns from customSelectionField.html,
    quantity input from quantityfield.js) to match ModernTheme. Scoped to .mt-pdt since these
    directives are reused elsewhere in the app (checkout, kits) that we have not redesigned yet. */
