@@ -66,8 +66,8 @@
                         <orderhistorydetails></orderhistorydetails>
                         <orderhistorysummary ng-if="!(user.Permissions.contains('HidePricing'))"></orderhistorysummary>
                         <div class="mt-order-detail-card-footer" ng-if="order.FromUserID == user.ID && order.Status != 'Unsubmitted'">
-                            <button ng-disabled="currentOrder" class="mt-btn-accent" ng-click="repeatOrder()">
-                                <i ng-show="currentOrder" class="fa fa-warning"></i>
+                            <loadingindicator ng-show="displayLoadingIndicator"></loadingindicator>
+                            <button ng-disabled="displayLoadingIndicator" class="mt-btn-accent" ng-click="repeatOrder()">
                                 {{('Repeat' | r) + ' ' + ('Order' | r) | xlat}}
                             </button>
                         </div>

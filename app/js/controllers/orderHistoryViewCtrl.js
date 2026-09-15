@@ -71,16 +71,27 @@ four51.app.controller('OrderViewCtrl', ['$scope', '$location', '$routeParams', '
 		$scope.repeatOrder = function() {
 			$scope.errorMessage = null;
 			$scope.actionMessage = null;
+			$scope.displayLoadingIndicator = true;
 			Order.repeat($scope.order.ID,
 				function(data) {
 					$scope.currentOrder = data;
 					$scope.user.CurrentOrderID = data.ID;
-					User.save($scope.user, function(data){
-						$scope.user = data;
-						$location.path('/cart');
-					});
+					User.save($scope.user,
+						function(data){
+							$scope.user = data;
+							$location.path('/cart');
+						},
+						function(ex) {
+							// Order.repeat already created/updated the order server-side by this
+							// point - only setting it as the shopper's current order failed, so
+							// surface that instead of leaving the click looking like it did nothing.
+							$scope.displayLoadingIndicator = false;
+							$scope.errorMessage = ex.Message;
+						}
+					);
 				},
 				function(ex) {
+					$scope.displayLoadingIndicator = false;
 					$scope.errorMessage = ex.Message;
 				}
 			);
