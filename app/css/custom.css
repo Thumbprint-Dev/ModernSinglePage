@@ -1082,15 +1082,6 @@ body {
     margin-top: 8px;
 }
 
-.mt-price-schedule-title {
-    margin: 0;
-    padding: 12px 16px;
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--mt-color-text);
-    border-bottom: 1px solid var(--mt-color-border);
-}
-
 .mt-price-schedule-row {
     display: flex;
     padding: 10px 16px;
@@ -1211,11 +1202,30 @@ body {
 }
 
 .mt-pdt-description {
+    max-width: 420px;
     border-top: 1px solid var(--mt-color-border);
     padding-top: 24px;
     margin-top: 24px;
     font-size: 14px;
     color: var(--mt-color-text-soft);
+}
+
+/* trustedDescription() (productDisplayService.js) renders Product.Description verbatim as HTML
+   with no sanitization or tag stripping - if the admin's rich-text field actually saved real
+   <ul>/<li> markup, this styles it; browser-default list styling is otherwise easy to lose track
+   of and can look cramped against the rest of the page's type scale. */
+.mt-pdt-description ul,
+.mt-pdt-description ol {
+    margin: 0 0 12px;
+    padding-left: 20px;
+}
+
+.mt-pdt-description li {
+    margin-bottom: 4px;
+}
+
+.mt-pdt-description p {
+    margin: 0 0 12px;
 }
 
 /* Restyle the spec-form fields (Location/Size dropdowns from customSelectionField.html,
