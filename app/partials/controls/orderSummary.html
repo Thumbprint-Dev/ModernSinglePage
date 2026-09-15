@@ -5,6 +5,21 @@
     <loadingindicator ng-show="couponRemoveIndicator" title="{{'Please wait while we remove your promotion code' | r | xlat}}"></loadingindicator>
     <orderconfirmationmessage></orderconfirmationmessage>
 
+    <div class="mt-checkout-coupon" ng-show="user.Permissions.contains('ViewPromotions')">
+        <div ng-show="!currentOrder.Coupon">
+            <label ng-show="currentOrder.CouponCode">{{('Promotion' | r) + ' ' + ('Code' | r) | xlat}}</label>
+            <div class="mt-field-row">
+                <input type="text" ng-model="currentOrder.CouponCode" placeholder="{{('Promotion' | r) + ' ' + ('Code' | r) | xlat}}" autocomplete="off" />
+                <button type="button" class="mt-btn-accent" ng-click="applyCoupon()"><i class="fa fa-check"></i></button>
+            </div>
+        </div>
+        <div ng-show="currentOrder.Coupon" class="mt-checkout-coupon-applied">
+            <span>{{currentOrder.Coupon.Label}}: {{currentOrder.Coupon.OrderDiscount * -1 | culturecurrency}}</span>
+            <button type="button" class="mt-cart-remove-link" ng-click="removeCoupon()">{{'Remove' | r | xlat}} {{'Coupon' | r | xlat}}</button>
+            <p class="mt-pdp-meta" ng-show="currentOrder.Coupon.ExpirationDate">{{'Expires' | r | xlat}}: {{currentOrder.Coupon.ExpirationDate | date:user.Culture.DateFormat.short}}</p>
+        </div>
+    </div>
+
     <div class="mt-checkout-summary-line">
         <span>{{'Items' | r | xlat}}</span>
         <span>{{currentOrder.LineItems.length}}</span>
@@ -20,21 +35,6 @@
     <div class="mt-checkout-summary-line" ng-if="!(user.Permissions.contains('HidePricing'))">
         <span>{{'Tax' | r | xlat}}</span>
         <span>{{currentOrder.TaxCost || 0 | culturecurrency}}</span>
-    </div>
-
-    <div class="mt-checkout-coupon" ng-show="user.Permissions.contains('ViewPromotions')">
-        <div ng-show="!currentOrder.Coupon">
-            <label ng-show="currentOrder.CouponCode">{{('Promotion' | r) + ' ' + ('Code' | r) | xlat}}</label>
-            <div class="mt-field-row">
-                <input type="text" ng-model="currentOrder.CouponCode" placeholder="{{('Promotion' | r) + ' ' + ('Code' | r) | xlat}}" autocomplete="off" />
-                <button type="button" class="mt-btn-accent" ng-click="applyCoupon()"><i class="fa fa-check"></i></button>
-            </div>
-        </div>
-        <div ng-show="currentOrder.Coupon" class="mt-checkout-coupon-applied">
-            <span>{{currentOrder.Coupon.Label}}: {{currentOrder.Coupon.OrderDiscount * -1 | culturecurrency}}</span>
-            <button type="button" class="mt-cart-remove-link" ng-click="removeCoupon()">{{'Remove' | r | xlat}} {{'Coupon' | r | xlat}}</button>
-            <p class="mt-pdp-meta" ng-show="currentOrder.Coupon.ExpirationDate">{{'Expires' | r | xlat}}: {{currentOrder.Coupon.ExpirationDate | date:user.Culture.DateFormat.short}}</p>
-        </div>
     </div>
 
     <div class="mt-checkout-spendingaccount-applied" ng-show="currentOrder.BudgetAccountID && currentBudgetAccount && !(user.Permissions.contains('HidePricing'))">
