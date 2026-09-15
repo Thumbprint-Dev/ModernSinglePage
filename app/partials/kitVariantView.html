@@ -1,4 +1,4 @@
-<section class="product-detail-default mt-pdp mt-kit">
+<section class="product-detail-default mt-pdt mt-kit">
     <loadingindicator ng-show="loadingIndicator" title="{{'Please wait while we fetch product information' | r | xlat}}"></loadingindicator>
     <div id="message">
         <div class="view-response-message alert-success text-center" alert-show="actionMessage">
@@ -6,23 +6,23 @@
         </div>
     </div>
 
-    <div class="mt-container mt-pdp-inner">
+    <div class="mt-container mt-pdt-inner">
         <div class="row">
             <!-- PRODUCT IMAGE PANEL -->
             <div class="col-md-5">
-                <div class="mt-pdp-image-wrap" ng-if="!LineItem.Variant" ng-controller="LightboxCtrl">
+                <div class="mt-pdt-image-wrap" ng-if="!LineItem.Variant" ng-controller="LightboxCtrl">
                     <productlightbox></productlightbox>
                 </div>
                 <div ng-if="LineItem.Variant">
-                    <div class="mt-pdp-image-wrap">
+                    <div class="mt-pdt-image-wrap">
                         <loadingindicator ng-show="loadingImage && LineItem.Variant.IsMpowerVariant"></loadingindicator>
-                        <img id="451_img_prod_lg" class="mt-placeholder-photo mt-real-photo mt-pdp-image" ng-src="{{LineItem.Variant.PreviewUrl || LineItem.Variant.LargeImageUrl || LineItem.Product.LargeImageUrl}}"
+                        <img id="451_img_prod_lg" class="mt-placeholder-photo mt-real-photo mt-pdt-image" ng-src="{{LineItem.Variant.PreviewUrl || LineItem.Variant.LargeImageUrl || LineItem.Product.LargeImageUrl}}"
                              ng-show="LineItem.Variant.PreviewUrl || LineItem.Variant.LargeImageUrl || LineItem.Product.LargeImageUrl" imageonload />
-                        <div class="mt-placeholder-photo mt-pdp-image" ng-hide="LineItem.Variant.PreviewUrl || LineItem.Variant.LargeImageUrl || LineItem.Product.LargeImageUrl">
+                        <div class="mt-placeholder-photo mt-pdt-image" ng-hide="LineItem.Variant.PreviewUrl || LineItem.Variant.LargeImageUrl || LineItem.Product.LargeImageUrl">
                             {{'[product photo]' | r | xlat}}
                         </div>
                     </div>
-                    <div class="mt-pdp-variant-actions" ng-show="LineItem.Product.Type=='VariableText' && LineItem.Variant">
+                    <div class="mt-pdt-variant-actions" ng-show="LineItem.Product.Type=='VariableText' && LineItem.Variant">
                         <button ng-if="currentOrder.Status != 'AwaitingApproval' && !EditingLineItem" class="mt-header-btn" redirect="/kit/{{kitID}}/{{kitIndex}}/{{kitProductInteropID}}/{{LineItem.Variant.InteropID}}/edit">
                             {{'Edit' | r | xlat}}
                         </button>
@@ -52,14 +52,14 @@
                 <staticspecstable ng-show="StaticSpecGroups && user.Permissions.contains('ViewNonCustomizableSpecs')" specgroups="StaticSpecGroups" length="LineItem.Product.StaticSpecLength"></staticspecstable>
 
                 <form name="addToOrderForm" novalidate="" class="mt-order-panel">
-                    <button class="mt-btn-accent mt-pdp-add-btn" type="button" id="451_btn_orderadd" ng-click="addToOrder()">
+                    <button class="mt-btn-accent mt-pdt-add-btn" type="button" id="451_btn_orderadd" ng-click="addToOrder()">
                         <loadingindicator ng-show="addToOrderIndicator"></loadingindicator>
                         <i ng-show="lineItemErrors.length > 1" class="fa fa-warning"></i>
                         {{addToOrderText | r | xlat}}
                     </button>
                 </form>
 
-                <div class="mt-pdp-description">
+                <div class="mt-pdt-description">
                     <h2 class="mt-eyebrow">{{'Product Description' | r | xlat}}</h2>
                     <h4 ng-show="LineItem.Product.ExternalID" class="mt-pdp-meta">
                         {{'ID' | r | xlat}}: {{LineItem.Product.ExternalID}}

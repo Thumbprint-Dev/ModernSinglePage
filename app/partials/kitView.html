@@ -1,15 +1,15 @@
-<section class="product-detail-default mt-pdp mt-kit">
+<section class="product-detail-default mt-pdt mt-kit">
 	<loadingindicator ng-show="loadingIndicator" title="{{'Please wait while we fetch kit information' | r | xlat}}"></loadingindicator>
 
-	<div class="mt-container mt-pdp-inner">
+	<div class="mt-container mt-pdt-inner">
 		<p class="mt-breadcrumb"><a href="catalog">{{'Home' | r | xlat}}</a> / {{Kit.KitParent.Name}}</p>
 
 		<div class="row">
 			<!-- KIT IMAGE + KIT ITEMS PANEL -->
 			<div class="col-md-5">
-				<div class="mt-pdp-image-wrap">
-					<img id="451_img_prod_lg" class="mt-placeholder-photo mt-real-photo mt-pdp-image" ng-src="{{Kit.KitParent.LargeImageUrl}}" ng-show="Kit.KitParent.LargeImageUrl" imageonload />
-					<div class="mt-placeholder-photo mt-pdp-image" ng-hide="Kit.KitParent.LargeImageUrl">
+				<div class="mt-pdt-image-wrap">
+					<img id="451_img_prod_lg" class="mt-placeholder-photo mt-real-photo mt-pdt-image" ng-src="{{Kit.KitParent.LargeImageUrl}}" ng-show="Kit.KitParent.LargeImageUrl" imageonload />
+					<div class="mt-placeholder-photo mt-pdt-image" ng-hide="Kit.KitParent.LargeImageUrl">
 						{{'[product photo]' | r | xlat}}
 					</div>
 				</div>
@@ -114,7 +114,7 @@
 								<label ng-class="{required: !allowAddFromVariantList}" ng-hide="allowAddFromVariantList">{{('Order' | r) + ' ' + ('Quantity' | r) | xlat}}</label>
 								<quantityfield required="true" lineitem="LineItem" class="quantity"></quantityfield>
 							</div>
-							<button ng-show="LineItem.IsKitParent" class="mt-btn-accent mt-pdp-add-btn" type="button" ng-click="saveOrder()">
+							<button ng-show="LineItem.IsKitParent" class="mt-btn-accent mt-pdt-add-btn" type="button" ng-click="saveOrder()">
 								<loadingindicator ng-show="addToOrderIndicator"></loadingindicator>
 								<i ng-show="lineItemErrors.length > 0" class="fa fa-warning"></i>
 								{{addToOrderText | r | xlat}}
@@ -127,7 +127,7 @@
 							</p>
 							<div ng-show="LineItem.IsKitChild">
 								<loadingindicator ng-show="addToOrderIndicator"></loadingindicator>
-								<button class="mt-btn-accent mt-pdp-add-btn" type="button" ng-click="saveKitItem()" ng-disabled="(ActiveKitItem.RequiresVariantSelection && !LineItem.Variant)">
+								<button class="mt-btn-accent mt-pdt-add-btn" type="button" ng-click="saveKitItem()" ng-disabled="(ActiveKitItem.RequiresVariantSelection && !LineItem.Variant)">
 									<i ng-show="lineItemErrors.length > 0" class="fa fa-warning"></i>
 									{{updateKitLineItemText | r | xlat}}
 								</button>
@@ -136,7 +136,7 @@
 					</form>
 				</div>
 
-				<div class="mt-pdp-description">
+				<div class="mt-pdt-description">
 					<h2 class="mt-eyebrow">{{'Description' | r | xlat}}</h2>
 					<h4 ng-show="Kit.KitParent.ExternalID" class="mt-pdp-meta">
 						{{'ID' | r | xlat}}: {{Kit.KitParent.ExternalID}}

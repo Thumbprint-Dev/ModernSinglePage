@@ -34,7 +34,7 @@ body {
        in practice, so setting it directly here is the reliable fix. */
     width: 100%;
     min-width: 0;
-    /* Every page-wrapper class (.mt-home, .mt-pdp, .mt-cart, .mt-checkout, etc.) sets this same
+    /* Every page-wrapper class (.mt-home, .mt-pdt, .mt-cart, .mt-checkout, etc.) sets this same
        cream background on itself, but that box is only as tall as its own content - on a short
        page (e.g. a small kit's PDP) it doesn't reach the bottom of this flex-stretched container,
        leaving a visible gray gap of unstyled default background between the content and the
@@ -360,7 +360,7 @@ body {
     margin: 0;
 }
 
-.mt-product-card .mt-pdp-sku {
+.mt-product-card .mt-pdt-sku {
     margin: 0 0 4px;
 }
 
@@ -921,7 +921,7 @@ body {
    see pdt-templates/ModernTheme-PDP.html for the reference copy. This CSS still loads on
    every page via custom.css, so it reaches the PDT-rendered markup the same as anywhere else. */
 
-.mt-pdp {
+.mt-pdt {
     font-family: 'Inter', 'Droid Sans', sans-serif;
     color: #262420;
     background: #FAF8F4;
@@ -929,16 +929,16 @@ body {
     padding-bottom: 60px;
 }
 
-.mt-pdp-inner {
+.mt-pdt-inner {
     padding-top: 24px;
 }
 
-.mt-pdp-image-wrap {
+.mt-pdt-image-wrap {
     position: relative;
     margin-bottom: 16px;
 }
 
-.mt-pdp-fav-btn {
+.mt-pdt-fav-btn {
     top: 16px;
     right: 16px;
     width: 40px;
@@ -952,12 +952,12 @@ body {
     font-size: 18px;
 }
 
-.mt-pdp-image {
+.mt-pdt-image {
     aspect-ratio: 1 / 1;
     width: 100%;
 }
 
-.mt-pdp-variant-actions {
+.mt-pdt-variant-actions {
     display: flex;
     gap: 8px;
     margin-bottom: 16px;
@@ -977,7 +977,7 @@ body {
     color: #211F19;
 }
 
-.mt-pdp-sku {
+.mt-pdt-sku {
     font-size: 13px;
     color: #726D5F;
     margin: 0 0 16px;
@@ -1144,7 +1144,7 @@ body {
     color: #0F6B63;
 }
 
-.mt-pdp-add-btn {
+.mt-pdt-add-btn {
     display: block;
     width: 100%;
     max-width: 360px;
@@ -1154,7 +1154,7 @@ body {
     margin-top: 16px;
 }
 
-.mt-pdp-description {
+.mt-pdt-description {
     border-top: 1px solid #E8E4DA;
     padding-top: 24px;
     margin-top: 24px;
@@ -1163,14 +1163,14 @@ body {
 }
 
 /* Restyle the spec-form fields (Location/Size dropdowns from customSelectionField.html,
-   quantity input from quantityfield.js) to match ModernTheme. Scoped to .mt-pdp since these
+   quantity input from quantityfield.js) to match ModernTheme. Scoped to .mt-pdt since these
    directives are reused elsewhere in the app (checkout, kits) that we have not redesigned yet. */
 
-.mt-pdp .view-form-icon {
+.mt-pdt .view-form-icon {
     margin-bottom: 16px;
 }
 
-.mt-pdp .view-form-icon label {
+.mt-pdt .view-form-icon label {
     display: block;
     font-size: 12px;
     font-weight: 600;
@@ -1180,12 +1180,12 @@ body {
     margin-bottom: 6px;
 }
 
-.mt-pdp .view-form-icon label.required:after {
+.mt-pdt .view-form-icon label.required:after {
     content: " *";
     color: #0F6B63;
 }
 
-.mt-pdp .view-form-icon .form-control {
+.mt-pdt .view-form-icon .form-control {
     border: 1px solid #E8E4DA;
     border-radius: 8px;
     padding: 10px 12px;
@@ -1197,16 +1197,16 @@ body {
     max-width: 360px;
 }
 
-.mt-pdp .view-form-icon .form-control:focus {
+.mt-pdt .view-form-icon .form-control:focus {
     border-color: #0F6B63;
     box-shadow: none;
 }
 
-.mt-pdp .view-form-icon .fa-edit {
+.mt-pdt .view-form-icon .fa-edit {
     display: none;
 }
 
-.mt-pdp .quantity .form-control {
+.mt-pdt .quantity .form-control {
     border: 1px solid #E8E4DA;
     border-radius: 8px;
     padding: 10px 12px;
@@ -1218,14 +1218,14 @@ body {
     max-width: 120px;
 }
 
-.mt-pdp .quantity .form-control:focus {
+.mt-pdt .quantity .form-control:focus {
     border-color: #0F6B63;
     box-shadow: none;
 }
 
 /* ===== ModernTheme: login screen (v1) ===== */
 /* index.html wraps <login/> in a Bootstrap .container - the negative margin below cancels its
-   default padding, matching the same trick used for .mt-home/.mt-plp/.mt-pdp. */
+   default padding, matching the same trick used for .mt-home/.mt-plp/.mt-pdt. */
 
 .mt-login {
     min-height: 80vh;
@@ -2432,7 +2432,7 @@ body {
 }
 
 /* ===== ModernTheme: Kit product pages (v1) ===== */
-/* kitView.html / kitVariantView.html - built on top of the same .mt-pdp base styles as the
+/* kitView.html / kitVariantView.html - built on top of the same .mt-pdt base styles as the
    real PDP (image wrap, title/price/description, view-form-icon spec fields, quantity field),
    scoped additionally under .mt-kit for the kit-item list and "configuring item" card, which
    have no equivalent on the standard product page. */

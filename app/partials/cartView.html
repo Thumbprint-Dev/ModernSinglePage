@@ -27,11 +27,11 @@
                                 <a class="mt-cart-item-link" ng-if="currentOrder.Status != 'AwaitingApproval' || isEditforApproval" ng-href="{{(item.Product.Type == 'Kit' ? 'kit' : 'cart') + '/' + (item.Product.InteropID) + '/' + (isEditforApproval ? (currentOrder.ID + '/') : '') + ($index)}}">
                                     <i ng-show="item.KitIsInvalid" class="fa fa-exclamation-triangle"></i>
                                     <span class="mt-cart-item-name">{{item.Product.Name}}</span>
-                                    <span class="mt-pdp-sku">{{item.ProductIDText}}</span>
+                                    <span class="mt-pdt-sku">{{item.ProductIDText}}</span>
                                 </a>
                                 <div ng-if="currentOrder.Status == 'AwaitingApproval' && !isEditforApproval">
                                     <span class="mt-cart-item-name">{{item.Product.Name}}</span>
-                                    <span class="mt-pdp-sku">{{item.ProductIDText}}</span>
+                                    <span class="mt-pdt-sku">{{item.ProductIDText}}</span>
                                 </div>
 
                                 <div class="mt-cart-item-fields" ng-if="(user.Permissions.contains('DateNeededRequired') || user.Permissions.contains('DateNeededOptional')) || user.Permissions.contains('CostCenterPerLine')">
