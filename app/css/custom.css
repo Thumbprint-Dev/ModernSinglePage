@@ -3447,6 +3447,17 @@ body {
     }
 }
 
+/* bootstrap-451.css force-hides input[datepicker-popup] below 992px (visibility:hidden,
+   negative margin) - a legacy assumption that every such field pairs with its own separate
+   "Tap" trigger button for that range. Our date inputs work fine as real, directly-tappable
+   fields at every width, so undo that hiding globally. */
+input[datepicker-popup] {
+    visibility: visible !important;
+    position: static !important;
+    top: auto !important;
+    margin-bottom: 0 !important;
+}
+
 .mt-orders-search-actions {
     margin-top: 20px;
     text-align: right;
@@ -3496,9 +3507,55 @@ body {
 
 @media (max-width: 767px) {
     .mt-orders-row {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 6px;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-areas:
+            "id      id        status"
+            "type    submitted date"
+            "total   total     total";
+        column-gap: 12px;
+        row-gap: 10px;
+        align-items: start;
+        padding: 16px;
+        border: 1px solid var(--mt-color-border);
+        border-radius: 10px;
+        margin-bottom: 10px;
+    }
+
+    .mt-orders-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .mt-orders-col-id {
+        grid-area: id;
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    .mt-orders-col-status {
+        grid-area: status;
+        justify-self: end;
+    }
+
+    .mt-orders-col-type {
+        grid-area: type;
+    }
+
+    .mt-orders-col-submitted {
+        grid-area: submitted;
+    }
+
+    .mt-orders-col-date {
+        grid-area: date;
+    }
+
+    .mt-orders-col-total {
+        grid-area: total;
+        text-align: right;
+        font-size: 15px;
+        font-weight: 600;
+        border-top: 1px solid var(--mt-color-divider);
+        padding-top: 10px;
     }
 }
 
