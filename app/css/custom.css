@@ -3393,11 +3393,14 @@ body {
     padding-bottom: 60px;
 }
 
-.mt-orders-inner,
 .mt-order-detail-inner,
 .mt-line-item-detail-inner,
 .mt-favorites-inner {
     padding-top: 24px;
+}
+
+.mt-orders-inner {
+    padding-top: 44px;
 }
 
 .mt-orders .mt-pdp-title,
