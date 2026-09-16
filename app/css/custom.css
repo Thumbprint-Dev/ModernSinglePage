@@ -3431,6 +3431,19 @@ body {
     margin: 0;
 }
 
+@media (max-width: 767px) {
+    .mt-orders-search-fields .view-form-icon {
+        flex-direction: column;
+        flex-wrap: nowrap;
+    }
+
+    .mt-orders-search-fields .form-group {
+        flex: 1 1 auto;
+        width: 100%;
+        min-width: 0;
+    }
+}
+
 .mt-orders-search-actions {
     margin-top: 20px;
     text-align: right;
