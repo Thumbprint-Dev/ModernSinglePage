@@ -39,6 +39,9 @@
                     <b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-right">
+                    <li class="visible-xs" ng-if="user.Type == 'Customer'">
+                        <a href="order">{{'Order History' | r | xlat}}</a>
+                    </li>
                     <li id="451qa_user_link" ng-show="user.Permissions.contains('ViewSelfAdmin')" class="admin">
                         <a href="admin">{{'User Information' | r | xlat}}</a>
                     </li>
