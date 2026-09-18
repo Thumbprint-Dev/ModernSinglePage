@@ -4,6 +4,10 @@
 		"url": "",
 		"alt": ""
 	},
+	"theme": {
+		"accent": "",
+		"accentDark": ""
+	},
 	"hero": {
 		"image": "",
 		"eyebrow": "Fall 2026 Collection",

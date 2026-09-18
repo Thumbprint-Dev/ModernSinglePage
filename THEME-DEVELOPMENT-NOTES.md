@@ -491,6 +491,7 @@ Four51 without forking the theme.
 ```json
 {
 	"logo": { "url": "", "alt": "" },
+	"theme": { "accent": "", "accentDark": "" },
 	"hero": {
 		"image": "",
 		"eyebrow": "Fall 2026 Collection",
@@ -513,6 +514,19 @@ Four51 without forking the theme.
   platform's `user.Company.LogoUrl`, then the company name as text. Leaving
   `logo.url` blank keeps whatever the admin set in Four51 -- the file is an
   override, not a replacement.
+- **Accent colour**: `theme.accent` overrides `--mt-color-accent`, which drives all
+  61 accent usages in `custom.css` -- links, buttons, focus rings, active states.
+  The service writes it as an inline custom property on `<html>`, where it beats
+  the `:root` rule, so `custom.css` keeps the theme default and the file only names
+  the change. `theme.accentDark` (hover/pressed) is optional: left blank it is
+  derived by darkening the accent 18%. Only colour-shaped values are accepted --
+  the string ends up in a CSS declaration.
+- **Accent contrast is a two-sided constraint**: the same token is link text *on*
+  the page background and the background *behind* white button text, so it needs
+  4.5:1 both ways. A brand pink usually does not clear that bar -- Molly Maid's
+  logo pink `#db529c` is only 3.68:1 on white. Keep the hue and saturation, drop
+  the lightness until it passes: `#B12571` is the same 327.6deg/65.6% at 6.2:1 on
+  white and 5.9:1 on the page background, matching the stock teal's 6.4:1.
 - **Hero image**: set `hero.image` and the woven placeholder gradient gives way to
   the photo, with `.mt-hero-image` adding a scrim and white copy so the text stays
   readable on any image. Leave it blank for the placeholder.
