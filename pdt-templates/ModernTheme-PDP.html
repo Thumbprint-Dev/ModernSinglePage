@@ -148,13 +148,15 @@
                             <label ng-class="{required: !allowAddFromVariantList}">{{('Order' | r) + ' ' + ('Quantity' | r) | xlat}}</label>
                             <quantityfield required="true" lineitem="LineItem" class="quantity"></quantityfield>
                         </div>
-                        <button class="mt-btn-accent mt-pdt-add-btn" type="button" id="451_btn_orderadd" ng-click="addToOrder()"
-                                ng-disabled="!allowAddFromVariantList && LineItem.Product.DisplayInventory && (LineItem.Variant || LineItem.Product.Variants.length == 0) && inventoryDisplay(LineItem.Product, LineItem.Variant) <= 0 && LineItem.Product.AllowExceedInventory == false && LineItem.PriceSchedule.OrderType != 'Replenishment'">
+                        <button class="mt-btn-accent mt-pdt-add-btn" type="button" id="451_btn_orderadd" ng-click="addToOrder()" ng-disabled="outOfInventory()">
                             <loadingindicator ng-show="addToOrderIndicator"></loadingindicator>
-                            <i ng-show="lineItemErrors.length > 0" class="fa fa-warning"></i>
-                            {{addToOrderText | r | xlat}}
-                            <span id="451qa_lineitem_total" ng-if="!(user.Permissions.contains('HidePricing')) && (LineItem.LineTotal || variantLineItemsOrderTotal) > 0">
-                                &middot; {{(LineItem.LineTotal || variantLineItemsOrderTotal) | culturecurrency}}
+                            <i ng-show="lineItemErrors.length > 0 && !outOfInventory()" class="fa fa-warning"></i>
+                            <span ng-if="outOfInventory()">{{'Out of Inventory' | r | xlat}}</span>
+                            <span ng-if="!outOfInventory()">
+                                {{addToOrderText | r | xlat}}
+                                <span id="451qa_lineitem_total" ng-if="!(user.Permissions.contains('HidePricing')) && (LineItem.LineTotal || variantLineItemsOrderTotal) > 0">
+                                    &middot; {{(LineItem.LineTotal || variantLineItemsOrderTotal) | culturecurrency}}
+                                </span>
                             </span>
                         </button>
                     </div>
