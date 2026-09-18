@@ -27,7 +27,10 @@ function ($scope, $routeParams, $route, $location, $451, Product, ProductDisplay
 	$scope.outOfInventory = function(){
 		var li = $scope.LineItem;
 		if ($scope.allowAddFromVariantList || !li.Product || !li.PriceSchedule) return false;
-		if (!li.Product.DisplayInventory) return false;
+		// DisplayInventory only controls whether the "Quantity Available" text is shown to the
+		// shopper - it's a separate merchant setting from whether the stock limit is enforced
+		// (quantityfield.js's own exceeds-inventory check never looks at it either).
+		if (li.Product.IsVariantLevelInventory && !li.Variant) return false;
 		if (!(li.Variant || li.Product.Variants.length == 0)) return false;
 		if (li.Product.AllowExceedInventory) return false;
 		if (li.PriceSchedule.OrderType == 'Replenishment') return false;
