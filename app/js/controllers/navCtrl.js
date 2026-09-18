@@ -1,5 +1,5 @@
-four51.app.controller('NavCtrl', ['$location', '$route', '$scope', '$451', '$timeout', 'User', 'Order', 'SpendingAccount', 'AppConst',
-function ($location, $route, $scope, $451, $timeout, User, Order, SpendingAccount, AppConst) {
+four51.app.controller('NavCtrl', ['$location', '$route', '$scope', '$451', '$timeout', '$window', 'User', 'Order', 'SpendingAccount', 'AppConst',
+function ($location, $route, $scope, $451, $timeout, $window, User, Order, SpendingAccount, AppConst) {
     // Four51 InteropIDs are unique platform-wide, so Featured/All Products may carry a uniqueness
     // suffix (e.g. "featured-gp") - match by prefix, not exact equality. Mirrors the same
     // exclusion categoryCtrl.js already applies to the home page's "Shop by category" tiles.
@@ -71,17 +71,20 @@ function ($location, $route, $scope, $451, $timeout, User, Order, SpendingAccoun
     });
 
     $scope.Logout = function(){
-        function redirectAnon() {
-            if ($scope.isAnon) {
-                $timeout(function () {
-                    $location.path("/login");
-                    location.reload(true);
-                }, 500);
-            }
+        // Dropping the token on its own just re-renders the login form under
+        // whatever URL the user was on -- /catalog, a product page -- which is
+        // what made logging out look broken. The old redirect ran on anon sites
+        // only, and even there reloaded the page being left, since $location
+        // does not write the new URL until the digest. Navigate instead: every
+        // site lands on /login with all state re-initialised, and an anon site
+        // picks up a fresh temp session on the way back in.
+        function goToLogin() {
+            $window.location.href = '/' + $451.apiName + '/login';
         }
-        User.logout($scope.user, redirectAnon, function(ex){
+
+        User.logout($scope.user, goToLogin, function(ex){
             console.log(ex.Message);
-            redirectAnon();
+            goToLogin();
         });
     };
 

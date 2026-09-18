@@ -127,18 +127,17 @@ function ($scope, $route, $rootScope, $timeout, $document, $window, $location, $
 			bodyElement.bind(EventName, function (e) { TimeOut_Resetter(e) });
 		});
 
+	// Same destination as the Log Out menu item (navCtrl): a session dropped on
+	// the idle timer and left sitting on the page is the same broken-looking
+	// state, and more confusing for not having been asked for.
 	function LogoutByTimer(){
-		function redirectAnon() {
-			if ($scope.isAnon) {
-				$timeout(function () {
-					$location.path("/login");
-					location.reload(true);
-				}, 500);
-			}
+		function goToLogin() {
+			$window.location.href = '/' + $451.apiName + '/login';
 		}
-		User.logout($scope.user, redirectAnon, function(ex){
+
+		User.logout($scope.user, goToLogin, function(ex){
 			console.log(ex.Message);
-			redirectAnon();
+			goToLogin();
 		});
 	}
 
