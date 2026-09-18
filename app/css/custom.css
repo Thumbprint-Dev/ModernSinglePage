@@ -2900,6 +2900,30 @@ body {
     margin-bottom: 20px;
 }
 
+/* Signing up is not account management: a TempCustomer at /admin gets the same
+   presentation the login card gives sign-in -- centred, one column, logo on top,
+   full-width submit. The sizes here deliberately mirror .mt-login-card. */
+.mt-signup-col {
+    float: none;
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+}
+
+.mt-signup-col .mt-checkout-card {
+    padding: 40px 32px;
+}
+
+.mt-signup-col .mt-checkout-card-title {
+    text-align: center;
+}
+
+.mt-signup-col .mt-account-card-footer .mt-btn-accent {
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
 .mt-account-card-footer {
     display: flex;
     align-items: center;

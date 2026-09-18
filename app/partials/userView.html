@@ -12,9 +12,13 @@
         <identifyusermessage ng-show="user.Type == 'TempCustomer'"></identifyusermessage>
 
         <div class="row" ng-show="user.Permissions.contains('ViewSelfAdmin')">
-            <div>
+            <div ng-class="{'mt-signup-col': user.Type == 'TempCustomer'}">
                 <form name="user_form" ng-submit="save()">
                     <div class="mt-checkout-card" id="user_form">
+                        <div class="mt-login-brand" ng-if="user.Type == 'TempCustomer'">
+                            <img ng-if="site.logo.url || user.Company.LogoUrl" ng-src="{{site.logo.url || user.Company.LogoUrl}}" alt="{{site.logo.alt || site.name || user.Company.Name || 'Storefront'}}" />
+                            <span ng-if="!(site.logo.url || user.Company.LogoUrl)">{{site.name || user.Company.Name || 'Storefront'}}</span>
+                        </div>
                         <h2 class="mt-checkout-card-title">{{(user.Type == 'TempCustomer' ? 'Create' : 'My') + ' ' + ('Account' | r) | xlat}}</h2>
                         <div class="view-form-icon">
                             <div>
@@ -88,6 +92,8 @@
                             <p class="alert alert-success mt-account-success" ng-show="actionMessage" ng-bind-html="actionMessage | r | xlat"></p>
                             <input class="mt-btn-accent" type="submit" ng-disabled="user_form.$invalid || buttonClicked" id="451_btn_user" value="{{(user.Type == 'TempCustomer' ? 'Create Account' : 'Save') | xlat}}" />
                         </div>
+
+                        <a class="mt-login-link" href="login" ng-if="user.Type == 'TempCustomer'">{{'Already have an account? Sign in' | r}}</a>
                     </div>
                 </form>
             </div>
