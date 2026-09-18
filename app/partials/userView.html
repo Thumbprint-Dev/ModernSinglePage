@@ -22,17 +22,17 @@
                         <h2 class="mt-checkout-card-title">{{(user.Type == 'TempCustomer' ? 'Create' : 'My') + ' ' + ('Account' | r) | xlat}}</h2>
                         <div class="view-form-icon">
                             <div>
-                                <label ng-show="user.FirstName">{{('First' | r) + ' ' + ('Name' | r) | xlat}}</label>
+                                <label class="required">{{('First' | r) + ' ' + ('Name' | r) | xlat}}</label>
                                 <input name="firstname" class="form-control" type="text" required ng-model="user.FirstName" placeholder="{{('First' | r) + ' ' + ('Name' | r) | xlat}}" autocomplete="off" />
                                 <i class="fa fa-user"></i>
                             </div>
                             <div>
-                                <label ng-show="user.LastName">{{('Last' | r) + ' ' + ('Name' | r) | xlat}}</label>
+                                <label class="required">{{('Last' | r) + ' ' + ('Name' | r) | xlat}}</label>
                                 <input name="lastname" required class="form-control" type="text" ng-model="user.LastName" placeholder="{{('Last' | r) + ' ' + ('Name' | r) | xlat}}" autocomplete="off" />
                                 <i class="fa fa-user"></i>
                             </div>
                             <div>
-                                <label ng-show="user.Phone">{{'Phone' | r | xlat}}</label>
+                                <label>{{'Phone' | r | xlat}}</label>
                                 <input name="phone" class="form-control" type="text" ng-model="user.Phone" ui-mask="(999) 999-9999" autocomplete="off" />
                                 <i class="fa fa-phone"></i>
                             </div>
@@ -49,12 +49,12 @@
                             </div>
                             <!--TODO username input shouldn't default to temporary usernames, if the user is temp, make the placeholder show instead !-->
                             <div ng-if="!isSsoUser()">
-                                <label ng-show="user.Password">{{'Password' | r | xlat}}</label>
+                                <label ng-class="{required: user.Type == 'TempCustomer'}">{{'Password' | r | xlat}}</label>
                                 <input name="password" class="form-control" ng-required="user.Type == 'TempCustomer'" type="password" ng-model="user.Password" placeholder="{{'Password' | r | xlat}}" autocomplete="off" />
                                 <i class="fa fa-lock"></i>
                             </div>
                             <div ng-if="!isSsoUser()">
-                                <label ng-show="user.ConfirmPassword">{{('Confirm' | r) + ' ' + ('Password' | r) | xlat}}</label>
+                                <label ng-class="{required: user.Type == 'TempCustomer' || user.Password}">{{('Confirm' | r) + ' ' + ('Password' | r) | xlat}}</label>
                                 <input name="confirm_password" ng-match="user.Password" ng-required="user.Type == 'TempCustomer' || user.Password" class="form-control" type="password" ng-model="user.ConfirmPassword" placeholder="{{('Confirm' | r) + ' ' + ('Password' | r) | xlat}}" autocomplete="off" />
                                 <i class="fa fa-lock"></i>
                                 <inlineerror ng-show="user_form.confirm_password.$error.match" title="{{('Password' | r) + 's do not match!' | xlat}}"></inlineerror>
