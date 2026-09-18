@@ -1,0 +1,15 @@
+{
+	"_readme": "Per-site branding. Blank values fall back to the theme/platform defaults, so only fill in what this site changes. See THEME-DEVELOPMENT-NOTES.md, 'Per-site branding: app/site.json'.",
+	"logo": {
+		"url": "",
+		"alt": ""
+	},
+	"hero": {
+		"image": "",
+		"eyebrow": "Fall 2026 Collection",
+		"heading": "Gear your team for the season ahead.",
+		"subheading": "New apparel, drinkware and print kits, priced for your group.",
+		"buttonText": "Shop the collection",
+		"buttonHref": "catalog"
+	}
+}

@@ -461,6 +461,45 @@ existing form rather than having a dedicated one. `app/partials/controls/login.h
 `/login` route) had no link to this at all - fixed by adding a plain "Need an account? Click here"
 link to `/admin`, styled like the existing "Need help logging on?" link already on that page.
 
+## Per-site branding: `app/site.json`
+
+There is no CMS behind this theme, and the platform has no field for a home-page
+hero. `app/site.json` fills that gap: one deployed file per site, editable in
+Four51 without forking the theme.
+
+```json
+{
+	"logo": { "url": "", "alt": "" },
+	"hero": {
+		"image": "",
+		"eyebrow": "Fall 2026 Collection",
+		"heading": "Gear your team for the season ahead.",
+		"subheading": "New apparel, drinkware and print kits, priced for your group.",
+		"buttonText": "Shop the collection",
+		"buttonHref": "catalog"
+	}
+}
+```
+
+- `js/services/siteConfigService.js` holds the same keys as hard-coded fallbacks
+  and merges the file over them, **ignoring blanks**. A site only fills in what it
+  changes, a missing or half-written file still renders the stock theme, and
+  clearing a value back to `""` restores the default.
+- `Four51Ctrl` sits on `<html>`, so it puts the merged object on `$scope.site` and
+  every view and directive below it inherits it. No extra injection needed to read
+  branding in a new partial.
+- **Logo precedence** (`partials/controls/nav.html`): `site.logo.url`, then the
+  platform's `user.Company.LogoUrl`, then the company name as text. Leaving
+  `logo.url` blank keeps whatever the admin set in Four51 -- the file is an
+  override, not a replacement.
+- **Hero image**: set `hero.image` and the woven placeholder gradient gives way to
+  the photo, with `.mt-hero-image` adding a scrim and white copy so the text stays
+  readable on any image. Leave it blank for the placeholder.
+- Paths are relative to `<base href>`, i.e. the deployed app folder, the same way
+  partials load. An absolute URL to an image hosted elsewhere works too.
+- Adding a key means adding it in *both* places -- the JSON and the service's
+  defaults. A key only in the JSON is ignored.
+
 ## Workflow
 
 - One focused branch + PR per change, branched fresh off `origin/master` each time (never off

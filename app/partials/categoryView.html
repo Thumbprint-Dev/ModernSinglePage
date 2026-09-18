@@ -1,11 +1,11 @@
 <section ng-if="isHome" class="mt-home">
 
-    <div class="mt-hero">
+    <div class="mt-hero" ng-class="{'mt-hero-image': site.hero.image}" ng-style="site.heroStyle">
         <div class="mt-container">
-            <p class="mt-eyebrow">{{'Fall 2026 Collection' | r | xlat}}</p>
-            <h1>{{'Gear your team for the season ahead.' | r | xlat}}</h1>
-            <p class="mt-hero-sub">{{'New apparel, drinkware and print kits, priced for your group.' | r | xlat}}</p>
-            <a href="catalog" class="mt-btn-accent">{{'Shop the collection' | r | xlat}}</a>
+            <p class="mt-eyebrow" ng-if="site.hero.eyebrow">{{site.hero.eyebrow | r | xlat}}</p>
+            <h1 ng-if="site.hero.heading">{{site.hero.heading | r | xlat}}</h1>
+            <p class="mt-hero-sub" ng-if="site.hero.subheading">{{site.hero.subheading | r | xlat}}</p>
+            <a ng-if="site.hero.buttonText" ng-href="{{site.hero.buttonHref}}" class="mt-btn-accent">{{site.hero.buttonText | r | xlat}}</a>
         </div>
     </div>
 

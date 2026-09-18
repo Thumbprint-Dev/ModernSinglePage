@@ -178,6 +178,36 @@ body {
     background-image: repeating-linear-gradient(120deg, #E7E1D3, #E7E1D3 22px, #DED5C0 22px, #DED5C0 44px);
 }
 
+/* site.json hero.image replaces the woven placeholder above. The photo itself is
+   set inline by ngStyle (categoryView.html); these rules only make it behave. */
+.mt-hero-image {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+}
+
+/* The placeholder weave is light, but a site can upload anything -- scrim the
+   image so the hero copy stays legible on top of it. */
+.mt-hero-image:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(90deg, rgba(20, 18, 15, 0.72), rgba(20, 18, 15, 0.25));
+}
+
+.mt-hero-image > .mt-container {
+    position: relative;
+}
+
+.mt-hero-image .mt-eyebrow,
+.mt-hero-image h1,
+.mt-hero-image .mt-hero-sub {
+    color: #fff;
+}
+
 .mt-hero h1 {
     font-size: 42px;
     font-weight: 300;
