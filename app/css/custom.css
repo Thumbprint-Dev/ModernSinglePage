@@ -1504,8 +1504,10 @@ body {
 }
 
 .mt-login-brand img {
+    display: block;
     max-height: 40px;
     max-width: 100%;
+    margin: 0 auto;
 }
 
 .mt-login-brand span {
