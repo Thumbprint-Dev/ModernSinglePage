@@ -4124,3 +4124,26 @@ input[datepicker-popup] {
 .mt-error-modal-list li:last-child {
     margin-bottom: 0;
 }
+
+/* ===== ModernTheme: inline field errors (quantityfield, login, account forms) ===== */
+/* bootstrap-451.css's .view-inline-error is an absolutely-positioned popover with a shadow and
+   a pointer arrow - stacked over whatever sits below the field (e.g. the Add to Cart button),
+   and its left:0/right:0 stretches only to its narrow positioning context, wrapping short
+   messages into a tall, cramped card. Replaced with a plain message that flows in place below
+   the field instead of floating over neighboring elements. */
+.view-inline-error {
+    position: static;
+    box-shadow: none;
+    text-align: left;
+    padding: 0;
+    margin: 6px 0 0;
+    background: none;
+    border: none;
+    color: var(--mt-color-danger);
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.view-inline-error:before {
+    display: none;
+}
