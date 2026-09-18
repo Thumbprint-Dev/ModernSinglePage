@@ -13,6 +13,12 @@ function ($location, $route, $scope, $451, $timeout, User, Order, SpendingAccoun
         return !startsWithInteropID(cat.InteropID, AppConst.featuredCategoryInteropID) && !startsWithInteropID(cat.InteropID, AppConst.allProductsCategoryInteropID);
     };
 
+    // Groups (Company > Groups in the admin) are a real array on the user object, each
+    // {Name, ID, InteropID, ...} - checked by Name since InteropID is often left blank.
+    $scope.isInGroup = function(groupName) {
+        return !!($scope.user && $scope.user.Groups && $scope.user.Groups.some(function(g){ return g.Name === groupName; }));
+    };
+
     $scope.$watch('user', function(user) {
         if (user && user.Type == 'Customer' && user.Permissions.contains('PayByBudgetAccount')) {
             SpendingAccount.query(function(accounts) {
