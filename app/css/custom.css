@@ -602,8 +602,11 @@ body {
        and then renders as nothing. Pinning the height gives the aspect ratio
        something to resolve the width against. A raster logo is sized to match
        rather than left at its own smaller height. */
-    height: 32px;
-    max-height: 32px;
+    /* 40px is as tall as the mark can go for free: the row is sized by the
+       42px search field plus 14px of padding, so anything up to 42px leaves the
+       71px header exactly where it is. 44px starts pushing it. */
+    height: 40px;
+    max-height: 40px;
     width: auto;
     flex: 0 0 auto;
     object-fit: contain;
