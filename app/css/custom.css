@@ -841,25 +841,10 @@ body {
         gap: 12px;
         /* Positioning context for the mini-cart panel below, so it spans the header row's
            own width instead of being anchored to (and overflowing past) the narrow Cart
-           button - see .mt-minicart-panel in this same breakpoint. */
+           button - see .mt-minicart-panel's mobile override further down this file, next to
+           its base rule (source order matters: this block's own copy kept losing to the base
+           .mt-minicart-panel rule declared later in the file at equal specificity). */
         position: relative;
-    }
-    /* The panel is normally a Bootstrap dropdown-menu anchored to its toggle (.mt-minicart,
-       set position:relative elsewhere) - on a narrow screen the Cart button sits well right
-       of center, so a right-aligned dropdown that width overflows off the left edge of the
-       viewport entirely. Detach it from that anchor and let it size to the header row itself
-       instead. bootstrap-451.css resets every plain div to position:relative, so .mt-minicart
-       AND .mt-header-actions (its own parent, also a bare div) both need overriding back to
-       static, or the search for the nearest positioned ancestor just stops one level too early. */
-    .mt-minicart,
-    .mt-header-actions {
-        position: static;
-    }
-    .mt-minicart-panel {
-        left: 0;
-        right: 0;
-        width: auto;
-        max-width: none;
     }
     .mt-cat-nav-row {
         padding: 0 16px;
@@ -4209,6 +4194,27 @@ input[datepicker-popup] {
     border-radius: 8px;
     border-color: var(--mt-color-border);
     margin-top: 6px;
+}
+
+/* On a narrow screen the Cart button sits well right of center, so a right-aligned dropdown
+   of fixed width overflows past the viewport edge. Detach it from its toggle and size it to
+   the header row instead. Placed here (not in the mobile media block further up this file) so
+   it wins in source order over the same-specificity base rules just above - equal specificity
+   ties resolve by position in the file, not by which block is more specific to the viewport.
+   bootstrap-451.css resets every plain div to position:relative, so .mt-minicart AND
+   .mt-header-actions (its own parent, also a bare div) both need overriding back to static, or
+   the search for the nearest positioned ancestor just stops one level too early. */
+@media (max-width: 767px) {
+    .mt-minicart,
+    .mt-header-actions {
+        position: static;
+    }
+    .mt-minicart-panel {
+        left: 0;
+        right: 0;
+        width: auto;
+        max-width: none;
+    }
 }
 
 .mt-minicart-empty {
