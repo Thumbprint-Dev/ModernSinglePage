@@ -1,5 +1,5 @@
-four51.app.controller('ProductCtrl', ['$scope', '$routeParams', '$route', '$location', '$451', 'Product', 'ProductDisplayService', 'Order', 'Variant', 'User',
-function ($scope, $routeParams, $route, $location, $451, Product, ProductDisplayService, Order, Variant, User) {
+four51.app.controller('ProductCtrl', ['$scope', '$rootScope', '$routeParams', '$route', '$location', '$451', 'Product', 'ProductDisplayService', 'Order', 'Variant', 'User',
+function ($scope, $rootScope, $routeParams, $route, $location, $451, Product, ProductDisplayService, Order, Variant, User) {
     $scope.isEditforApproval = $routeParams.orderID && $scope.user.Permissions.contains('EditApprovalOrder');
     if ($scope.isEditforApproval) {
         Order.get($routeParams.orderID, function(order) {
@@ -131,8 +131,17 @@ function ($scope, $routeParams, $route, $location, $451, Product, ProductDisplay
 				function(o){
 					$scope.user.CurrentOrderID = o.ID;
 					User.save($scope.user, function(){
-						$scope.addToOrderIndicator = true;
-						$location.path('/cart' + ($scope.isEditforApproval ? '/' + o.ID : ''));
+						$scope.addToOrderIndicator = false;
+						// Editing a line item on an order already under approval is a "make the
+						// change and go back to reviewing it" flow, not exploratory shopping -
+						// keep sending that case to the order. A normal add-to-cart stays on the
+						// page and lets the shopper keep browsing; the mini-cart pops open as
+						// confirmation instead of forcing a jump to /cart.
+						if ($scope.isEditforApproval) {
+							$location.path('/cart/' + o.ID);
+						} else {
+							$rootScope.$broadcast('event:addedToCart');
+						}
 					});
 				},
 				function(ex) {
