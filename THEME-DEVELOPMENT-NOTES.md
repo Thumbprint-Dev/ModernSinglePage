@@ -37,6 +37,51 @@ the **Four51 admin**, not from this repo. Look for `concatProductView`/`concatSp
   below) — this bites here more than anywhere else because it's hand-edited in a web textarea
   with no linting.
 
+## Session, login & logout mechanics
+
+- **Who owns what**: `app/js/services/securityService.js`'s `Security` factory owns the session
+  cookie (`init()` writes it, `auth()` reads it, `isAuthenticated()` decides, `logout()` clears
+  it). `app/js/services/userService.js`'s `_logout()` calls `store.clear()`, `Security.logout()`,
+  then POSTs `api('logout/user')`. `app/js/controllers/navCtrl.js`'s `$scope.Logout()` (Log Out
+  menu item) and `app/js/controllers/Four51Ctrl.js`'s `LogoutByTimer()` (15-minute idle logout)
+  both trigger it — keep them in step, they've drifted out of sync before.
+- **The cookie name** is `"user." + apiName` (apiName = first URL path segment, e.g.
+  `user.Mollymaid`). On the deployed site the *server* sets it `path=/<app>` (no trailing
+  slash), `SameSite=None; Secure; Partitioned`. Client code that doesn't match every one of
+  those attributes when clearing it ends up writing a second, different cookie of the same
+  name instead of clearing the real one.
+- **Partitioned cookies (CHIPS) live in a separate jar.** Expiring one with a plain
+  `document.cookie` write does nothing to it — it silently creates a new *unpartitioned* cookie
+  of the same name and leaves the real, partitioned one untouched. A correct logout must repeat
+  every attribute on the expiry write and cover every plausible path (`/<app>`, `/<app>/`, `/`),
+  both plain and with `SameSite=None; Secure; Partitioned`.
+- **This class of bug does not reproduce on localhost.** The dev server strips
+  `Secure`/`SameSite=None` from proxied `Set-Cookie` headers, so locally the cookie is plain and
+  a naive delete looks like it works. Verify any logout/session fix on the deployed site, never
+  just locally.
+- **The in-memory `logout = true` flag is not proof the session is gone.** `Security.logout()`
+  sets it so `isAuthenticated()` returns false for the rest of the current page's life, but it
+  dies on the next load. If the cookie itself survived, the next load reads it back, decides the
+  visitor is signed in, and renders the header — while the user object it can't actually fetch
+  leaves that header showing only Cart/Account and nothing else. That combination ("looks logged
+  out for a moment, then looks half logged-in on reload") is this bug's signature.
+- **Redirect to login with a real navigation, not Angular routing**:
+  `$window.location.href = '/' + $451.apiName + '/login'`. `$location.path('/login')` followed
+  by `location.reload()` doesn't work — `$location` only writes the URL on the next digest, one
+  tick after `reload()` has already re-fetched the page being left. Also don't gate the redirect
+  on `$scope.isAnon` — that's false on any site that requires sign-in, so the redirect silently
+  never fires.
+- **How to actually verify a fix**: `document.cookie` can't see partition/path/sameSite
+  attributes — use `(await cookieStore.getAll()).filter(c => c.name.startsWith('user.'))` in the
+  browser console instead. Check before and after logout; two entries with the same name at
+  different paths is normal *and is exactly how this bug hides* — only "gone from `cookieStore`
+  entirely" counts as proof.
+- Fixed by Jimwell Rabino (another developer working in this same repo) in commits `50d7995a`
+  (redirect) and `baa6cb32` (cookie expiry) — a separate, unrelated logout bug (native navigation
+  racing an `ng-click` handler on `href="#"` links without `event.preventDefault()`) was fixed
+  earlier the same week; both were real, distinct root causes behind similar-looking "logout
+  doesn't work" symptoms.
+
 ## Restyle methodology (screen-by-screen)
 
 1. **Preserve every real binding.** `ng-click`, `ng-show`, `ng-if`, controller function calls,
@@ -203,6 +248,25 @@ against the screen edge on mobile, where the container is the full viewport widt
 **Rule: any class meant to be combined with `.mt-container` (or any other class supplying its own
 padding/margin) must use `padding-top`/`padding-bottom` only, never the shorthand**, unless you
 genuinely intend to override all four sides.
+
+### A mobile `@media` override lost to an unconditional same-specificity rule declared later in the file
+
+A mobile-only block (`@media (max-width: 767px)`) set `.mt-minicart-panel { width: auto; ... }`
+and `.mt-minicart { position: static; }` to stop the mini-cart dropdown from overflowing past
+the viewport edge on narrow screens. It kept losing anyway: several thousand lines further down
+the file, an **unconditional** (non-media) `.mt-minicart-panel { width: 340px; ... }` and
+`.mt-minicart { position: relative; }` block existed from when the feature was first built.
+Same specificity (single class selector) on both sides, so **source order** decided it, and the
+later unconditional rule always won regardless of viewport — a media query's relevance to
+"mobile" counts for nothing in the cascade; only specificity and position in the file do.
+
+**Rule: before shipping an override for any selector, grep the whole file for that selector
+first.** If a same-specificity rule for it already exists elsewhere, either place the new
+override physically after that rule (right next to it, so the relationship is visible in the
+file), or bump specificity on purpose — don't rely on `@media` scoping alone to win a tie. Also:
+a fix that visually checked out once right after deploying isn't proof it's correct if that
+check was informal — verify overrides like this on a real narrow device after every subsequent
+change to the same file, not just once.
 
 ### `.mt-checkout-card .input-group` + a button inside it, at narrow widths
 
@@ -537,19 +601,20 @@ Four51 without forking the theme.
 
 ## Workflow
 
-- One focused branch + PR per change, branched fresh off `origin/master` each time (never off
-  another feature branch, and never off whatever's currently checked out without checking first —
-  `git fetch origin master && git checkout -b <name> origin/master`).
-- `gh pr create -R <owner>/<repo> ...` then `gh pr merge -R <owner>/<repo> <branch> --merge`
-  immediately — this project's convention is auto-merge, no waiting for review, since merges to
-  `master` auto-deploy live.
-- **Heredocs break on apostrophes** in commit messages / PR bodies in this shell setup. Use
-  multiple `-m` flags instead of a single heredoc-based message, or avoid contractions.
-- If two PRs both append new CSS to the end of `custom.css` and the second was branched before
-  the first merged, expect a merge conflict on the shared tail of the file — it's usually a fake
-  conflict (two independent, non-overlapping additions that just happen to sit at the same
-  location), not a real logical collision. Resolve by keeping both blocks, verifying brace count
-  balances (`node -e "..."` brace-depth check) before committing the resolution.
+- **No branches or PRs — every change commits directly to `master`.** The user explicitly
+  changed this convention mid-project ("do not create branches and PRs for changes, just commit
+  it directly in our master branch"); the earlier branch+PR+auto-merge workflow described in
+  older commit history no longer applies. Always sync first
+  (`git fetch origin && git reset --mixed origin/master && git checkout-index -a -f`) so the
+  commit's parent is genuinely current — another developer (Jimwell Rabino) also commits
+  directly to this same `master`, so check `git log origin/master` for unfamiliar recent commits
+  before assuming your local state is caught up.
+- **Heredocs break on apostrophes** in commit messages in this shell setup. Use multiple `-m`
+  flags instead of a single heredoc-based message, or avoid contractions.
+- If your local edit and someone else's already-pushed commit both touch the tail of
+  `custom.css` (a common spot since new component CSS tends to get appended there), re-sync and
+  re-diff before committing — it's usually two independent, non-overlapping additions rather
+  than a real logical collision, but confirm brace balance either way.
 - After deploying, **verify against the live server directly** (`curl` the actual `.css`/`.html`
   file with a cache-busting query string) before concluding a fix didn't work — the browser doing
   the visual check is very likely just serving a stale cached copy of an asset, not proof the
@@ -564,18 +629,24 @@ Four51 without forking the theme.
   never will — several of the bugs above were only found by actually looking at a rendered page
   at a real mobile width and noticing something was visually wrong, then tracing back to the
   cause.
-- **`git fetch`/`git push` over HTTPS can hang indefinitely** in this environment (confirmed via
-  `GIT_TRACE`/`GIT_CURL_VERBOSE`: the connection completes the initial header exchange fine, then
-  stalls specifically on the pack-protocol POST body - unrelated to credentials, reproduced across
+- **`git fetch` works fine; `git push` over HTTPS does not** in this environment — seen two
+  different ways across sessions: a hang (confirmed via `GIT_TRACE`/`GIT_CURL_VERBOSE` stalling
+  specifically on the pack-protocol POST body, unrelated to credentials — reproduced across
   plain HTTP/1.1, forced protocol v0, and a larger `http.postBuffer`, so don't bother re-trying
-  those tweaks first). **`gh` CLI commands (`gh api`, `gh pr create`, `gh pr merge`, `gh search
-  code`) all still work fine when this happens** - they go over plain REST, not git's smart-HTTP
-  pack protocol. When `git push` is stuck, ship changes by building the commit directly through
-  GitHub's Git Data API instead: create a blob per changed file (`gh api .../git/blobs`, base64
-  content), a tree from the branch's current tree plus those blobs (`sha: null` for a deleted
-  path), a commit from that tree, then move the branch ref to it
-  (`gh api .../git/refs/heads/<branch> -X PATCH -f sha=...`) - then `gh pr create`/`gh pr merge` as
-  normal. A reusable script for this exists in scratchpad from when this was worked out
+  those tweaks first), and separately a hard failure (`fatal: could not read Username for
+  'https://github.com'` — no credential helper configured for HTTPS push specifically). **`gh`
+  CLI commands (`gh api`, `gh search code`, etc.) all still work fine either way** — they go over
+  plain REST, not git's smart-HTTP pack protocol. Ship changes by building the commit directly
+  through GitHub's Git Data API instead: create a blob per changed file (`gh api .../git/blobs`,
+  base64 content), a tree from `master`'s current tree (`base_tree`) plus those blobs (`sha: null`
+  for a deleted path — the tree endpoint's returned sha should exactly equal what
+  `git cat-file -p HEAD` reports as your local commit's tree if the local commit and the API tree
+  really match), a commit from that tree with `master`'s current commit sha as parent, then move
+  `refs/heads/master` itself to it
+  (`gh api repos/<owner>/<repo>/git/refs/heads/master -X PATCH -f sha=... -F force=false`) — no PR
+  step, this lands directly (see the no-branches-or-PRs rule above). Re-sync local state
+  afterward (`git fetch && git reset --mixed origin/master && git checkout-index -a -f`). A
+  reusable script for this exists in scratchpad from when this was worked out
   (`gh_commit.sh` - recreate it the same way if it's not there in a future session: blobs → tree →
   commit → ref-update, one function per step). Worth a quick retry of plain `git fetch` first each
   session in case the underlying issue has resolved - this was environment-specific, not a design
