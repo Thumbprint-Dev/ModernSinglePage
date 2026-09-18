@@ -155,12 +155,12 @@ four51.app.factory('ProductDisplayService', ['$sce', '$451', 'Variant', 'Product
 			else return null;
 		}
 		// Distinct from inventoryDisplay(), which defaults a missing QuantityAvailable to 0 -
-		// that's fine for arithmetic but would make an untracked product look like it has zero
-		// stock. This checks whether the API actually returned a real number, so callers can
-		// tell "genuinely out of stock" apart from "inventory isn't tracked for this product".
+		// fine for arithmetic, but an untracked product's QuantityAvailable can genuinely come
+		// back as a real 0 (not null), so checking the number itself isn't reliable - Product/Variant
+		// carry a dedicated InventoryEnabled flag for exactly this - use that instead.
 		scope.isInventoryTracked = function(product, variant){
 			var qa = product.IsVariantLevelInventory ? variant : product;
-			return !!qa && qa.QuantityAvailable != null;
+			return !!qa && !!qa.InventoryEnabled;
 		}
 		if(scope.LineItem.Variant){
 			//scope.LineItem.Variant = variant;

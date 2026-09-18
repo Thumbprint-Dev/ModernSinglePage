@@ -8,12 +8,18 @@ four51.app.directive('ordersummary', ['Order', 'Coupon', function(Order, Coupon)
 					function(data) {
 						var budgetAccountID = $scope.currentOrder.BudgetAccountID;
 						var creditCardID = $scope.currentOrder.CreditCardID;
+						// A freshly-typed (not yet saved as a reusable CreditCardID) card lives
+						// only on this raw CreditCard object - the API doesn't echo it back.
+						var creditCard = $scope.currentOrder.CreditCard;
 						$scope.currentOrder = data;
 						if (budgetAccountID) {
 							$scope.currentOrder.BudgetAccountID = budgetAccountID;
 						}
 						if (creditCardID) {
 							$scope.currentOrder.CreditCardID = creditCardID;
+						}
+						if (creditCard) {
+							$scope.currentOrder.CreditCard = creditCard;
 						}
 						if (callback) callback($scope.currentOrder);
 					}
