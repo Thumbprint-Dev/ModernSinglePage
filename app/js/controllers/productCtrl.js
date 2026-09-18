@@ -1,11 +1,42 @@
-four51.app.controller('ProductCtrl', ['$scope', '$rootScope', '$routeParams', '$route', '$location', '$451', 'Product', 'ProductDisplayService', 'Order', 'Variant', 'User',
-function ($scope, $rootScope, $routeParams, $route, $location, $451, Product, ProductDisplayService, Order, Variant, User) {
+four51.app.controller('ProductCtrl', ['$scope', '$rootScope', '$routeParams', '$route', '$location', '$451', 'Product', 'ProductDisplayService', 'Order', 'Variant', 'User', 'AppConst',
+function ($scope, $rootScope, $routeParams, $route, $location, $451, Product, ProductDisplayService, Order, Variant, User, AppConst) {
     $scope.isEditforApproval = $routeParams.orderID && $scope.user.Permissions.contains('EditApprovalOrder');
     if ($scope.isEditforApproval) {
         Order.get($routeParams.orderID, function(order) {
             $scope.currentOrder = order;
         });
     }
+
+    // Four51 InteropIDs are unique platform-wide, so Featured/All Products may carry a
+    // uniqueness suffix (e.g. "featured-gp") - match by prefix. Mirrors the same helper
+    // navCtrl.js/categoryCtrl.js already use to keep those utility categories out of the nav
+    // and the home page's category tiles - a breadcrumb shouldn't show them either.
+    function startsWithInteropID(fullID, prefix) {
+        return !!fullID && !!prefix && fullID.toLowerCase().indexOf(prefix.toLowerCase()) === 0;
+    }
+
+    // Products carry no category reference of their own - the catalog listing (mtProductCard.html)
+    // appends ?cat=<InteropID> to the product link, and this resolves that leaf category's
+    // ancestor chain from the already-loaded nav tree ($scope.tree, set in Four51Ctrl.js).
+    // Arriving without that query param (search, a direct link, a related-product click) just
+    // means no breadcrumb category shows - there's nothing to reconstruct it from.
+    $scope.categoryPath = function(){
+        var catID = $location.search().cat;
+        if (!catID || !$scope.tree) return [];
+        var path = null;
+        angular.forEach($scope.tree, function(cat){
+            if (path) return;
+            if (cat.InteropID === catID) path = [cat];
+            else angular.forEach(cat.SubCategories, function(sub){
+                if (!path && sub.InteropID === catID) path = [cat, sub];
+            });
+        });
+        if (!path) return [];
+        return path.filter(function(cat){
+            return !startsWithInteropID(cat.InteropID, AppConst.featuredCategoryInteropID) &&
+                   !startsWithInteropID(cat.InteropID, AppConst.allProductsCategoryInteropID);
+        });
+    };
 
     $scope.selected = 1;
     $scope.LineItem = {};
