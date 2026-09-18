@@ -576,6 +576,7 @@ body {
     align-items: center;
     gap: 24px;
     padding: 14px 24px;
+    max-height: 80px;
 }
 
 .mt-brand {
@@ -602,14 +603,21 @@ body {
        and then renders as nothing. Pinning the height gives the aspect ratio
        something to resolve the width against. A raster logo is sized to match
        rather than left at its own smaller height. */
-    /* 40px is as tall as the mark can go for free: the row is sized by the
-       42px search field plus 14px of padding, so anything up to 42px leaves the
-       71px header exactly where it is. 44px starts pushing it. */
-    height: 40px;
-    max-height: 40px;
+    height: 70px;
+    max-height: 100px;
     width: auto;
     flex: 0 0 auto;
     object-fit: contain;
+}
+
+/* Tablet and phone: the header row there is sized by the buttons rather than the
+   42px search field, so a 70px mark is the one thing stretching the bar. Cap it
+   at 40px, which the row absorbs without growing. */
+@media (max-width: 991px) {
+    .mt-brand-logo {
+        height: 40px;
+        max-height: 40px;
+    }
 }
 
 .mt-search {
