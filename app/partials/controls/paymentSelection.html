@@ -44,11 +44,12 @@
         </div>
         <div class="mt-field" ng-show="(SpendingAccounts|filter:{ForPurchase:true}).length > 1">
             <label ng-show="currentOrder.BudgetAccountID">{{'Spending Account' | r}}</label>
-            <select class="form-control" placeholder="{{'Spending Account' | r | xlat}}"
+            <select class="form-control"
                     ng-options="account.ID as (account.Label + ' - ' + ('Balance' | xlat) + ': ' + (account.Balance | culturecurrency)) for account in SpendingAccounts | filter:{ForPurchase:true}"
                     ng-model="currentOrder.BudgetAccountID"
                     ng-required="currentOrder.PaymentMethod == 'BudgetAccount'"
                     ng-change="savePaymentMethod()">
+                <option value="">{{('Choose Your' | r) + ' ' + ('Spending Account' | r) | xlat}}</option>
             </select>
         </div>
     </div>
@@ -58,7 +59,7 @@
             <div class="mt-field">
                 <label>{{('Saved' | r) + ' ' +  ('Card' | r) | xlat}}</label>
                 <select class="form-control" ng-model="currentOrder.CreditCardID" ng-options="card.ID as card.Name for card in paymentSelection.SavedCards" ng-change="savePaymentMethod()">
-                    <option value=""></option>
+                    <option value="">{{('Choose Your' | r) + ' ' + ('Saved' | r) + ' ' + ('Card' | r) | xlat}}</option>
                 </select>
             </div>
             <button type="button" ng-show="showDelete(currentOrder.CreditCardID)" title="Delete" class="mt-cart-remove-link" ng-click="deleteSavedCard(currentOrder.CreditCardID)">

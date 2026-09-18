@@ -37,7 +37,7 @@
                             ng-options="address.ID as address.AddressName for address in shipaddresses"
                             ng-model="currentOrder.ShipAddressID"
                             ng-required="!currentOrder.IsMultipleShip()">
-                        <option value=""></option>
+                        <option value="">{{('Choose Your' | r) + ' ' + ('Shipping' | r) + ' ' + ('Address' | r) | xlat}}</option>
                     </select>
                 </div>
                 <div class="mt-field" ng-show="user.ShipMethod != null && shippers">
@@ -47,7 +47,7 @@
                             ng-show="user.ShipMethod.ShipperSelectionType == 'UserDropDown'"
                             ng-options="shipper.Name as (shipper.Name + ' ' + (shipper.ShippingRate.Price | currency | xlat)) for shipper in shippers"
                             ng-required="!currentOrder.IsMultipleShip() && user.ShipMethod != null">
-                        <option value=""></option>
+                        <option value="">{{('Choose Your' | r) + ' ' + ('Shipping' | r) + ' Method' | xlat}}</option>
                     </select>
                 </div>
             </div>
@@ -103,7 +103,7 @@
                                 ng-model="item.ShipAddressID"
                                 ng-required="currentOrder.IsMultipleShip()"
                                 ng-change="setShipAddressAtLineItem(item)">
-                            <option value=""></option>
+                            <option value="">{{('Choose Your' | r) + ' ' + ('Shipping' | r) + ' ' + ('Address' | r) | xlat}}</option>
                         </select>
                     </div>
                     <div class="mt-field" ng-show="item.ShipAddressID || currentOrder.IsMultipleShip() && item.ShipAddressID && user.ShipMethod != null">
@@ -113,7 +113,7 @@
                                 ng-options="shipper.Name as shipper.Name for shipper in shippers | noliverates"
                                 ng-model="item.ShipperName"
                                 ng-required="currentOrder.IsMultipleShip() && user.ShipMethod != null">
-                            <option value=""></option>
+                            <option value="">{{('Choose Your' | r) + ' ' + ('Shipping' | r) + ' Method' | xlat}}</option>
                         </select>
                     </div>
                     <div class="mt-field" ng-show="user.ShipMethod.AskForAccountNumber && currentOrder.IsMultipleShip()">

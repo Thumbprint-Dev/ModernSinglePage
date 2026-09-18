@@ -839,6 +839,27 @@ body {
     .mt-header-row {
         padding: 12px 16px;
         gap: 12px;
+        /* Positioning context for the mini-cart panel below, so it spans the header row's
+           own width instead of being anchored to (and overflowing past) the narrow Cart
+           button - see .mt-minicart-panel in this same breakpoint. */
+        position: relative;
+    }
+    /* The panel is normally a Bootstrap dropdown-menu anchored to its toggle (.mt-minicart,
+       set position:relative elsewhere) - on a narrow screen the Cart button sits well right
+       of center, so a right-aligned dropdown that width overflows off the left edge of the
+       viewport entirely. Detach it from that anchor and let it size to the header row itself
+       instead. bootstrap-451.css resets every plain div to position:relative, so .mt-minicart
+       AND .mt-header-actions (its own parent, also a bare div) both need overriding back to
+       static, or the search for the nearest positioned ancestor just stops one level too early. */
+    .mt-minicart,
+    .mt-header-actions {
+        position: static;
+    }
+    .mt-minicart-panel {
+        left: 0;
+        right: 0;
+        width: auto;
+        max-width: none;
     }
     .mt-cat-nav-row {
         padding: 0 16px;

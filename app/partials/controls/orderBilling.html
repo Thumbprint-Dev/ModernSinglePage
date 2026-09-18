@@ -16,7 +16,7 @@
                 <select class="form-control" ng-show="billaddresses" name="billingAddress"
                         ng-options="address.ID as address.AddressName for address in billaddresses | filter:{IsBilling:true}" ng-model="currentOrder.BillAddressID" ng-required="currentOrder.BillingEnabled"
                         ng-change="saveOrderBilling()">
-                    <option value=""></option>
+                    <option value="">{{('Choose Your' | r) + ' ' + ('Billing' | r) + ' ' + ('Address' | r) | xlat}}</option>
                 </select>
             </div>
 
