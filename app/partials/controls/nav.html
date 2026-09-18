@@ -29,10 +29,38 @@
             <a id="451qa_order_link" href="order" class="mt-header-btn hidden-xs" ng-if="user.Type == 'Customer'">
                 {{'Order History' | r | xlat}}
             </a>
-            <a id="451qa_cart_link" href="cart" class="mt-header-btn mt-cart-btn" aria-label="{{'View cart' | r | xlat}}">
-                {{'Cart' | r | xlat}}
-                <span class="mt-cart-badge" ng-if="cartCount">{{cartCount}}</span>
-            </a>
+            <div class="dropdown mt-minicart">
+                <a id="451qa_cart_link" class="mt-header-btn mt-cart-btn dropdown-toggle" data-toggle="dropdown" aria-label="{{'View cart' | r | xlat}}">
+                    {{'Cart' | r | xlat}}
+                    <span class="mt-cart-badge" ng-if="cartCount">{{cartCount}}</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right mt-minicart-panel">
+                    <p class="mt-minicart-empty" ng-if="!currentOrder.LineItems.length">{{'Your cart is empty' | r | xlat}}</p>
+                    <div ng-if="currentOrder.LineItems.length">
+                        <div class="mt-minicart-items">
+                            <div class="mt-minicart-item" ng-repeat="item in currentOrder.LineItems" ng-if="!(item.IsKitParent && item.KitIsInvalid)">
+                                <img class="mt-minicart-item-photo mt-real-photo" ng-if="item.Variant.LargeImageUrl || item.Product.SmallImageUrl" ng-src="{{item.Variant.LargeImageUrl || item.Product.SmallImageUrl}}" />
+                                <div class="mt-placeholder-photo mt-minicart-item-photo" ng-if="!(item.Variant.LargeImageUrl || item.Product.SmallImageUrl)"></div>
+                                <div class="mt-minicart-item-info">
+                                    <p class="mt-minicart-item-name">{{item.Product.Name}}</p>
+                                    <p class="mt-minicart-item-meta">{{'Qty' | r | xlat}}: {{item.Quantity}}</p>
+                                </div>
+                                <p class="mt-minicart-item-price" ng-if="!(user.Permissions.contains('HidePricing'))">{{item.LineTotal | culturecurrency}}</p>
+                            </div>
+                        </div>
+                        <div class="mt-minicart-footer">
+                            <div class="mt-minicart-subtotal" ng-if="!(user.Permissions.contains('HidePricing'))">
+                                <span>{{'Subtotal' | r | xlat}}</span>
+                                <span>{{currentOrder.Subtotal | culturecurrency}}</span>
+                            </div>
+                            <div class="mt-minicart-actions">
+                                <a href="cart" class="mt-header-btn mt-minicart-view-btn">{{'View Cart' | r | xlat}}</a>
+                                <a href="checkout" class="mt-btn-accent mt-minicart-checkout-btn">{{'Checkout' | r | xlat}}</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="dropdown mt-account" ng-class="{'active': isActive(['admin', 'addresses', 'address', 'messages', 'message', 'favoriteorders', 'favoriteproducts'])}">
                 <a id="451qa_acct_link2" class="mt-header-btn dropdown-toggle" data-toggle="dropdown" aria-label="{{'Account' | r | xlat}}">
                     <span ng-if="user.FirstName">{{user.FirstName}} {{(user.LastName || '')[0]}}</span><span ng-if="!user.FirstName">{{'Account' | r | xlat}}</span>
