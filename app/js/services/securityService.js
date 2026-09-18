@@ -46,9 +46,28 @@ four51.app.factory('Security', ['$451', '$cookieStore', function ($451, $cookieS
         logout: function () {
             logout = true;
 
+            // The live server sets this cookie on path "/<app>" with
+            // SameSite=None; Secure; Partitioned (CHIPS). A partitioned cookie sits
+            // in its own jar, so an expiry written without those attributes does not
+            // clear it - it just creates an unpartitioned cookie of the same name.
+            // That is why logging out left the session cookie in place on the
+            // deployed site: `logout` above only suppresses isAuthenticated() for
+            // the current page, and the next load read the cookie straight back and
+            // came up half signed-in, header and all. It looked fine locally because
+            // the dev server strips Secure/SameSite from proxied Set-Cookie headers,
+            // leaving a plain cookie the old single-variant delete could expire.
+            // Path matters too: the server uses no trailing slash, Security.init()
+            // does. Expire every combination rather than guess which one is live.
             function delete_cookie(name) {
-                document.cookie = name + '=; path=/' + $451.apiName + '; expires=Thu, 01 Jan 1970 00:00:00 UTC';
-                document.cookie = name + '=; path=/' + $451.apiName + '/; expires=Thu, 01 Jan 1970 00:00:00 UTC';
+                var expiry = '; expires=Thu, 01 Jan 1970 00:00:00 UTC';
+                var paths = ['/' + $451.apiName, '/' + $451.apiName + '/', '/'];
+
+                angular.forEach(paths, function (path) {
+                    document.cookie = name + '=; path=' + path + expiry;
+                    // Ignored on http (a Secure cookie cannot be written from an
+                    // insecure origin), which is exactly where it is not needed.
+                    document.cookie = name + '=; path=' + path + '; SameSite=None; Secure; Partitioned' + expiry;
+                });
             }
             delete_cookie(_cookieName);
             delete this.currentToken;
