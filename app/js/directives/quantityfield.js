@@ -68,7 +68,14 @@ four51.app.directive('quantityfield', ['$451', 'ProductDisplayService', function
                 else{
                     var qtyAvail = (product.IsVariantLevelInventory ? variant.QuantityAvailable : product.QuantityAvailable) + (lineItem.OriginalQuantity || 0);
 
-                    if(qtyAvail < value && product.AllowExceedInventory == false && priceSchedule.OrderType != 'Replenishment'){
+                    if(qtyAvail <= 0 && product.AllowExceedInventory == false && priceSchedule.OrderType != 'Replenishment'){
+                        // Fully out of stock - the Add to Cart button itself is disabled and
+                        // relabeled "Out of Inventory" (see outOfInventory() in productCtrl.js), so
+                        // don't also pop a red inline error before the shopper has done anything.
+                        scope.lineitem.qtyError = null;
+                        scope.valid = false;
+                    }
+                    else if(qtyAvail < value && product.AllowExceedInventory == false && priceSchedule.OrderType != 'Replenishment'){
                         scope.lineitem.qtyError = "Cannot Exceed Quantity Available";
                         scope.valid = false;
                     }

@@ -24,6 +24,15 @@ function ($scope, $routeParams, $route, $location, $451, Product, ProductDisplay
 			$scope.variantLineItemsOrderTotal += item.LineTotal || 0;
 		})
 	};
+	$scope.outOfInventory = function(){
+		var li = $scope.LineItem;
+		if ($scope.allowAddFromVariantList || !li.Product || !li.PriceSchedule) return false;
+		if (!li.Product.DisplayInventory) return false;
+		if (!(li.Variant || li.Product.Variants.length == 0)) return false;
+		if (li.Product.AllowExceedInventory) return false;
+		if (li.PriceSchedule.OrderType == 'Replenishment') return false;
+		return $scope.inventoryDisplay(li.Product, li.Variant) <= 0;
+	};
 	function setDefaultQty(lineitem) {
 		// Restricted-quantity price schedules only allow specific break quantities (e.g. 100 /
 		// 250 / 500 / 1000) via a <select>, not an arbitrary number - defaulting to 1 here set a
