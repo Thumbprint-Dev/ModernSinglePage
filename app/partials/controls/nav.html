@@ -64,16 +64,16 @@
                         <a href="contactus">{{'Contact Us' | r | xlat}}</a>
                     </li>
                     <li>
-                        <a href="#" neworder ng-if="user.Permissions.contains('MultipleShoppingCart') && currentOrder" class="neworder" ng-click="newOrderLoadingIndicator = true;startNewOrder()">
+                        <a href="#" neworder ng-if="user.Permissions.contains('MultipleShoppingCart') && currentOrder" class="neworder" ng-click="$event.preventDefault(); newOrderLoadingIndicator = true;startNewOrder()">
                             {{"Start" | r | xlat}} {{"New" | r | xlat}} {{"Order" | r | xlat}}
                         </a>
                     </li>
                     <li class="divider" ng-show="user.Type!='TempCustomer' || AppConst.debug"></li>
                     <li ng-show="user.Type!='TempCustomer'" class="logout">
-                        <a href="#" class="451_btn_logout" ng-click="Logout()">{{'Log Out' | r | xlat}}</a>
+                        <a href="#" class="451_btn_logout" ng-click="$event.preventDefault(); Logout()">{{'Log Out' | r | xlat}}</a>
                     </li>
                     <li ng-if="AppConst.debug">
-                        <a href="#" ng-click="Clear()">{{'Clear Cache' | r | xlat}}</a>
+                        <a href="#" ng-click="$event.preventDefault(); Clear()">{{'Clear Cache' | r | xlat}}</a>
                     </li>
                 </ul>
             </div>
