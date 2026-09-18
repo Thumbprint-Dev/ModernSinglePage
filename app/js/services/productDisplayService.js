@@ -95,6 +95,9 @@ four51.app.factory('ProductDisplayService', ['$sce', '$451', 'Variant', 'Product
 			if(scope.LineItem.qtyError)
 				newErrorList.push(scope.LineItem.qtyError);
 
+			if(scope.LineItem.variantError)
+				newErrorList.push(scope.LineItem.variantError);
+
 			angular.forEach(scope.LineItem.Specs, function(s){
 				if(s.Required && !s.Value)
 					newErrorList.push(s.Name + " is a required field");
@@ -103,6 +106,23 @@ four51.app.factory('ProductDisplayService', ['$sce', '$451', 'Variant', 'Product
 			//	newErrorList.push("Please fill all required fields");
 			//}
 			scope.lineItemErrors = newErrorList;
+		}
+
+		// Which DefinesVariant specs are in play decides the wording - "color" and "size" are
+		// this catalog's own spec-naming convention, matched case-insensitively; anything else
+		// (a different spec name, or more than two defining specs) falls back to the generic
+		// message rather than guessing at wording for a combination we don't recognize.
+		function invalidVariantMessage(specs){
+			var names = [];
+			angular.forEach(specs, function(s){
+				if(s.DefinesVariant) names.push((s.Name || '').toLowerCase());
+			});
+			switch(names.sort().join(',')){
+				case 'color': return "The color that you selected is not available, please choose another color.";
+				case 'size': return "The size that you selected is not available, please choose another size.";
+				case 'color,size': return "The color and size combination that you selected is not available, please choose another.";
+				default: return "This item is not available, please choose another item.";
+			}
 		}
 
 		scope.specChanged = function(spec){
@@ -131,11 +151,13 @@ four51.app.factory('ProductDisplayService', ['$sce', '$451', 'Variant', 'Product
 				if(hasAllVarDefiningSpecs){
 					//{'ProductInteropID': productInteropID, 'SpecOptionIDs': specOptionIDs}
 					Variant.get({'ProductInteropID': scope.LineItem.Product.InteropID, 'SpecOptionIDs': specOptionIDs}, function(data){
+						scope.LineItem.variantError = null;
 						if(!data.IsDefaultVariant)
 							scope.LineItem.Variant = data;
 						newLineItemScope(scope);
 					}, function(ex){
 						scope.LineItem.Variant = null;
+						scope.LineItem.variantError = invalidVariantMessage(scope.LineItem.Specs);
 					});
 				}
 			}
