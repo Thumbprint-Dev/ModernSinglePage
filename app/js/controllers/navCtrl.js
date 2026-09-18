@@ -1,5 +1,5 @@
-four51.app.controller('NavCtrl', ['$location', '$route', '$scope', '$451', '$timeout', 'User', 'SpendingAccount', 'AppConst',
-function ($location, $route, $scope, $451, $timeout, User, SpendingAccount, AppConst) {
+four51.app.controller('NavCtrl', ['$location', '$route', '$scope', '$451', '$timeout', 'User', 'Order', 'SpendingAccount', 'AppConst',
+function ($location, $route, $scope, $451, $timeout, User, Order, SpendingAccount, AppConst) {
     // Four51 InteropIDs are unique platform-wide, so Featured/All Products may carry a uniqueness
     // suffix (e.g. "featured-gp") - match by prefix, not exact equality. Mirrors the same
     // exclusion categoryCtrl.js already applies to the home page's "Shop by category" tiles.
@@ -24,6 +24,25 @@ function ($location, $route, $scope, $451, $timeout, User, SpendingAccount, AppC
     $scope.doSearch = function(){
         if ($scope.searchTerm)
             $location.path('search/' + $scope.searchTerm);
+    };
+
+    // Removing straight from the mini-cart, without leaving whatever page the shopper is
+    // browsing. Mirrors cartCtrl.js's removeItem(), minus the shipping-recalc/saveChanges
+    // afterward - the shopper isn't on the checkout flow here, so there's nothing to resave.
+    $scope.removeMinicartItem = function(item){
+        if (!$scope.currentOrder || !confirm('Are you sure you wish to remove this item from your cart?'))
+            return;
+        Order.deletelineitem($scope.currentOrder.ID, item.ID, function(order){
+            if (!order) {
+                $scope.user.CurrentOrderID = null;
+                User.save($scope.user);
+                $scope.currentOrder = null;
+            } else {
+                $scope.currentOrder = order;
+            }
+        }, function(ex){
+            alert(ex.Message);
+        });
     };
 
     // Confirmation for staying on the page after Add to Cart (see productCtrl.js's

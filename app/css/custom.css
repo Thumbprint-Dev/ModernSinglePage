@@ -4237,6 +4237,27 @@ input[datepicker-popup] {
     white-space: nowrap;
 }
 
+.mt-minicart-item-remove {
+    flex: 0 0 auto;
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-size: 12px;
+    color: var(--mt-color-muted);
+    cursor: pointer;
+}
+
+.mt-minicart-item-remove:hover,
+.mt-minicart-item-remove:focus {
+    color: var(--mt-color-danger);
+}
+
 .mt-minicart-footer {
     margin-top: 14px;
     padding-top: 14px;

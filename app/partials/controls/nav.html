@@ -46,6 +46,9 @@
                                     <p class="mt-minicart-item-meta">{{'Qty' | r | xlat}}: {{item.Quantity}}</p>
                                 </div>
                                 <p class="mt-minicart-item-price" ng-if="!(user.Permissions.contains('HidePricing'))">{{item.LineTotal | culturecurrency}}</p>
+                                <button type="button" class="mt-minicart-item-remove" ng-click="removeMinicartItem(item)" aria-label="{{'Remove' | r | xlat}}" title="{{'Remove' | r | xlat}}">
+                                    <i class="fa fa-times"></i>
+                                </button>
                             </div>
                         </div>
                         <div class="mt-minicart-footer">
