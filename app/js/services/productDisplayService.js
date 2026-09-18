@@ -95,9 +95,6 @@ four51.app.factory('ProductDisplayService', ['$sce', '$451', 'Variant', 'Product
 			if(scope.LineItem.qtyError)
 				newErrorList.push(scope.LineItem.qtyError);
 
-			if(!scope.LineItem.Variant && scope.LineItem.Product.IsVBOSS){
-				newErrorList.push("Please select an active product");
-			}
 			angular.forEach(scope.LineItem.Specs, function(s){
 				if(s.Required && !s.Value)
 					newErrorList.push(s.Name + " is a required field");
