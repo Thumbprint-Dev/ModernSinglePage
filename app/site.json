@@ -5,6 +5,10 @@
 		"url": "",
 		"alt": ""
 	},
+	"login": {
+		"_help_createAccountUrl": "createAccountUrl: where 'Need an account?' goes. Blank uses the built-in signup page at /admin, which needs the site to give anonymous visitors a temp session; otherwise paste the site's Four51 AutoLogon link.",
+		"createAccountUrl": ""
+	},
 	"theme": {
 		"accent": "",
 		"accentDark": ""

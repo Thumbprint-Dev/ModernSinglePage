@@ -22,6 +22,13 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			buttonText: 'Shop the collection',
 			buttonHref: 'catalog'
 		},
+		login: {
+			// Where "Need an account?" goes. Blank uses the native self-service
+			// signup at /admin (partials/userView.html in its TempCustomer branch),
+			// which only works on sites that hand anonymous visitors a temp
+			// session -- elsewhere, point this at the site's Four51 signup link.
+			createAccountUrl: ''
+		},
 		theme: {
 			// Overrides --mt-color-accent / --mt-color-accent-dark from custom.css.
 			// Leave blank to keep the theme's own accent.
