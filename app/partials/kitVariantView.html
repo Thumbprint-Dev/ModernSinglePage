@@ -71,28 +71,15 @@
         </div>
     </div>
 
-    <!-- ERROR MESSAGING (unchanged - already fixed-position, not part of the layout flow) -->
-    <div class="navbar-fixed-bottom">
-        <div class="view-error-message" ng-show="showAddToCartErrors && lineItemErrors.length > 0">
-            <ul class="alert-warning">
-                <li class="text-center">
-                    <span class="badge">
-                        <i class="fa fa-exclamation-circle fa-inverse"></i>
-                        {{lineItemErrors.length}}
-                    </span>
-                </li>
-                <li class="text-center">
-                    <ul ng-class="{'one': errorSection == 'open', 'two': errorSection == '' }">
-                        <li class="alert-warning" ng-repeat="e in lineItemErrors">{{e | xlat}}</li>
-                        <li class="alert-warning" ng-show="variantLineItems[v.InteropID].qtyError">{{variantLineItems[v.InteropID].qtyError}}</li>
-                    </ul>
-                </li>
-                <li class="text-center">
-                    <a ng-show="lineItemErrors.length > 1">
-                        <i class="fa fa-caret-down" ng-click="errorSection = 'open'" ng-hide="errorSection == 'open'"></i>
-                        <i class="fa fa-caret-up" ng-click="errorSection = ''" ng-show="errorSection == 'open'"></i>
-                    </a>
-                </li>
+    <!-- ERROR MESSAGING: modal instead of a fixed bottom bar, so errors don't get lost off-screen. -->
+    <div class="mt-error-modal-backdrop" ng-show="showAddToCartErrors && lineItemErrors.length > 0" ng-click="showAddToCartErrors = false">
+        <div class="mt-error-modal" ng-click="$event.stopPropagation()">
+            <button type="button" class="mt-error-modal-close" ng-click="showAddToCartErrors = false" aria-label="{{'Close' | r | xlat}}">
+                <i class="fa fa-times"></i>
+            </button>
+            <div class="mt-error-modal-icon"><i class="fa fa-exclamation-circle"></i></div>
+            <ul class="mt-error-modal-list">
+                <li ng-repeat="e in lineItemErrors">{{e | xlat}}</li>
             </ul>
         </div>
     </div>

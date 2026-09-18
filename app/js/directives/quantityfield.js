@@ -69,7 +69,7 @@ four51.app.directive('quantityfield', ['$451', 'ProductDisplayService', function
                     var qtyAvail = (product.IsVariantLevelInventory ? variant.QuantityAvailable : product.QuantityAvailable) + (lineItem.OriginalQuantity || 0);
 
                     if(qtyAvail < value && product.AllowExceedInventory == false && priceSchedule.OrderType != 'Replenishment'){
-                        scope.lineitem.qtyError = "cannot exceed the Quantity Available of " +  qtyAvail;
+                        scope.lineitem.qtyError = "Cannot Exceed Quantity Available";
                         scope.valid = false;
                     }
                 }
