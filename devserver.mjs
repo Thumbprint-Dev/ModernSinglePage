@@ -129,6 +129,18 @@ function safeUrl(url) {
 	return url.replace(/([?&]auth=)[^&]*/gi, '$1<redacted>')
 }
 
+// Site addresses get written down without a scheme (buyersites.json carries
+// entries like thumbprint.Four51OrderCloud.com/adt_dealers), so assume https
+// rather than failing on a value that is otherwise usable.
+function parseUpstream(value, source) {
+	const withScheme = /^[a-z][a-z0-9+.-]*:\/\//i.test(value) ? value : `https://${value}`
+	try {
+		return new URL(withScheme)
+	} catch {
+		throw new Error(`${source} is not a usable URL: ${value}`)
+	}
+}
+
 // The deployed site gets its app name from the first path segment
 // (see app/js/451.js: four51.apiName()). Nothing on disk pins it, because the
 // <base href> is injected at deploy time -- so derive it from the upstream URL.
@@ -186,8 +198,18 @@ function main() {
 		process.exit(1)
 	}
 
-	const upstream = new URL(args.upstream || SITE.url)
-	const appPath = resolveAppPath(upstream, args.appPath)
+	let upstream
+	let appPath
+	try {
+		upstream = args.upstream
+			? parseUpstream(args.upstream, '--upstream')
+			: parseUpstream(SITE.url, env.SITE_URL ? 'SITE_URL' : 'the built-in default site')
+		appPath = resolveAppPath(upstream, args.appPath)
+	} catch (err) {
+		console.error(`Error: ${err.message}`)
+		process.exit(1)
+	}
+
 	const mount = `/${appPath}/`
 	const agent = new https.Agent({ keepAlive: true })
 
