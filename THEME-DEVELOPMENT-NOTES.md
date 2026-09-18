@@ -169,6 +169,27 @@ need to target one, use an attribute selector: `[class~="451qa_home_link"]`.
 
 ## Bugs we introduced ourselves while restyling — watch for these patterns
 
+### An SVG logo with only a `viewBox` collapses to 0x0 inside a flex container
+
+`molly_maid-logo.svg` carries `viewBox="0 0 309.79 132.77"` and no `width`/`height`
+attributes. `img.naturalWidth` still reports `300x129` (the spec's default object
+size resolved against the ratio), so the image looks loaded in the console — but
+flex layout treats the intrinsic size as *absent*, and `.mt-brand` is
+`display: flex`, so the logo laid out at exactly 0x0 and rendered as nothing.
+
+Debug tell: `complete: true`, `naturalWidth` non-zero, `getComputedStyle().width`
+`0px`. `max-height` alone cannot fix it — nothing pins a dimension for the ratio to
+resolve against. `.mt-brand-logo` now sets `height: 32px; width: auto`.
+
+### Adding a modifier class above the base rules it has to beat
+
+`.mt-hero-image h1 { color: #fff }` was inserted *before* `.mt-hero h1 { color: var(--mt-color-text-strong) }`.
+Equal specificity (0,1,1), so source order decided it and the hero heading stayed
+dark on the photo while the eyebrow and subheading went white — a half-applied
+look that reads as an image problem, not a CSS one. Fixed by doubling up the
+class: `.mt-hero.mt-hero-image h1`, which wins on specificity wherever it sits in
+the file.
+
 ### CSS shorthand collision when combining two classes on one element
 
 `<div class="mt-container mt-section">` — if `.mt-section` uses the `padding` shorthand

@@ -202,9 +202,11 @@ body {
     position: relative;
 }
 
-.mt-hero-image .mt-eyebrow,
-.mt-hero-image h1,
-.mt-hero-image .mt-hero-sub {
+/* Two classes on purpose: .mt-hero's own colour rules sit further down this
+   file, so a single-class selector here would lose on source order. */
+.mt-hero.mt-hero-image .mt-eyebrow,
+.mt-hero.mt-hero-image h1,
+.mt-hero.mt-hero-image .mt-hero-sub {
     color: #fff;
 }
 
@@ -595,7 +597,16 @@ body {
 }
 
 .mt-brand-logo {
+    /* An SVG whose markup carries only a viewBox has no intrinsic pixel size, and
+       as a flex item inside .mt-brand that collapses it to 0x0 -- the logo loads
+       and then renders as nothing. Pinning the height gives the aspect ratio
+       something to resolve the width against. A raster logo is sized to match
+       rather than left at its own smaller height. */
+    height: 32px;
     max-height: 32px;
+    width: auto;
+    flex: 0 0 auto;
+    object-fit: contain;
 }
 
 .mt-search {
