@@ -21,12 +21,39 @@ import { fileURLToPath } from 'node:url'
 const ROOT = path.dirname(fileURLToPath(import.meta.url))
 const APP_DIR = path.join(ROOT, 'app')
 
-// This theme is deployed to many storefronts, so the built-in default is the
-// sandbox -- pass --upstream to aim at the storefront you are actually working
-// on without editing this.
-const SITE = {
+// This theme is deployed to many storefronts, so the site it serves is not
+// pinned in code. Highest wins: --upstream, then SITE_URL from the environment
+// or .env (copy .env.example), then the sandbox below.
+const DEFAULT_SITE = {
 	name: 'Sandbox',
 	url: 'https://thumbprint.four51ordercloud.com/thumbprint_sandbox'
+}
+
+// Minimal .env reader -- KEY=value, # comment lines, optional surrounding
+// quotes. Kept inline so the server stays dependency-free.
+function loadEnvFile(file) {
+	const out = {}
+	if (!fs.existsSync(file)) return out
+
+	for (const line of fs.readFileSync(file, 'utf8').split('\n')) {
+		const match = line.match(/^\s*(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)$/)
+		if (!match) continue
+
+		let value = match[2].trim()
+		if (/^(".*"|'.*')$/s.test(value)) value = value.slice(1, -1)
+		out[match[1]] = value
+	}
+	return out
+}
+
+// A real environment variable beats the file, so a one-off
+// `SITE_URL=... node devserver.mjs` works without editing .env.
+const fileEnv = loadEnvFile(path.join(ROOT, '.env'))
+const env = { ...fileEnv, ...process.env }
+
+const SITE = {
+	name: env.SITE_NAME || DEFAULT_SITE.name,
+	url: env.SITE_URL || DEFAULT_SITE.url
 }
 
 const MIME = {
@@ -71,6 +98,8 @@ Options:
   -p, --port <n>       Port to listen on (default 3000)
   -u, --upstream <url> Override the API target -- the storefront this theme is
                        deployed to. Defaults to ${SITE.url}
+                       (set SITE_NAME/SITE_URL in .env to change that default --
+                       see .env.example)
       --app-path <s>   Override the mount / API app name. Defaults to the first
                        path segment of the upstream URL.
       --allow-orders   Permit order submit/approve/decline/repeat. Blocked by
@@ -274,7 +303,11 @@ function main() {
 	})
 
 	server.listen(args.port, () => {
-		const source = args.upstream ? '--upstream override' : `built-in default (${SITE.name})`
+		const source = args.upstream
+			? '--upstream override'
+			: env.SITE_URL
+				? `${fileEnv.SITE_URL && !process.env.SITE_URL ? '.env' : 'environment'} (${SITE.name})`
+				: `built-in default (${SITE.name})`
 		const orders = args.allowOrders
 			? 'ALLOWED  (--allow-orders is set -- a submit here is a real order)'
 			: 'blocked  (submit/approve/decline/repeat return 403)'

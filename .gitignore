@@ -23,3 +23,6 @@ app/PDT-ThreeColumnAccordionView.html
 app/PDT-ThreeColumnTabbedView.html
 app/PDT-ThreeColumnView.html
 app/PDT.html
+
+# Local dev server site config -- copy .env.example and edit
+.env
