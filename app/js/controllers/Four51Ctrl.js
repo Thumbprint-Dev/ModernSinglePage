@@ -120,8 +120,11 @@ function ($scope, $route, $rootScope, $timeout, $document, $window, $location, $
 	function LogoutByTimer(){
 		function redirectAnon() {
 			if ($scope.isAnon) {
+				// See the identical comment in navCtrl.js's Logout() - routing through /login
+				// here just flashes the login form before the auto-anon-login above bounces the
+				// shopper off it anyway.
 				$timeout(function () {
-					$location.path("/login");
+					$location.path("/catalog");
 					location.reload(true);
 				}, 500);
 			}
