@@ -12,6 +12,11 @@ four51.app.directive('orderbilling', ['Address', 'AddressList', 'Order', functio
 						var billAddressID = $scope.currentOrder.BillAddressID;
 						var budgetAccountID = $scope.currentOrder.BudgetAccountID;
 						var creditCardID = $scope.currentOrder.CreditCardID;
+						// A freshly-typed (not yet saved as a reusable CreditCardID) card lives
+						// only on this raw CreditCard object - the API doesn't echo it back on the
+						// order, so without this it silently disappeared any time a billing field
+						// autosaved (e.g. blurring the bill-to name) while the card was filled in.
+						var creditCard = $scope.currentOrder.CreditCard;
 						$scope.currentOrder = data;
 						$scope.currentOrder.BillAddressID = billAddressID;
 						if (budgetAccountID) {
@@ -19,6 +24,9 @@ four51.app.directive('orderbilling', ['Address', 'AddressList', 'Order', functio
 						}
 						if (creditCardID) {
 							$scope.currentOrder.CreditCardID = creditCardID;
+						}
+						if (creditCard) {
+							$scope.currentOrder.CreditCard = creditCard;
 						}
 					},
 					function(ex) {

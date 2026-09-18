@@ -29,13 +29,8 @@ function ($location, $route, $scope, $451, $timeout, User, SpendingAccount, AppC
     $scope.Logout = function(){
         function redirectAnon() {
             if ($scope.isAnon) {
-                // Landing on /login here was pointless work: Four51Ctrl.js already auto-creates
-                // a fresh anonymous session on any unauthenticated page load, regardless of URL,
-                // and that auto-login triggers its own reload - so routing through /login first
-                // just flashed the login form for a moment before the second reload bounced the
-                // shopper off it to home anyway. Go straight to the destination instead.
                 $timeout(function () {
-                    $location.path("/catalog");
+                    $location.path("/login");
                     location.reload(true);
                 }, 500);
             }

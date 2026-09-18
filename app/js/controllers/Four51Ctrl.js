@@ -1,5 +1,5 @@
-four51.app.controller('Four51Ctrl', ['$scope', '$route', '$rootScope', '$timeout', '$document', '$window', '$location', '$451', 'User', 'Order', 'Security', 'OrderConfig', 'Category', 'AppConst','XLATService', 'GoogleAnalytics', 'FavoriteProducts', 'SiteConfig',
-function ($scope, $route, $rootScope, $timeout, $document, $window, $location, $451, User, Order, Security, OrderConfig, Category, AppConst, XLATService, GoogleAnalytics, FavoriteProducts, SiteConfig) {
+four51.app.controller('Four51Ctrl', ['$scope', '$route', '$rootScope', '$timeout', '$document', '$window', '$location', '$451', 'User', 'Order', 'Security', 'OrderConfig', 'Category', 'AppConst','XLATService', 'GoogleAnalytics', 'FavoriteProducts', 'SiteConfig', 'publicRoutes',
+function ($scope, $route, $rootScope, $timeout, $document, $window, $location, $451, User, Order, Security, OrderConfig, Category, AppConst, XLATService, GoogleAnalytics, FavoriteProducts, SiteConfig, publicRoutes) {
 	$scope.AppConst = AppConst;
 	// This controller sits on <html>, so every view and directive below it -- the
 	// nav logo, the home hero -- reads site.json off the inherited `site` object.
@@ -7,15 +7,25 @@ function ($scope, $route, $rootScope, $timeout, $document, $window, $location, $
 	$scope.scroll = 0;
 	$scope.isAnon = $451.isAnon; //need to know this before we have access to the user object
 	$scope.Four51User = Security;
+	// This used to auto-provision a guest (TempCustomer) session for ANY unauthenticated page
+	// load, regardless of destination - so a logged-out shopper landing on, say, /catalog would
+	// silently become a guest and see the storefront instead of being asked to log in. Now it
+	// only does that on the routes meant to be reachable without an account (the same list
+	// AnonRouter already treats as public); anything else goes straight to /login.
 	if ($451.isAnon && !Security.isAuthenticated()) {
-		var tempUser = {
-			Username: null,
-			Password: null,
-			Email: null
-		};
-		User.login(tempUser,function (u) {
-			location.reload();
-		});
+		var currentRoute = $location.path().replace(/^\/+/, '').split('/')[0];
+		if (publicRoutes.indexOf(currentRoute) > -1) {
+			var tempUser = {
+				Username: null,
+				Password: null,
+				Email: null
+			};
+			User.login(tempUser,function (u) {
+				location.reload();
+			});
+		} else {
+			$location.path('/login');
+		}
 	}
 
 	// fix Bootstrap fixed-top and fixed-bottom from jumping around on mobile input when virtual keyboard appears
@@ -120,11 +130,8 @@ function ($scope, $route, $rootScope, $timeout, $document, $window, $location, $
 	function LogoutByTimer(){
 		function redirectAnon() {
 			if ($scope.isAnon) {
-				// See the identical comment in navCtrl.js's Logout() - routing through /login
-				// here just flashes the login form before the auto-anon-login above bounces the
-				// shopper off it anyway.
 				$timeout(function () {
-					$location.path("/catalog");
+					$location.path("/login");
 					location.reload(true);
 				}, 500);
 			}

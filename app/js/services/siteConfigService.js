@@ -7,6 +7,9 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 	// truncated or partially filled file therefore still renders the stock theme
 	// rather than an empty hero.
 	var settings = {
+		// Falls back to Company.Name once a user loads, but the login page has no user yet -
+		// this is what the logo's alt text and its no-logo-uploaded text fallback use there.
+		name: '',
 		logo: {
 			url: '',
 			alt: ''
@@ -72,6 +75,8 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 	// One level deep, and blanks are ignored -- a site only names the keys it
 	// actually overrides, and clearing a value back to "" restores the default.
 	function apply(data) {
+		if (data && angular.isString(data.name) && data.name !== '') settings.name = data.name;
+
 		angular.forEach(settings, function(defaults, section) {
 			var overrides = data && data[section];
 			if (!angular.isObject(defaults) || !angular.isObject(overrides)) return;
