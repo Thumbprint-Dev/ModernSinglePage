@@ -4051,3 +4051,76 @@ input[datepicker-popup] {
         flex-direction: column;
     }
 }
+
+/* ===== ModernTheme: Add-to-cart error modal (PDT, kitView, kitVariantView) ===== */
+/* Replaces the platform's fixed-bottom-bar error list, which was easy to miss/lose. */
+
+.mt-error-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 2000;
+}
+
+.mt-error-modal {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    background: var(--mt-color-white);
+    border-radius: 12px;
+    padding: 32px 28px 28px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+}
+
+.mt-error-modal-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: var(--mt-color-muted);
+    cursor: pointer;
+}
+
+.mt-error-modal-close:hover,
+.mt-error-modal-close:focus {
+    color: var(--mt-color-text);
+}
+
+.mt-error-modal-icon {
+    text-align: center;
+    font-size: 32px;
+    color: var(--mt-color-danger);
+    margin-bottom: 12px;
+}
+
+.mt-error-modal-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    color: var(--mt-color-text);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.mt-error-modal-list li {
+    margin-bottom: 6px;
+}
+
+.mt-error-modal-list li:last-child {
+    margin-bottom: 0;
+}
