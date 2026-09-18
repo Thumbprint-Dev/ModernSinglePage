@@ -4149,3 +4149,118 @@ input[datepicker-popup] {
 .view-inline-error:before {
     display: none;
 }
+
+/* ===== ModernTheme: header mini-cart ===== */
+
+.mt-minicart {
+    position: relative;
+}
+
+.mt-minicart-panel {
+    width: 340px;
+    max-width: calc(100vw - 32px);
+    padding: 16px;
+    font-family: var(--mt-font-body);
+    border-radius: 8px;
+    border-color: var(--mt-color-border);
+    margin-top: 6px;
+}
+
+.mt-minicart-empty {
+    margin: 0;
+    padding: 12px 4px;
+    text-align: center;
+    color: var(--mt-color-muted);
+    font-size: 13px;
+}
+
+.mt-minicart-items {
+    max-height: 320px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.mt-minicart-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--mt-color-divider);
+}
+
+.mt-minicart-item:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.mt-minicart-item-photo {
+    flex: 0 0 48px;
+    width: 48px;
+    height: 48px;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 0;
+    font-size: 9px;
+    padding: 4px;
+}
+
+.mt-minicart-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.mt-minicart-item-name {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--mt-color-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.mt-minicart-item-meta {
+    margin: 2px 0 0;
+    font-size: 12px;
+    color: var(--mt-color-muted);
+}
+
+.mt-minicart-item-price {
+    flex: 0 0 auto;
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--mt-color-text);
+    white-space: nowrap;
+}
+
+.mt-minicart-footer {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--mt-color-border);
+}
+
+.mt-minicart-subtotal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--mt-color-text);
+}
+
+.mt-minicart-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.mt-minicart-actions .mt-header-btn,
+.mt-minicart-actions .mt-btn-accent {
+    flex: 1;
+    justify-content: center;
+    text-align: center;
+}
