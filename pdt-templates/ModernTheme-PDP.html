@@ -151,7 +151,7 @@
                         <button class="mt-btn-accent mt-pdt-add-btn" type="button" id="451_btn_orderadd" ng-click="addToOrder()" ng-disabled="outOfInventory()">
                             <loadingindicator ng-show="addToOrderIndicator"></loadingindicator>
                             <i ng-show="lineItemErrors.length > 0 && !outOfInventory()" class="fa fa-warning"></i>
-                            <span ng-if="outOfInventory()">{{'Out of Inventory' | r | xlat}}</span>
+                            <span ng-if="outOfInventory()">{{'Out of Stock' | r | xlat}}</span>
                             <span ng-if="!outOfInventory()">
                                 {{addToOrderText | r | xlat}}
                                 <span id="451qa_lineitem_total" ng-if="!(user.Permissions.contains('HidePricing')) && (LineItem.LineTotal || variantLineItemsOrderTotal) > 0">

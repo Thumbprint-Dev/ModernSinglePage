@@ -70,7 +70,7 @@ four51.app.directive('quantityfield', ['$451', 'ProductDisplayService', function
 
                     if(qtyAvail <= 0 && product.AllowExceedInventory == false && priceSchedule.OrderType != 'Replenishment'){
                         // Fully out of stock - the Add to Cart button itself is disabled and
-                        // relabeled "Out of Inventory" (see outOfInventory() in productCtrl.js), so
+                        // relabeled "Out of Stock" (see outOfInventory() in productCtrl.js), so
                         // don't also pop a red inline error before the shopper has done anything.
                         scope.lineitem.qtyError = null;
                         scope.valid = false;
