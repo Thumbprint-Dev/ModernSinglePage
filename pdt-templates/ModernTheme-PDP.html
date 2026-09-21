@@ -22,7 +22,7 @@
     <loadingindicator ng-show="loadingIndicator" title="{{'Please wait while we fetch product information' | r | xlat}}"></loadingindicator>
 
     <div class="mt-container mt-pdt-inner">
-        <p class="mt-breadcrumb"><a href="catalog">{{'Home' | r | xlat}}</a> / {{LineItem.Product.Name}}</p>
+        <p class="mt-breadcrumb"><span ng-repeat="cat in categoryPath()"><a ng-href="catalog/{{cat.InteropID}}" ng-bind-html="cat.Name"></a> / </span>{{LineItem.Product.Name}}</p>
 
         <div class="row">
             <!-- PRODUCT IMAGE -->
