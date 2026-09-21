@@ -1088,6 +1088,16 @@ body {
     margin-bottom: 16px;
 }
 
+/* Extra breathing room between the product image and the info column, on top of Bootstrap's
+   own 15px gutter - only once the two actually sit side by side (col-md-* stacks full-width
+   below 992px, where this would just push the info column right for no reason). Scoped to the
+   PDT's own top-level row so it doesn't touch the unrelated nested .row inside the variant list. */
+@media (min-width: 992px) {
+    .mt-pdt-inner > .row > .col-md-7 {
+        padding-left: 45px;
+    }
+}
+
 .mt-pdt-fav-btn {
     top: 16px;
     right: 16px;
