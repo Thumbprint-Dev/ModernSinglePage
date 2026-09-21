@@ -1,6 +1,7 @@
 {
 	"_readme": "Per-site branding. Blank values fall back to the theme/platform defaults, so only fill in what this site changes. See THEME-DEVELOPMENT-NOTES.md, 'Per-site branding: app/site.json'.",
 	"name": "",
+	"favicon": "",
 	"logo": {
 		"url": "",
 		"alt": ""
@@ -11,7 +12,9 @@
 	},
 	"theme": {
 		"accent": "",
-		"accentDark": ""
+		"accentDark": "",
+		"fontFamily": "",
+		"fontUrl": ""
 	},
 	"hero": {
 		"image": "",

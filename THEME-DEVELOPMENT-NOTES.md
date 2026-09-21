@@ -554,8 +554,9 @@ Four51 without forking the theme.
 
 ```json
 {
+	"favicon": "",
 	"logo": { "url": "", "alt": "" },
-	"theme": { "accent": "", "accentDark": "" },
+	"theme": { "accent": "", "accentDark": "", "fontFamily": "", "fontUrl": "" },
 	"hero": {
 		"image": "",
 		"eyebrow": "Fall 2026 Collection",
@@ -591,6 +592,30 @@ Four51 without forking the theme.
   logo pink `#db529c` is only 3.68:1 on white. Keep the hue and saturation, drop
   the lightness until it passes: `#B12571` is the same 327.6deg/65.6% at 6.2:1 on
   white and 5.9:1 on the page background, matching the stock teal's 6.4:1.
+- **Favicon**: `favicon` repoints both `<link rel="icon">` tags in `index.html`,
+  which otherwise stay on the platform's `storefrontfavicon.ico`. The service also
+  strips their `type="image/x-icon"`, since the stock links declare ICO and a
+  browser that trusts that attribute renders nothing for a PNG.
+- **Font**: `theme.fontFamily` overrides `--mt-font-body`. Name just the family --
+  the theme's own `'Inter', 'Droid Sans', sans-serif` is appended behind it, so a
+  visitor without the font lands on Inter rather than the browser's default serif.
+  A stack that already ends in a generic family is used verbatim.
+- **`fontFamily` alone does not load anything.** It only names a family; the font
+  still has to reach the visitor. `theme.fontUrl` is injected as a `<link
+  rel="stylesheet">` for that -- a foundry URL, a Google Fonts one, or any
+  stylesheet carrying the `@font-face`. Leave it blank and the family renders only
+  for visitors who happen to have the font installed, which is exactly why a brand
+  font looks right in-house and wrong in the wild. Check before promising one: many
+  brand faces are commercially licensed and absent from Google Fonts, and the
+  fallback is silent -- `document.fonts.check()` returns true for any name, so
+  measure rendered text width against a deliberately bogus family instead.
+- **Font coverage stops at the `mt-` roots.** `--mt-font-body` is set on the 17
+  page/component roots (`.mt-home`, `.mt-header`, `.mt-plp`, `.mt-checkout`, ...),
+  not on `body` -- `bootstrap-451.css` sets `body { font-family: 'Droid Sans' }` and
+  `custom.css` never overrides it. That covers every restyled screen, but anything
+  rendered outside those roots keeps Droid Sans. Adding `body { font-family:
+  var(--mt-font-body) }` to `custom.css` would close the gap, at the cost of
+  restyling every un-restyled surface at once.
 - **Hero image**: set `hero.image` and the woven placeholder gradient gives way to
   the photo, with `.mt-hero-image` adding a scrim and white copy so the text stays
   readable on any image. Leave it blank for the placeholder.
