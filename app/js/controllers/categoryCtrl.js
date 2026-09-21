@@ -81,6 +81,20 @@ function ($routeParams, $sce, $scope, $451, Category, Product, AppConst, Order, 
 		return product && product.Type != 'VariableText' && product.Type != 'Kit';
 	};
 
+	// Card-level mirror of productCtrl.js's outOfInventory(), against the lighter
+	// Product.search() list shape instead of a LineItem/Variant wrapper. Only meaningful for a
+	// simple (variant-less) product - a card for a product with variants has no selected variant
+	// to check inventory against, same as the PDP before one's chosen, so it's left showing a
+	// normal Add to Cart button (quick-add opens the modal, where a variant gets picked).
+	$scope.productOutOfInventory = function(product) {
+		if (!product || !product.StandardPriceSchedule) return false;
+		if (product.Variants && product.Variants.length > 0) return false;
+		if (product.AllowExceedInventory) return false;
+		if (product.StandardPriceSchedule.OrderType == 'Replenishment') return false;
+		if (!product.InventoryEnabled) return false;
+		return (product.QuantityAvailable > 0 ? product.QuantityAvailable : 0) <= 0;
+	};
+
 	function addSimpleProductToCart(product) {
 		if (!$scope.currentOrder) {
 			$scope.currentOrder = {};
