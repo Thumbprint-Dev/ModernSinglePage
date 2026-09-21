@@ -44,7 +44,7 @@
                             </div>
                             <div>
                                 <label class="required">{{'Username' | r | xlat}}</label>
-                                <input name="username" class="form-control" type="text" ng-model="user.TempUsername" required placeholder="{{'Username' | r | xlat}}" autocomplete="off" />
+                                <input name="username" class="form-control" type="text" ng-model="user.TempUsername" required placeholder="{{'Username' | r | xlat}}" autocomplete="off" ng-readonly="isSsoUser()" />
                                 <i class="fa fa-user"></i>
                             </div>
                             <!--TODO username input shouldn't default to temporary usernames, if the user is temp, make the placeholder show instead !-->

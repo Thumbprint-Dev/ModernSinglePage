@@ -84,6 +84,11 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 	function apply(data) {
 		if (data && angular.isString(data.name) && data.name !== '') settings.name = data.name;
 
+		// The tab title otherwise stays index.html's static "Storefront" for any page
+		// rendered before a user is authenticated (the login screen, public routes) --
+		// Four51Ctrl only sets it from Company.Name once a user has actually loaded.
+		if (settings.name) $document[0].title = settings.name;
+
 		angular.forEach(settings, function(defaults, section) {
 			var overrides = data && data[section];
 			if (!angular.isObject(defaults) || !angular.isObject(overrides)) return;
