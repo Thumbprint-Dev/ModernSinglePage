@@ -1031,6 +1031,11 @@ body {
 .mt-product-grid-wrap .row {
     display: flex;
     flex-wrap: wrap;
+    /* .mt-product-card's own margin-bottom (shared with the Home page grid, see that section
+       above) is easy to lose here since every card is stretched to height:100% of a flex line -
+       row-gap sits on the line-wrapping itself instead, so it's unaffected by that stretch and
+       reliably spaces every wrapped row apart regardless of card height. */
+    row-gap: 24px;
 }
 
 .mt-plp-count {

@@ -139,7 +139,20 @@ function ($location, $route, $scope, $451, $timeout, $window, User, Order, Spend
     $scope.$on('event:orderUpdate', function(event, order) {
         if (!order || order.Status != 'Unsubmitted') {
             $scope.cartCount = null;
+            // null specifically means "this session's own order was cleared" (e.g. Start New
+            // Order) - safe to clear the mini-cart too. A non-null order that's no longer
+            // Unsubmitted is left alone below, same as cartCount's own handling.
+            if (!order) $scope.currentOrder = null;
             return;
+        }
+        // Every Order.get/save broadcasts this event with whatever order it just touched, which
+        // isn't always this shopper's own cart - an approver opening someone else's order from
+        // Order History fires it too. Only resync the header/mini-cart when the broadcast order
+        // really is the current user's own active order, so add-to-cart (previously stale here
+        // until the next full page navigation re-fetched it) updates immediately without ever
+        // letting someone else's order data leak into the mini-cart.
+        if ($scope.user && order.ID === $scope.user.CurrentOrderID) {
+            $scope.currentOrder = order;
         }
         // A kit that's still mid-configuration is a real LineItem server-side (the platform
         // requires that to know what needs configuring), but it isn't done yet - don't count it
