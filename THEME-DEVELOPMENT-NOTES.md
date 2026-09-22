@@ -609,13 +609,21 @@ Four51 without forking the theme.
   brand faces are commercially licensed and absent from Google Fonts, and the
   fallback is silent -- `document.fonts.check()` returns true for any name, so
   measure rendered text width against a deliberately bogus family instead.
-- **Font coverage stops at the `mt-` roots.** `--mt-font-body` is set on the 17
-  page/component roots (`.mt-home`, `.mt-header`, `.mt-plp`, `.mt-checkout`, ...),
-  not on `body` -- `bootstrap-451.css` sets `body { font-family: 'Droid Sans' }` and
-  `custom.css` never overrides it. That covers every restyled screen, but anything
-  rendered outside those roots keeps Droid Sans. Adding `body { font-family:
-  var(--mt-font-body) }` to `custom.css` would close the gap, at the cost of
-  restyling every un-restyled surface at once.
+- **Font coverage: headings everywhere, body copy inside the `mt-` roots.**
+  `--mt-font-body` is set on the 17 page/component roots (`.mt-home`, `.mt-header`,
+  `.mt-plp`, `.mt-checkout`, ...) plus a global `h1-h6`/`.h1-.h6` rule. It is *not*
+  on `body` -- `bootstrap-451.css` sets `body { font-family: 'Droid Sans' }` and
+  `custom.css` never overrides it -- so body copy outside those roots still falls
+  back. `body { font-family: var(--mt-font-body) }` would close the gap, at the cost
+  of restyling every un-restyled surface at once.
+- **Headings were never on the theme font at all.** `bootstrap-451.css` pins
+  `h1-h6` and `.h1-.h6` to `'Lato', sans-serif`, and nothing in this app loads Lato,
+  so every heading silently fell back to the browser's default sans while body copy
+  rendered in Inter. `custom.css` now re-points that exact selector list at
+  `--mt-font-body`. Match the list including `.h1-.h6`: those class selectors
+  outrank the bare elements, so overriding only `h1-h6` leaves the class form
+  behind. It wins on source order alone, so it has to stay below the bootstrap
+  `<link>` in `index.html`.
 - **Hero image**: set `hero.image` and the woven placeholder gradient gives way to
   the photo, with `.mt-hero-image` adding a scrim and white copy so the text stays
   readable on any image. Leave it blank for the placeholder.

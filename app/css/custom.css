@@ -61,6 +61,20 @@ Template: Howdy
 }
 
 
+/* bootstrap-451.css pins every heading to 'Lato', a font this app never loads - so headings
+   have been falling back to the browser's default sans while the rest of the theme renders in
+   --mt-font-body. Putting them on the token instead means site.json's theme.fontFamily drives
+   headings too, rather than only the body copy.
+
+   The selector list matches bootstrap's exactly, .h1-.h6 included: those class selectors outrank
+   the bare elements, so overriding only h1-h6 would leave anything using the class form behind.
+   Equal specificity, so this wins purely on custom.css loading later - keep it below the
+   bootstrap link in index.html. */
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+    font-family: var(--mt-font-body);
+}
+
 /* Stock Four51 theme (bootstrap-451.css) puts a fixed 100px gray margin below every page - with
    ModernTheme's generously-spaced pages this read as a huge empty gray gap before the footer. */
 body {
