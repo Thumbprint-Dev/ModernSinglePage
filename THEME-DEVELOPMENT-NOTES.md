@@ -727,6 +727,33 @@ Four51 without forking the theme.
 - Adding a key means adding it in *both* places -- the JSON and the service's
   defaults. A key only in the JSON is ignored.
 
+## The address form saves on submit only
+
+`partials/controls/addressInput.html` used to call `autoSaveIfValid()` from `ng-blur`
+on every text field and `ng-change` on the selects and checkboxes -- 14 hooks. Tabbing
+out of a field therefore persisted the address mid-edit.
+
+- A half-typed street line could be written to the address book, and `Address.save`
+  round-trips the whole object, so a partially filled form overwrote the stored one.
+- Every save broadcasts `event:AddressSaved`, which `ordershipping.js` and
+  `orderbilling.js` listen for. They reassign the order's `Ship`/`BillAddressID` and
+  set `shipaddressform`/`billaddressform` to false -- so an autosave mid-edit could
+  close the form underneath the shopper.
+- `orderbilling.js` already carried defensive code for the fallout: a freshly-typed
+  credit card lived only on the raw `CreditCard` object and "silently disappeared any
+  time a billing field autosaved (e.g. blurring the bill-to name)". Removing the
+  autosave removes the situation that guard exists for.
+
+Saving now happens on submit only, via the form's `ng-submit="save()"`. The Google
+Places path in `makeAddress` also no longer saves -- picking a suggestion fills the
+fields in and nothing more. The submit button reads **Save** rather than Done.
+
+**Testing this needs the directive, not the template.** `addressInput.html` has no
+`ng-controller`; `AddressInputCtrl` is attached by the `addressinput` directive. Compile
+`<addressinput address="..." user="...">`, not the raw partial -- compiling the partial
+alone leaves `ng-submit="save()"` pointing at nothing, and a "no save happened" result
+means only that the controller was never there.
+
 ## Workflow
 
 - **No branches or PRs — every change commits directly to `master`.** The user explicitly

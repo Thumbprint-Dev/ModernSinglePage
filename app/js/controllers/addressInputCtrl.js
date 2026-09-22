@@ -17,12 +17,12 @@ function ($scope, $rootScope, $location, User, Address, Resources) {
         );
     };
 
-    $scope.autoSaveIfValid = function() {
-        if ($scope.addressEdit && $scope.addressEdit.$valid) {
-            persistAddress();
-        }
-    };
-
+    // There is deliberately no autosave here. Every field in addressInput.html used to
+    // call an autoSaveIfValid() on ng-blur (and ng-change on the selects and
+    // checkboxes), so tabbing out of a field persisted the address mid-edit -- a
+    // half-typed street line could be written to the address book, and each save
+    // broadcast event:AddressSaved, which reassigns the order's Ship/BillAddressID and
+    // closes the form underneath the shopper. Saving happens on submit only.
     $scope.save = function() {
         persistAddress(function() {
             $location.path($scope.return);
@@ -96,6 +96,7 @@ function ($scope, $rootScope, $location, User, Address, Resources) {
                 component.types[0] == 'country'                     ? ($scope.address.Country = component.short_name)   : '';
                 component.types[0] == 'postal_code'                 ? ($scope.address.Zip = component.short_name)       : '';
         });
-        $scope.autoSaveIfValid();
+        // Deliberately does not save. Picking a suggestion only fills the fields in;
+        // nothing is persisted until the form is submitted, same as typing them by hand.
     }
 }]);
