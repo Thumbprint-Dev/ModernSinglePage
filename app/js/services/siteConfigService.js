@@ -47,6 +47,24 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			// to have the font installed locally.
 			fontUrl: ''
 		},
+		shipping: {
+			// The only shipping method names the checkout dropdowns may offer, matched
+			// against the Name the API returns, trimmed and case-insensitively. Empty
+			// means unrestricted, not "allow nothing" -- a site that has not filled
+			// this in keeps everything the platform offers. The platform still decides
+			// entitlement; this can only narrow what is shown, never add a method back.
+			allowedDomesticMethods: [],
+			// Methods offered only when the order ships outside domesticCountries.
+			// When this is non-empty it replaces allowedDomesticMethods for an international
+			// address, and its entries are suppressed on a domestic one -- the rule
+			// is symmetric, so a carrier listed here never appears domestically.
+			// Leave it empty and country plays no part at all.
+			allowedInternationalMethods: [],
+			// Country codes counted as domestic, as the address returns them. Defaults
+			// to US alone; note that Canada and Mexico are not domestic here unless a
+			// site says so.
+			domesticCountries: ['US']
+		},
 		// Applied to the hero element by ngStyle; recomputed whenever the file lands.
 		heroStyle: {}
 	};
@@ -77,6 +95,14 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 
 	function isColor(value) {
 		return angular.isString(value) && COLOR.test(value.trim());
+	}
+
+	function stringList(value) {
+		var output = [];
+		angular.forEach(value, function(entry) {
+			if (angular.isString(entry) && entry.trim() !== '') output.push(entry.trim());
+		});
+		return output;
 	}
 
 	function isSafeUrl(value) {
@@ -202,7 +228,25 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			if (!angular.isObject(defaults) || !angular.isObject(overrides)) return;
 
 			angular.forEach(defaults, function(value, key) {
-				if (angular.isString(overrides[key]) && overrides[key] !== '') defaults[key] = overrides[key];
+				var override = overrides[key];
+
+				// The override has to match the shape of the default it replaces. A key
+				// that defaults to a list takes only a list; one that defaults to a
+				// string takes only a string. Anything else is ignored, so the key keeps
+				// its default and the rest of the file still applies -- the same
+				// treatment a blank gets.
+				//
+				// Without the type check a list written as a bare string ("UPS Ground"
+				// instead of ["UPS Ground"]) was stored as a string and then iterated
+				// character by character downstream, which threw inside checkout.
+				if (angular.isArray(value)) {
+					if (angular.isArray(override)) defaults[key] = stringList(override);
+					else if (override !== undefined) $log.warn('SiteConfig: ' + section + '.' + key + ' must be a list, ignoring -- ' + angular.toJson(override));
+				}
+				// Lists are taken whole rather than merged, so a site can shorten one as
+				// well as extend it. Non-string entries are dropped instead of failing
+				// the whole file.
+				else if (angular.isString(override) && override !== '') defaults[key] = override;
 			});
 		});
 

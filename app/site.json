@@ -23,5 +23,14 @@
 		"subheading": "New apparel, drinkware and print kits, priced for your group.",
 		"buttonText": "Shop the collection",
 		"buttonHref": "catalog"
+	},
+	"shipping": {
+		"_help_allowedDomesticMethods": "allowedDomesticMethods: what a DOMESTIC order may use. Matched on the name Four51 returns, trimmed and case-insensitive, and the whole name must match - `Fedex International` does not match `Fedex International Priority`, so list each variant you want. Leave it empty for no restriction. Methods seen: `Bulk Shipping (over 150 lbs)`, `Fedex International`, `UPS Ground`, `UPS 3 Day Select`, `UPS 2nd Day Air`, `UPS Next Day Air Saver`, `UPS Next Day Air`, `UPS Next Day Air Early A.M.`.",
+		"_help_allowedInternationalMethods": "allowedInternationalMethods: what an order shipping OUTSIDE domesticCountries may use. The rule is symmetric - an international address sees only these, and a domestic address never sees them, so a carrier listed here is automatically kept out of domestic checkout. Leave it empty and country plays no part at all. A name matching nothing empties the dropdown and logs a warning to the console.",
+		"_help_domesticCountries": "domesticCountries: country codes treated as domestic, as the address stores them. Everything else counts as international. Empty falls back to US. Canada and Mexico are NOT domestic unless listed here. Note this is country only.",
+		
+		"allowedDomesticMethods": ["UPS Ground"],
+		"allowedInternationalMethods": ["Fedex International"],
+		"domesticCountries": ["US"]
 	}
 }

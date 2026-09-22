@@ -40,15 +40,30 @@
                         <option value="">{{('Choose Your' | r) + ' ' + ('Shipping' | r) + ' ' + ('Address' | r) | xlat}}</option>
                     </select>
                 </div>
-                <div class="mt-field" ng-show="user.ShipMethod != null && shippers">
+                <!-- `shippers != null` rather than plain `shippers`: AngularJS 1.2 runs ng-show
+                     through toBoolean(), which counts an EMPTY ARRAY as false - so this whole
+                     field used to disappear the moment the list came back empty, taking any
+                     explanation with it. Testing against null keeps the row up once the list
+                     has loaded, empty or not, and still hides it while the fetch is in flight. -->
+                <div class="mt-field" ng-show="user.ShipMethod != null && shippers != null">
                     <label ng-class="{required: !currentOrder.IsMultipleShip() && user.ShipMethod != null}" ng-show="currentOrder.LineItems[0].ShipperName || !currentOrder.IsMultipleShip() && user.ShipMethod != null">{{('Shipping' | r) + ' Method' | xlat}}</label>
                     <select class="form-control" ng-change="updateShipper()" name="shipMethod"
                             ng-model="currentOrder.LineItems[0].ShipperName"
-                            ng-show="user.ShipMethod.ShipperSelectionType == 'UserDropDown'"
+                            ng-show="user.ShipMethod.ShipperSelectionType == 'UserDropDown' && shippers.length"
                             ng-options="shipper.Name as (shipper.Name + ' ' + (shipper.ShippingRate.Price | currency | xlat)) for shipper in shippers"
                             ng-required="!currentOrder.IsMultipleShip() && user.ShipMethod != null">
                         <option value="">{{('Choose Your' | r) + ' ' + ('Shipping' | r) + ' Method' | xlat}}</option>
                     </select>
+                    <!-- The list came back empty: either the carrier does not serve this
+                         address or site.json's allowedDomesticMethods/allowedInternationalMethods ruled
+                         everything out. The select is hidden rather than left as an empty
+                         dropdown, but stays in the DOM so its ng-required still blocks
+                         submit - there is no valid way to check out without a method, and
+                         this says why instead of failing silently. -->
+                    <p class="mt-checkout-payment-warning mt-shipmethod-empty"
+                       ng-show="user.ShipMethod.ShipperSelectionType == 'UserDropDown' && !shippers.length">
+                        {{'No shipping methods are available for this address. Please choose a different address, or contact us for help.' | r | xlat}}
+                    </p>
                 </div>
             </div>
 
@@ -109,12 +124,20 @@
                     <div class="mt-field" ng-show="item.ShipAddressID || currentOrder.IsMultipleShip() && item.ShipAddressID && user.ShipMethod != null">
                         <label ng-class="{required: currentOrder.IsMultipleShip() && user.ShipMethod != null}">{{('Shipping' | r) + ' ' + ('Method' | r) | xlat}}</label>
                         <select class="form-control" ng-change="updateShipper(item)"
-                                ng-show="user.ShipMethod.ShipperSelectionType == 'UserDropDown'"
+                                ng-show="user.ShipMethod.ShipperSelectionType == 'UserDropDown' && (shippers | noliverates).length"
                                 ng-options="shipper.Name as shipper.Name for shipper in shippers | noliverates"
                                 ng-model="item.ShipperName"
                                 ng-required="currentOrder.IsMultipleShip() && user.ShipMethod != null">
                             <option value="">{{('Choose Your' | r) + ' ' + ('Shipping' | r) + ' Method' | xlat}}</option>
                         </select>
+                        <!-- Tested against `shippers | noliverates`, the same list the
+                             options are built from: this select drops live-rate carriers on
+                             top of the site.json filtering, so it can be empty when the
+                             single-ship one above is not. -->
+                        <p class="mt-checkout-payment-warning mt-shipmethod-empty"
+                           ng-show="user.ShipMethod.ShipperSelectionType == 'UserDropDown' && !(shippers | noliverates).length">
+                            {{'No shipping methods are available for this address. Please choose a different address, or contact us for help.' | r | xlat}}
+                        </p>
                     </div>
                     <div class="mt-field" ng-show="user.ShipMethod.AskForAccountNumber && currentOrder.IsMultipleShip()">
                         <label ng-show="item.ShipAccount">{{('Shipping' | r) + ' ' + ('Account' | r) | xlat}}</label>

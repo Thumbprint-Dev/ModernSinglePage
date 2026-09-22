@@ -1,8 +1,48 @@
-four51.app.directive('ordershipping', ['Order', 'Shipper', 'Address', 'AddressList', function(Order, Shipper, Address, AddressList) {
+four51.app.directive('ordershipping', ['Order', 'Shipper', 'Address', 'AddressList', '$filter', 'SiteConfig', function(Order, Shipper, Address, AddressList, $filter, SiteConfig) {
 	var obj = {
 		restrict: 'AE',
 		templateUrl: 'partials/controls/orderShipping.html',
 		controller: ['$scope', function($scope) {
+			// Every Shipper.query result goes through here so $scope.shippers is the
+			// one filtered source. Filtering in the template instead would leave the
+			// raw list behind the name -> object lookup in updateShipper and behind
+			// the "is the saved shipper still available" check below -- a method
+			// hidden by site.json would vanish from the dropdown while staying
+			// selected on the order.
+			//
+			// Gated on SiteConfig.loaded because site.json is fetched too: a fast
+			// shipper response could otherwise be filtered against an empty hide
+			// list. The promise always resolves, a missing file included.
+			function setShippers(list, onReady) {
+				SiteConfig.loaded.then(function() {
+					shipCountry(function(country) {
+						$scope.shippers = $filter('visibleshippers')(list, country);
+						if (onReady) onReady($scope.shippers);
+					});
+				});
+			}
+
+			// The country the order ships to, for the international rules in
+			// visibleshippers. Resolved here rather than inside the filter: the live
+			// stores that do this (shipperFilter in CapitalVacationsUniforms and
+			// Everstory) call Address.get from inside the filter and return before the
+			// callback fires, so the first digest yields an empty list and it only
+			// fills in once a later digest happens to re-run -- and they re-request the
+			// address on every digest. A filter has to be synchronous; this is the spot
+			// where waiting is legitimate, and it runs once per shipper fetch.
+			//
+			// Order-level address on purpose. Rates are quoted for the order and
+			// $scope.shippers is shared by both selects, so per-line-item addresses in
+			// multiple-ship mode do not get their own list -- same as the live stores.
+			function shipCountry(done) {
+				var addressID = $scope.currentOrder && $scope.currentOrder.ShipAddressID;
+
+				if (!addressID) return done('');
+				Address.get(addressID, function(address) {
+					done(address && address.Country ? address.Country : '');
+				});
+			}
+
 			AddressList.clear();
 			AddressList.shipping(function(list) {
 				$scope.shipaddresses = list;
@@ -84,16 +124,20 @@ four51.app.directive('ordershipping', ['Order', 'Shipper', 'Address', 'AddressLi
 			};
 
 			Shipper.query($scope.currentOrder, function(list) {
-				$scope.shippers = list;
-				// sometimes the current shipper is not longer available. we need to clear the shipping information in that case
-				var exists = false;
-				angular.forEach(list, function(s) {
-					if (!exists && $scope.currentOrder.LineItems[0].ShipperID == s.ID)
-						exists = true;
+				setShippers(list, function(shippers) {
+					// sometimes the current shipper is not longer available. we need to clear the shipping information in that case
+					// Checked against the filtered list on purpose: a method the site
+					// hides is, for this order, exactly as unavailable as one the API
+					// stopped returning, so it gets cleared and re-picked the same way.
+					var exists = false;
+					angular.forEach(shippers, function(s) {
+						if (!exists && $scope.currentOrder.LineItems[0].ShipperID == s.ID)
+							exists = true;
+					});
+					if (!exists) {
+						Order.clearshipping($scope.currentOrder);
+					}
 				});
-				if (!exists) {
-					Order.clearshipping($scope.currentOrder);
-				}
 			});
 
 			$scope.setMultipleShipAddress = function() {
@@ -172,7 +216,7 @@ four51.app.directive('ordershipping', ['Order', 'Shipper', 'Address', 'AddressLi
 					function(order) {
 						Shipper.query(order,
 							function(list) {
-								$scope.shippers = list;
+								setShippers(list);
 							}
 						);
 					},
@@ -198,10 +242,10 @@ four51.app.directive('ordershipping', ['Order', 'Shipper', 'Address', 'AddressLi
 				saveChanges(
 					function(order) {
 						Shipper.query(order, function(list) {
-							$scope.shippers = list;
+							setShippers(list, function() {
 								$scope.shippingFetchIndicator = false;
-							}
-						);
+							});
+						});
 					},
 					function(ex) {
 						$scope.currentOrder.ShipAddressID = null;

@@ -557,6 +557,7 @@ Four51 without forking the theme.
 	"favicon": "",
 	"logo": { "url": "", "alt": "" },
 	"theme": { "accent": "", "accentDark": "", "fontFamily": "", "fontUrl": "" },
+	"shipping": { "allowedDomesticMethods": [] },
 	"hero": {
 		"image": "",
 		"eyebrow": "Fall 2026 Collection",
@@ -627,6 +628,100 @@ Four51 without forking the theme.
 - **Hero image**: set `hero.image` and the woven placeholder gradient gives way to
   the photo, with `.mt-hero-image` adding a scrim and white copy so the text stays
   readable on any image. Leave it blank for the placeholder.
+- **An empty shipper list now explains itself instead of vanishing.** The shipping
+  method field carried `ng-show="user.ShipMethod != null && shippers"`, and
+  **AngularJS 1.2 runs ng-show through `toBoolean()`, which counts an empty array as
+  false** -- so the entire row disappeared the moment the list came back empty, with
+  nothing to say why. It now tests `shippers != null`, which keeps the row up once the
+  list has loaded (empty or not) and still hides it while the fetch is in flight, and
+  a `.mt-shipmethod-empty` warning takes the select's place. The select is hidden
+  rather than removed, so its `ng-required` still blocks submit -- there is no valid
+  way to check out without a method, and this says so instead of failing silently.
+- That `toBoolean` behaviour is worth remembering generally: `ng-show="someArray"` is
+  false for `[]`, so any "we fetched it and got nothing" state written that way hides
+  itself. Test `!= null`, or `.length`, depending on which you mean.
+- The multiple-ship select applies `| noliverates` on top of the site.json filtering,
+  so its emptiness is tested against `(shippers | noliverates).length` -- it can be
+  empty when the single-ship one is not.
+- **Testing this in the browser needs `$animate.enabled(false)`.** The app loads
+  `angular-animate`, so `ng-hide` is applied asynchronously via `ng-hide-add` and a
+  compiled-in-isolation fragment never finishes the transition -- an element mid-hide
+  reads as visible and the assertion lies.
+- **International-only carriers**: `shipping.allowedInternationalMethods` is the allowlist
+  for an order shipping outside `shipping.domesticCountries` (default `['US']`), and
+  `allowedDomesticMethods` becomes the domestic one. The rule is symmetric: an international
+  address sees only the international list, and a domestic address never sees those
+  carriers -- so a carrier named there is kept out of domestic checkout without also
+  having to be excluded from `allowedDomesticMethods`. Leave `allowedInternationalMethods` empty and
+  country plays no part; `allowedDomesticMethods` then applies everywhere. An unknown country
+  counts as domestic, and an empty `domesticCountries` falls back to `US` rather than
+  making every address international.
+- **The country is resolved in the directive, not the filter.** The live stores that
+  do this (`shipperFilter` in `CapitalVacationsUniforms` and `Everstory` under
+  `storefront-files`) call `Address.get` from *inside* the filter and `return results`
+  before the callback fires, so the first digest yields an empty list and it only
+  fills in when a later digest happens to re-run -- and they re-request the address
+  every digest, surviving only because `addressService` caches in `store`. A filter
+  has to be synchronous. `ordershipping.js` resolves the address before calling the
+  filter, which is where waiting is legitimate, and does it once per shipper fetch.
+- **Country comes from the order-level ship address.** Rates are quoted per order and
+  `$scope.shippers` is shared by both selects, so per-line-item addresses in
+  multiple-ship mode do not each get their own list. The live stores have the same
+  limitation.
+- **Names match in full**, so `Fedex International` does not match `Fedex
+  International Priority`; list each variant. The live stores use a case-insensitive
+  *substring* (`indexOf('fedex international') > -1`) instead, which catches variants
+  automatically but also catches anything else containing the phrase. Exact matching
+  was kept here for consistency with every other name in `site.json`.
+- **Puerto Rico is not handled.** `Everstory` treats `country === 'US' && state ===
+  'PR'` as international because FedEx rates it that way. `domesticCountries` is
+  country-only, so a PR address counts as domestic here. Add a state-level setting if
+  a site needs it.
+- **Restricting shipping methods**: `shipping.allowedDomesticMethods` is an allowlist -- the
+  only method *names* the checkout dropdowns may offer, matched against the `Name`
+  the API returns, trimmed and case-insensitively. Names, not IDs: the templates
+  already bind `shipper.Name` and line items persist `ShipperName`, so names are
+  what the app keys on everywhere else. The tradeoff is that renaming a method in
+  the Four51 admin silently drops it from the allowlist, and nothing here can
+  detect that.
+- **Unrestricted is the fallback for every way the key can be absent**: an empty
+  list, the `allowedDomesticMethods` key missing, the whole `shipping` section missing, or
+  `site.json` itself missing. Same contract as every other blank in `site.json`, and
+  the only safe reading -- a site that never fills this in must keep whatever the
+  platform offers rather than lose checkout. The filter returns the original array
+  untouched in all of those cases.
+- **Overrides must match the shape of the default they replace** (`apply` in the
+  service). A key defaulting to a list takes only a list; one defaulting to a string
+  takes only a string. Anything else is ignored with a `$log.warn`, and the key keeps
+  its default while the rest of the file still applies. This is not theoretical:
+  `"allowedDomesticMethods": "UPS Ground"` instead of `["UPS Ground"]` used to be stored as a
+  string and then iterated character by character, throwing `allowed.join is not a
+  function` inside checkout. The filter re-checks the type for the same reason -- the
+  difference between an unusable checkout and an unrestricted one is worth the
+  duplication.
+- **An allowlist fails differently from a blocklist**, which is worth keeping in
+  mind when editing the list. A name matching nothing used to be harmless; now it
+  removes a method rather than adding one, and a list matching nothing empties the
+  dropdown. That is deliberate: silently falling back to every method would let a
+  renamed method in the admin quietly re-expose one the site excluded, failing late
+  and invisibly. Instead the filter `$log.warn`s naming both the configured list and
+  what the order actually offered, so the mismatch is obvious in the console.
+- **The filter runs at the source, not in the template.** `ordershipping.js` routes
+  all three `Shipper.query` results through one helper so `$scope.shippers` is the
+  only list anything sees. Filtering in the template instead would leave the raw
+  list behind the name -> object lookup in `updateShipper` and behind the "is the
+  saved shipper still available" check, so a hidden method would disappear from the
+  dropdown while staying selected on the order. Checking availability against the
+  filtered list also means a hidden-but-already-selected method gets cleared and
+  re-picked, reusing the existing `Order.clearshipping` path.
+- It is gated on `SiteConfig.loaded`, since `site.json` is fetched too -- without
+  that, a fast shipper response gets filtered against an empty hide list.
+- **This is a UI-level hide, not an entitlement.** The API still returns and still
+  accepts the method; the platform decides what a site is entitled to. It can only
+  narrow what the dropdowns offer, never add something back.
+- **Lists merge whole, not per-entry** (`stringList` in the service): a site can
+  shorten a list as well as extend it, and non-string entries are dropped rather
+  than failing the file, the same spirit as ignoring a blank string.
 - Paths are relative to `<base href>`, i.e. the deployed app folder, the same way
   partials load. An absolute URL to an image hosted elsewhere works too.
 - Adding a key means adding it in *both* places -- the JSON and the service's
