@@ -754,6 +754,30 @@ fields in and nothing more. The submit button reads **Save** rather than Done.
 alone leaves `ng-submit="save()"` pointing at nothing, and a "no save happened" result
 means only that the controller was never there.
 
+## Editing an address did not refresh the card showing it
+
+Both checkout directives resolve the displayed address inside a `$watch` on its id --
+`ordershipping.js` watches `currentOrder.ShipAddressID` into `orderShipAddress`,
+`orderbilling.js` watches `currentOrder.BillAddressID` into `BillAddress`. The
+`event:AddressSaved` handlers then assign `ShipAddressID`/`BillAddressID` from the
+saved address.
+
+**Editing an existing address keeps its id**, so that assignment writes the same value
+back, the watch never fires, and the card kept showing the pre-edit values until the
+page was reloaded. The data was never stale -- `Address.save` writes through to
+`451Cache.Address.<id>` and clears `451Cache.Addresses`, so the list and any later
+`Address.get` were correct. Only the already-resolved object on the scope was stale.
+
+The watch body is now a named function (`applyShipAddress` / `applyBillAddress`) called
+from both the watch and the saved handler, so the saved address goes straight onto the
+scope. Extracting it rather than assigning the scope property directly matters: both
+watches also copy `FirstName`/`LastName` onto the order or its line items under
+`EditShipToName`/`EditBillToName`, and that has to happen on an edit too.
+
+**Watch out for this shape generally** -- `$watch` on an id, with the object fetched in
+the callback, silently misses in-place edits. Anywhere the theme does this, saving needs
+to push the new object in as well.
+
 ## Workflow
 
 - **No branches or PRs — every change commits directly to `master`.** The user explicitly

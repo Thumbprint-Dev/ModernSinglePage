@@ -34,6 +34,23 @@ four51.app.directive('ordershipping', ['Order', 'Shipper', 'Address', 'AddressLi
 			// Order-level address on purpose. Rates are quoted for the order and
 			// $scope.shippers is shared by both selects, so per-line-item addresses in
 			// multiple-ship mode do not get their own list -- same as the live stores.
+			// Pushes a resolved address into the displayed card, plus the ship-to name
+			// copy that goes with it. Shared by the ShipAddressID watch and the
+			// event:AddressSaved handler: editing an existing address keeps the same ID,
+			// so the watch never re-fires and the card would otherwise keep showing the
+			// values from before the edit until the page was reloaded.
+			function applyShipAddress(add) {
+				if (!add) return;
+
+				if ($scope.user.Permissions.contains('EditShipToName') && !add.IsCustEditable) {
+					angular.forEach($scope.currentOrder.LineItems, function(item) {
+						item.ShipFirstName = add.FirstName;
+						item.ShipLastName = add.LastName;
+					});
+				}
+				$scope.orderShipAddress = add;
+			}
+
 			function shipCountry(done) {
 				var addressID = $scope.currentOrder && $scope.currentOrder.ShipAddressID;
 
@@ -70,6 +87,9 @@ four51.app.directive('ordershipping', ['Order', 'Shipper', 'Address', 'AddressLi
 			$scope.$on('event:AddressSaved', function(event, address) {
 				if (address.IsShipping) {
 					$scope.currentOrder.ShipAddressID = address.ID;
+					// Assigning the same ID back does not trip the watch, so refresh the
+					// displayed address here rather than relying on it.
+					applyShipAddress(address);
 					if (!$scope.shipToMultipleAddresses)
 						$scope.setShipAddressAtOrderLevel();
 					$scope.shipaddressform = false;
@@ -176,15 +196,7 @@ four51.app.directive('ordershipping', ['Order', 'Shipper', 'Address', 'AddressLi
 				}
 
 				if (newValue) {
-					Address.get(newValue, function(add) {
-						if ($scope.user.Permissions.contains('EditShipToName') && !add.IsCustEditable) {
-							angular.forEach($scope.currentOrder.LineItems, function(item) {
-								item.ShipFirstName = add.FirstName;
-								item.ShipLastName = add.LastName;
-							});
-						}
-						$scope.orderShipAddress = add;
-					});
+					Address.get(newValue, applyShipAddress);
                     if (!$scope.currentOrder.IsMultipleShip()) {
                         $scope.setShipAddressAtOrderLevel();
                     }

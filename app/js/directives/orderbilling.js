@@ -51,6 +51,21 @@ four51.app.directive('orderbilling', ['Address', 'AddressList', 'Order', functio
 			});
 			$scope.billaddress = { Country: 'US', IsShipping: false, IsBilling: true };
 
+			// Pushes a resolved address into the displayed card, plus the bill-to name copy
+			// that goes with it. Shared by the BillAddressID watch and the
+			// event:AddressSaved handler: editing an existing address keeps the same ID,
+			// so the watch never re-fires and the card would otherwise keep showing the
+			// values from before the edit until the page was reloaded.
+			function applyBillAddress(add) {
+				if (!add) return;
+
+				if ($scope.user.Permissions.contains('EditBillToName') && !add.IsCustEditable) {
+					$scope.currentOrder.BillFirstName = add.FirstName;
+					$scope.currentOrder.BillLastName = add.LastName;
+				}
+				$scope.BillAddress = add;
+			}
+
 			$scope.editBillAddress = function() {
 				$scope.billaddress = angular.copy($scope.BillAddress);
 				$scope.billaddressform = true;
@@ -59,6 +74,9 @@ four51.app.directive('orderbilling', ['Address', 'AddressList', 'Order', functio
 			$scope.$on('event:AddressSaved', function(event, address) {
 				if (address.IsBilling) {
 					$scope.currentOrder.BillAddressID = address.ID;
+					// Assigning the same ID back does not trip the watch, so refresh the
+					// displayed address here rather than relying on it.
+					applyBillAddress(address);
 					$scope.billaddressform = false;
 				}
 
@@ -73,13 +91,7 @@ four51.app.directive('orderbilling', ['Address', 'AddressList', 'Order', functio
 
 			$scope.$watch('currentOrder.BillAddressID', function(newValue) {
 				if (newValue) {
-					Address.get(newValue, function(add) {
-						if ($scope.user.Permissions.contains('EditBillToName') && !add.IsCustEditable) {
-							$scope.currentOrder.BillFirstName = add.FirstName;
-							$scope.currentOrder.BillLastName = add.LastName;
-						}
-						$scope.BillAddress = add;
-					});
+					Address.get(newValue, applyBillAddress);
 				}
 			});
 
