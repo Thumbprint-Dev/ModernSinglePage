@@ -46,6 +46,13 @@ function ($routeParams, $sce, $scope, $451, Category, Product, AppConst, Order, 
 		}
 		$scope.shopByCategories = eligible;
 
+		// With fewer than 4 categories, a fixed col-sm-3 grid leaves empty space on the right
+		// instead of filling the row - widen the columns so 1-2 categories fill a 2-up row and
+		// 3 fill a 3-up row. .mt-dept-tile's aspect-ratio:1/1 (custom.css) keeps every tile
+		// square automatically as its column width changes, so this alone is enough to preserve
+		// the 1:1 ratio without any other layout changes.
+		$scope.deptTileClass = eligible.length <= 2 ? 'col-sm-6' : (eligible.length == 3 ? 'col-sm-4' : 'col-sm-3');
+
 		// Deferred until the real featured category (with its actual, possibly-suffixed
 		// InteropID) is resolved above, rather than searching on the bare config prefix directly -
 		// guarded so this only ever fires once even though computeHomeCategoryLists() re-runs

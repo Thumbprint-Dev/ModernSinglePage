@@ -12,7 +12,7 @@
     <div class="mt-container mt-section" ng-if="shopByCategories.length">
         <h2 class="mt-eyebrow">{{'Shop by category' | r | xlat}}</h2>
         <div class="row">
-            <div class="col-sm-3" ng-repeat="dept in shopByCategories">
+            <div class="{{deptTileClass}}" ng-repeat="dept in shopByCategories">
                 <a ng-href="catalog/{{dept.InteropID}}" class="mt-dept-tile">
                     <img ng-if="dept.Image.URL" ng-src="{{dept.Image.URL}}" class="mt-placeholder-photo mt-real-photo" alt="" />
                     <div ng-if="!dept.Image.URL" class="mt-placeholder-photo">{{'[lifestyle photo]' | r | xlat}}</div>
