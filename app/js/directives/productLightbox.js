@@ -53,7 +53,7 @@ function productlightbox() {
             '</div>',
             '<ul class="mt-lightbox-thumbs" ng-if="LineItem.images.length > 1">',
             '<li ng-repeat="image in LineItem.images">',
-            '<a ng-click="$parent.index=$index" ng-class="{active: $index==$parent.index}">',
+            '<a ng-click="selectImage($index)" ng-class="{active: $index==$parent.index}">',
             '<img ng-src="{{image.url}}" class="mt-lightbox-thumb" />',
             '</a>',
             '</li>',
@@ -114,6 +114,18 @@ function LightboxCtrl($scope, Lightbox) {
 
     $scope.openLightboxModal = function (index) {
         Lightbox.openModal($scope.LineItem.images, index);
+    };
+
+    // Called from the thumbnail template instead of the thumbnails' own ng-click writing
+    // "$parent.index=$index" directly - the thumbnail <ul> sits behind ng-if (only rendered
+    // when there's more than one image), and ng-if creates its own child scope, so that write
+    // landed on the ng-if's scope, not this controller's. The main image list (a sibling
+    // ng-repeat with no such wrapper) read $parent.index from THIS scope and never saw it
+    // change - the thumbnail's own active-border toggled fine (same scope wrote and read it),
+    // but clicking a thumbnail never swapped the large image. A function on this scope always
+    // closes over this scope's $index, regardless of how deep the caller's own scope nests.
+    $scope.selectImage = function (index) {
+        $scope.index = index;
     };
 
     LightboxImageScope($scope);
