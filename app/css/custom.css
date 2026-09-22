@@ -381,7 +381,11 @@ body {
     bottom: 0;
     z-index: 1;
     margin: 0;
-    padding: 18px;
+    padding: 18px 18px 28px 28px;
+    /* .mt-dept-tile's 40px border-radius curves well past a flat 18px inset at the
+       bottom-left corner this text is anchored to, so the same padding that reads as even
+       spacing on the top/right reads as cramped against the curve here - extra padding-left/
+       padding-bottom clears it so the buffer looks equal on every side. */
     font-size: 17px;
     font-weight: 600;
     letter-spacing: -0.01em;
