@@ -115,6 +115,30 @@ function ($scope, $route, $rootScope, $timeout, $document, $window, $location, $
 	$scope.$on("$routeChangeSuccess", init);
 	$scope.$on('event:auth-loginRequired', cleanup);
 
+	// $scope.currentOrder is set here (init(), above) and inherited by every other controller
+	// via the normal prototypal scope chain - navCtrl.js is the one exception, since <navigation>
+	// gets its own controller scope as a SIBLING of ng-view, not a descendant of it. Any update
+	// navCtrl.js made directly to "$scope.currentOrder" (e.g. removing a mini-cart item) was only
+	// ever shadowing nav's own local copy - the real value here, that every other page actually
+	// reads, never changed. A category-page add-to-cart right after a mini-cart removal then sent
+	// the server a stale order (still referencing an already-deleted line item, or a deleted
+	// order's now-invalid ID), which came back as a raw "Object reference not set to an instance
+	// of an object" exception. Order.deletelineitem/save/etc. already broadcast this event on
+	// every mutation (orderService.js's _then helper) - listening for it HERE, on the scope that
+	// actually owns currentOrder, is what makes every other page see the update too. Guarded by
+	// CurrentOrderID so an approver opening someone else's order (Order History) never overwrites
+	// this shopper's own cart.
+	$scope.$on('event:orderUpdate', function(event, order) {
+		if (!order || order.Status != 'Unsubmitted') {
+			if (!order || ($scope.currentOrder && order.ID === $scope.currentOrder.ID))
+				$scope.currentOrder = null;
+			return;
+		}
+		if ($scope.user && order.ID === $scope.user.CurrentOrderID) {
+			$scope.currentOrder = order;
+		}
+	});
+
 	// Timeout timer value
 	var TimeOutTimerValue = 15*60*1000;
 

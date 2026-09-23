@@ -35,6 +35,15 @@ function ($location, $route, $scope, $451, $timeout, $window, User, Order, Spend
     // Removing straight from the mini-cart, without leaving whatever page the shopper is
     // browsing. Mirrors cartCtrl.js's removeItem(), minus the shipping-recalc/saveChanges
     // afterward - the shopper isn't on the checkout flow here, so there's nothing to resave.
+    //
+    // Does NOT assign $scope.currentOrder itself, on purpose: <navigation> (this controller)
+    // gets its own scope as a SIBLING of ng-view, not an ancestor of it, so an assignment here
+    // only ever shadowed nav's own copy - every other page keeps reading Four51Ctrl's real
+    // currentOrder, which never changed, so a category-page add-to-cart right after a mini-cart
+    // removal sent the server a stale order and came back with a raw "Object reference not set
+    // to an instance of an object" exception. Order.deletelineitem already broadcasts
+    // event:orderUpdate on every call; Four51Ctrl.js listens for it and updates the one
+    // currentOrder every page actually inherits from - this just needs to trigger that.
     $scope.removeMinicartItem = function(item){
         if (!$scope.currentOrder || !confirm('Are you sure you wish to remove this item from your cart?'))
             return;
@@ -42,9 +51,6 @@ function ($location, $route, $scope, $451, $timeout, $window, User, Order, Spend
             if (!order) {
                 $scope.user.CurrentOrderID = null;
                 User.save($scope.user);
-                $scope.currentOrder = null;
-            } else {
-                $scope.currentOrder = order;
             }
         }, function(ex){
             alert(ex.Message);
@@ -136,25 +142,12 @@ function ($location, $route, $scope, $451, $timeout, $window, User, Order, Spend
         localStorage.clear();
     }
 
+    // currentOrder itself is Four51Ctrl.js's to own and sync (see the matching listener there) -
+    // this only derives the badge count, which is genuinely nav-specific UI state.
     $scope.$on('event:orderUpdate', function(event, order) {
         if (!order || order.Status != 'Unsubmitted') {
             $scope.cartCount = null;
-            // null specifically means "this session's own order was cleared" (e.g. Start New
-            // Order) - safe to clear the mini-cart too. A non-null order that's no longer
-            // Unsubmitted only clears it when it's the very order the mini-cart is showing -
-            // i.e. the shopper just submitted their cart - never for someone else's order.
-            if (!order || ($scope.currentOrder && order.ID === $scope.currentOrder.ID))
-                $scope.currentOrder = null;
             return;
-        }
-        // Every Order.get/save broadcasts this event with whatever order it just touched, which
-        // isn't always this shopper's own cart - an approver opening someone else's order from
-        // Order History fires it too. Only resync the header/mini-cart when the broadcast order
-        // really is the current user's own active order, so add-to-cart (previously stale here
-        // until the next full page navigation re-fetched it) updates immediately without ever
-        // letting someone else's order data leak into the mini-cart.
-        if ($scope.user && order.ID === $scope.user.CurrentOrderID) {
-            $scope.currentOrder = order;
         }
         // A kit that's still mid-configuration is a real LineItem server-side (the platform
         // requires that to know what needs configuring), but it isn't done yet - don't count it
