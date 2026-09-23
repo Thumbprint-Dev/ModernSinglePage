@@ -178,6 +178,14 @@ body {
     padding-bottom: 28px;
 }
 
+/* Shop by category's tiles already carry their own bottom margin (.mt-dept-tile), so stacking
+   the full 28px+28px combined gap on top of that read as excessive specifically between these
+   two sections - tightened just this one adjacency rather than shrinking every section's
+   spacing site-wide (Featured, the hero, etc. still want the fuller default). */
+.mt-section:has(> .mt-quick-actions) {
+    padding-top: 4px;
+}
+
 .mt-eyebrow {
     font-size: 12px;
     font-weight: 700;
