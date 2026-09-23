@@ -140,7 +140,7 @@ function ($scope, $route, $rootScope, $timeout, $document, $window, $location, $
 	});
 
 	// Timeout timer value
-	var TimeOutTimerValue = 15*60*1000;
+	var TimeOutTimerValue = 30*60*1000;
 
 	// Start a timeout
 	var TimeOut_Thread = $timeout(function(){ LogoutByTimer() } , TimeOutTimerValue);
