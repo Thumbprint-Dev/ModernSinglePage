@@ -563,11 +563,18 @@ Four51 without forking the theme.
 		"eyebrow": "Fall 2026 Collection",
 		"heading": "Gear your team for the season ahead.",
 		"subheading": "New apparel, drinkware and print kits, priced for your group.",
+		"showButton": true,
 		"buttonText": "Shop the collection",
 		"buttonHref": "catalog"
 	}
 }
 ```
+
+- **Hero button**: `hero.showButton` is a true/false switch (default `true`).
+  `false` hides the call-to-action button but keeps `buttonText`/`buttonHref`
+  in the file, so turning it back on is a one-word edit. Only a real JSON
+  boolean is accepted -- a quoted `"false"` is ignored with a console warning,
+  since as a non-empty string it would otherwise read as on.
 
 - `js/services/siteConfigService.js` holds the same keys as hard-coded fallbacks
   and merges the file over them, **ignoring blanks**. A site only fills in what it

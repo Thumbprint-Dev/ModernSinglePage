@@ -21,6 +21,8 @@
 		"eyebrow": "Fall 2026 Collection",
 		"heading": "Gear your team for the season ahead.",
 		"subheading": "New apparel, drinkware and print kits, priced for your group.",
+		"_help_showButton": "showButton: true or false, without quotes. false hides the hero button and keeps buttonText/buttonHref for when it is switched back on.",
+		"showButton": true,
 		"buttonText": "Shop the collection",
 		"buttonHref": "catalog"
 	},

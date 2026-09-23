@@ -22,6 +22,9 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			eyebrow: 'Fall 2026 Collection',
 			heading: 'Gear your team for the season ahead.',
 			subheading: 'New apparel, drinkware and print kits, priced for your group.',
+			// false hides the hero's call-to-action button while keeping its
+			// buttonText/buttonHref in the file, ready to switch back on.
+			showButton: true,
 			buttonText: 'Shop the collection',
 			buttonHref: 'catalog'
 		},
@@ -242,6 +245,12 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 				if (angular.isArray(value)) {
 					if (angular.isArray(override)) defaults[key] = stringList(override);
 					else if (override !== undefined) $log.warn('SiteConfig: ' + section + '.' + key + ' must be a list, ignoring -- ' + angular.toJson(override));
+				}
+				// A switch takes only a real true/false. A quoted "false" is a non-empty
+				// string, which would read as on -- the opposite of what was written.
+				else if (typeof value === 'boolean') {
+					if (typeof override === 'boolean') defaults[key] = override;
+					else if (override !== undefined) $log.warn('SiteConfig: ' + section + '.' + key + ' must be true or false, ignoring -- ' + angular.toJson(override));
 				}
 				// Lists are taken whole rather than merged, so a site can shorten one as
 				// well as extend it. Non-string entries are dropped instead of failing
