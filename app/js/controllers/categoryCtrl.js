@@ -84,6 +84,13 @@ function ($routeParams, $sce, $scope, $451, Category, Product, AppConst, Order, 
 	// custom spec that isn't itself a variant-defining dropdown).
 	$scope.quickAddIndicator = {};
 	$scope.quickAddNeedsOptions = {};
+	// A real Order.save() failure on a simple (variant-less) product - wrong price schedule
+	// state, a quantity restriction, an approval-workflow rule, anything server-side - is a
+	// different failure mode from "this product genuinely needs the full PDP to choose
+	// options," and showing the "needs options" UI for it is actively misleading on a product
+	// that has no options at all. Keyed by InteropID like the other two, holding the server's
+	// own message instead of a generic label.
+	$scope.quickAddError = {};
 	$scope.canQuickAdd = function(product) {
 		return product && product.Type != 'VariableText' && product.Type != 'Kit';
 	};
@@ -127,7 +134,7 @@ function ($routeParams, $sce, $scope, $451, Category, Product, AppConst, Order, 
 			function(ex) {
 				pending.undo();
 				$scope.quickAddIndicator[product.InteropID] = false;
-				$scope.quickAddNeedsOptions[product.InteropID] = true;
+				$scope.quickAddError[product.InteropID] = (ex && (ex.Detail || ex.Message)) || 'Unable to add to cart.';
 			}
 		);
 	}
@@ -157,6 +164,7 @@ function ($routeParams, $sce, $scope, $451, Category, Product, AppConst, Order, 
 
 	$scope.quickAddToCart = function(product) {
 		$scope.quickAddNeedsOptions[product.InteropID] = false;
+		$scope.quickAddError[product.InteropID] = null;
 		$scope.quickAddIndicator[product.InteropID] = true;
 		Product.clearCache().get(product.InteropID, function(fullProduct) {
 			if (fullProduct.Type == 'Kit' || fullProduct.Type == 'VariableText') {

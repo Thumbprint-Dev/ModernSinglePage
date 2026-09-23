@@ -513,6 +513,10 @@ body {
     margin: 6px 0 0;
 }
 
+.mt-product-card-error {
+    color: var(--mt-color-danger);
+}
+
 .mt-carousel-header {
     display: flex;
     align-items: center;
