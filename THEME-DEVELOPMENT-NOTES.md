@@ -43,8 +43,9 @@ the **Four51 admin**, not from this repo. Look for `concatProductView`/`concatSp
   cookie (`init()` writes it, `auth()` reads it, `isAuthenticated()` decides, `logout()` clears
   it). `app/js/services/userService.js`'s `_logout()` calls `store.clear()`, `Security.logout()`,
   then POSTs `api('logout/user')`. `app/js/controllers/navCtrl.js`'s `$scope.Logout()` (Log Out
-  menu item) and `app/js/controllers/Four51Ctrl.js`'s `LogoutByTimer()` (15-minute idle logout)
-  both trigger it — keep them in step, they've drifted out of sync before.
+  menu item) and `app/js/controllers/Four51Ctrl.js`'s `LogoutByTimer()` (idle logout, currently
+  30 minutes - `TimeOutTimerValue` in that file, easy to adjust per client) both trigger it — keep
+  them in step, they've drifted out of sync before.
 - **The cookie name** is `"user." + apiName` (apiName = first URL path segment, e.g.
   `user.Mollymaid`). On the deployed site the *server* sets it `path=/<app>` (no trailing
   slash), `SameSite=None; Secure; Partitioned`. Client code that doesn't match every one of
@@ -191,6 +192,95 @@ computed fresh at the moment you need it, not stored ahead of time. **General le
 with repeated save-then-redisplay cycles, anything you show the user afterward should be read from
 the just-returned fresh state, never a reference kept from before the save.**
 
+### Never let a sibling/descendant controller directly assign a shared scope property
+
+`$scope.currentOrder` (and `$scope.user`) are owned by `Four51Ctrl.js`, sitting on `<html>` - every
+other controller (`navCtrl.js`, `categoryCtrl.js`, `productCtrl.js`, ...) reads them via AngularJS's
+normal prototypal scope inheritance. That inheritance only works one direction: a **read** on a
+descendant scope falls through to the parent's value, but an **assignment**
+(`$scope.currentOrder = x`) *always* creates a new own property on whichever scope ran it, silently
+shadowing the inherited one from that point on - regardless of whether that scope is a true
+descendant (`productCtrl.js`/`categoryCtrl.js`, via `ng-view`) or a sibling (`navCtrl.js`, via
+`<navigation>`, which is *not* nested inside `ng-view` at all - it's a separate branch of the DOM
+under `#content`).
+
+This bit three times in the same debugging session, each looking like a different bug until traced
+back to the same cause:
+
+1. **`navCtrl.js`'s `removeMinicartItem()`** assigned `$scope.currentOrder = order` (or `null`)
+   directly in its own success callback. Removing an item updated nav's own mini-cart display
+   correctly (it was reading its own now-shadowed copy), but `Four51Ctrl.js`'s real `currentOrder` -
+   the one every OTHER page reads - never changed. A category-page add-to-cart right after a
+   mini-cart removal then merged into a line item the server had already deleted, and came back
+   with a raw `"Object reference not set to an instance of an object"` exception.
+2. **`categoryCtrl.js`'s `addSimpleProductToCart()`** did the same thing on success
+   (`$scope.currentOrder = o`), plus the old `if (!$scope.currentOrder) $scope.currentOrder = {}`
+   initialization pattern - the very first time that ran with no cart yet, it created the shadow.
+   `productCtrl.js`'s `addToOrder()` had the identical initialization pattern.
+3. **`categoryCtrl.js`'s `User.save($scope.user, function(u) { $scope.user = u; })`** - the exact
+   same mistake, one property over. The first add-to-cart in a page session still worked, because
+   `Four51Ctrl.js`'s `event:orderUpdate` listener (see below) checks
+   `order.ID === $scope.user.CurrentOrderID` *before* this async `User.save` callback had returned
+   and shadowed `$scope.user` - but every add after that mutated only the now-disconnected local
+   copy. `Four51Ctrl.js`'s real `user.CurrentOrderID` silently stopped updating, so its guard
+   silently stopped matching, and `currentOrder` stopped syncing - while the cart badge count
+   (computed straight from the broadcast payload, with no such guard) kept updating regardless.
+   The visible symptom: cart badge correctly says "1", mini-cart panel says "Your cart is empty".
+
+**The fix, applied consistently:** the object that legitimately owns a piece of shared state
+(`Four51Ctrl.js` for `currentOrder` and `user`) is the *only* place that should ever assign to it.
+Every mutating flow elsewhere (add to cart, remove from cart, save the user) already broadcasts an
+event on completion (`event:orderUpdate` via `orderService.js`'s shared `_then()` helper, which
+fires on success *and* failure paths alike unless explicitly suppressed) - add a listener on the
+owning scope, guarded by an ID match so it can't accidentally apply someone else's data (e.g. an
+approver opening a different shopper's order from Order History also broadcasts this event), and
+let every other controller just read the inherited value. Where a subordinate controller genuinely
+needs to build up a request payload locally before saving (e.g. constructing the LineItem to add),
+use a **local variable**, never `$scope.currentOrder` itself - `var order = $scope.currentOrder ||
+{ LineItems: [] };` - and never reassign `$scope.user`; mutate its fields in place
+(`$scope.user.CurrentOrderID = x`) or merge a fresh copy's fields into the *existing* object
+(`angular.extend($scope.user, freshUser)`), never replace the reference.
+
+**How to catch this class of bug**: the symptom is always "worked once, then silently stopped
+staying in sync" - if a scope property is definitely being updated somewhere (confirmed via a
+`console.log`/breakpoint) but a DIFFERENT part of the page never reflects it, suspect a shadowing
+assignment on a scope in between, not a missing update. `angular.element(el).scope()` in the
+browser console, on an element from each suspect view, lets you directly compare
+`scope.currentOrder === otherScope.currentOrder` (identity, not just value) to confirm.
+
+### `ng-repeat` needs a stable `track by` key when the underlying object gets replaced wholesale
+
+Directly downstream of the above: because `Four51Ctrl.js`'s `event:orderUpdate` listener replaces
+`$scope.currentOrder` **wholesale** (a brand new object graph from the server, not an in-place
+update of the existing one) on every single add/remove, the mini-cart's
+`ng-repeat="item in currentOrder.LineItems"` had no `track by` and defaulted to AngularJS's
+object-identity tracking. Every update therefore looked like "the whole list was removed, an
+entirely new list was added" - full DOM teardown and rebuild instead of an in-place diff. Under two
+updates close together (a client-side optimistic push - `ProductDisplayService.addOrMergeLineItem()`
+pushes the new LineItem into the array immediately, before the save even resolves - followed shortly
+by the server's confirmed response replacing the whole object) a stale DOM node could briefly
+coexist with its replacement: the product visibly appeared twice in the mini-cart for roughly a
+second, then one copy vanished. Confirmed live by recording `$scope.currentOrder.LineItems` and the
+actual rendered DOM at 30-50ms resolution while reproducing it: **the underlying data array never
+had a duplicate at any point** - only the DOM did, for exactly as long as the old and new render
+passes overlapped.
+
+The first fix attempt (`track by (item.ID || item.Product.InteropID)`) was still wrong, for a subtle
+reason: a newly-added item has no `ID` yet (the client-side optimistic push doesn't have one - only
+the server's confirmed response does), so the *effective key itself* changed the moment that
+response arrived (`"MMD-0818-WHT"` → the real server ID) - `ng-repeat` still saw a key disappear and
+a different key appear, so the flash happened on literally every add, not just remove-then-add.
+**The `track by` expression must evaluate to the same value for the same conceptual item across its
+entire lifecycle**, from the optimistic push through the confirmed response - `item.ID` fails that
+test for a brand new item; `item.Product.InteropID` (plus `item.Variant.InteropID` when present, to
+distinguish different variants of the same product) does not, since both are known and unchanged
+from the moment the LineItem is first constructed client-side.
+
+**General lesson for any list bound to an object that gets wholesale-replaced on save**: always add
+an explicit `track by`, and audit it for any field that's populated asynchronously (a server-assigned
+ID, a computed total, anything not present on the optimistic/local version) - a `track by` key that
+can change value for what's semantically the same item defeats the entire purpose of adding one.
+
 ## Latent bugs found in the stock Four51 templates (not introduced by us — pre-existing)
 
 ### Self-closing custom element tags
@@ -248,6 +338,38 @@ against the screen edge on mobile, where the container is the full viewport widt
 **Rule: any class meant to be combined with `.mt-container` (or any other class supplying its own
 padding/margin) must use `padding-top`/`padding-bottom` only, never the shorthand**, unless you
 genuinely intend to override all four sides.
+
+### `bootstrap-451.css` resets every `<ul>` on the site to `list-style-type: none`
+
+An unscoped `ul { list-style-type: none; margin: 0; padding: 0; }` in the base stylesheet (meant
+for nav-style lists elsewhere in the stock templates) silently strips bullet markers from **any**
+`<ul>`, including one rendered from admin-authored rich-text content (a product description's
+bulleted feature list, `ng-bind-html`'d in verbatim with no sanitization - see `trustedDescription()`
+in `productDisplayService.js`). Restoring `padding-left`/`margin` for a scoped selector like
+`.mt-pdt-description ul` is not enough on its own - it fixes the indentation but the list still
+renders with no visible bullet at all, since `list-style-type` is a separate property this reset
+also zeroes out. Any scoped list styling in this theme needs to explicitly set
+`list-style-type: disc` (or `decimal` for `ol`) alongside whatever spacing it restores - never
+assume the browser default survives just because you didn't touch it. Same family of gotcha as the
+`img { display: block }` and `div { position: relative }` resets noted elsewhere in this doc -
+`bootstrap-451.css` resets more tag-level defaults than you'd expect, and admin-authored HTML
+content is the most likely place to run into one you haven't hit yet.
+
+### `position: sticky` can silently fail on a `<header>` nested inside a custom directive element
+
+The site header (`.mt-header`, an actual `<header>` element) had `position: sticky; top: 0;` and
+looked completely correct in every diagnostic - `getComputedStyle` reported `sticky`, no ancestor had
+non-visible `overflow`, no `transform`/`filter`/`perspective`/`contain` anywhere in the chain, the
+containing block was tall enough - yet it scrolled away with the page instead of staying pinned, in
+Chrome, reproducibly. `position: fixed` on the exact same element worked immediately, proving nothing
+was fighting the positioning itself. The actual fix: move `position: sticky` up one DOM level, onto
+the wrapping `<section>` around `<header>` (this theme wraps the nav in a custom `<navigation>`
+directive element, itself inside a `<section>`), leaving `<header>` unpositioned - confirmed via a
+live DOM inspection loop that isolated it to specifically the `<header>` tag one level down, not the
+wrapper, not the ancestor chain, not the CSS rule itself. No confirmed root cause beyond "this exact
+nesting triggers it in Blink" - if a future theme's sticky header mysteriously doesn't stick despite
+every classic cause checking out clean, try moving `position: sticky` one level up before spending
+more time on it.
 
 ### A mobile `@media` override lost to an unconditional same-specificity rule declared later in the file
 
@@ -785,6 +907,48 @@ watches also copy `FirstName`/`LastName` onto the order or its line items under
 the callback, silently misses in-place edits. Anywhere the theme does this, saving needs
 to push the new object in as well.
 
+## Debugging techniques that paid off this session
+
+- **A native `confirm()`/`alert()` dialog will hang browser automation tools.** Both Claude's
+  built-in browser and the Claude-in-Chrome extension dispatch clicks/keys through the DOM/CDP,
+  which cannot interact with an OS-level native dialog - triggering one (e.g. clicking the
+  mini-cart's remove button, which calls `confirm('Are you sure...')`) freezes the tool with a
+  30-45s timeout and can wedge the tab entirely. Work around it by overriding the dialog *before*
+  triggering the action that opens one: `window.confirm = function(){ return true; };` injected via
+  the JS-exec tool. Re-apply after every navigation/reload - it doesn't survive a page load.
+- **Instrument `XMLHttpRequest` to capture the real request/response bodies** when a generic
+  client-side error message (or a stripped-down server error with no stack trace) hides what
+  actually went wrong. Patching `XMLHttpRequest.prototype.open`/`send` to log method, URL, request
+  body and response body for every `/api/` call, then reproducing the failure, surfaced the exact
+  evidence that cracked the mini-cart bug open: the failing request's line item had `Quantity: 2`
+  instead of `1`, proving the client was merging into a line item the server had already deleted -
+  something no amount of reading the Angular controller code alone would have made obvious. (Angular
+  apps built on `$resource` normally use XHR under the hood even where the code reads like `fetch`
+  wrappers - patch both if unsure which is in play.)
+- **Record a live DOM+scope timeline instead of trying to catch a race with screenshots.** A
+  transient visual glitch (an item flashing duplicate then disappearing) is invisible to a single
+  screenshot and too fast to click through manually. Polling both `angular.element(el).scope()`
+  state and the actual rendered DOM text into an array every 30-100ms via `setInterval`, running for
+  several seconds while the bug is reproduced (either by the agent itself, or - for something that
+  only shows up under a real person's exact click timing - by the user interacting with the same
+  shared browser tab live while the recorder runs in the background), then filtering the collected
+  samples down to only the ones where something changed, turns a "we think it's a timing issue"
+  guess into an exact, provable timeline. In this case it proved the underlying data array was
+  correct the entire time and only the rendered DOM briefly diverged, which pointed straight at an
+  `ng-repeat` tracking bug instead of a data bug.
+- **When a symptom doesn't reproduce consistently, don't assume a single cause.** A specific
+  product's add-to-cart intermittently threw *different* server exceptions (`Index was out of
+  range` on one attempt, `Object reference not set to an instance of an object` on another) even
+  after the actual client-side bug was fixed and confirmed working on other products. Isolate by
+  testing the SAME sequence against a different, known-simple product before concluding a fix
+  didn't work - it can reveal that a specific item's own server-side data is flaky for unrelated
+  reasons, rather than the fix being incomplete.
+- **`:has()` is safe to use in this theme's CSS** for scoping a rule to one specific structural
+  relationship without touching a shared base rule everywhere else (e.g.
+  `.mt-section:has(> .mt-quick-actions)` to tighten the gap after just one particular section,
+  leaving `.mt-section`'s default spacing untouched elsewhere). Modern evergreen browsers all
+  support it; no fallback needed for this theme's target browsers.
+
 ## Workflow
 
 - **No branches or PRs — every change commits directly to `master`.** The user explicitly
@@ -852,3 +1016,16 @@ to push the new object in as well.
   catalog. If a client wants "browse everything," the reliable option is a real category that
   aggregates the whole catalog (what we did here, via an admin-created "All Products" category),
   not new unscoped-search plumbing.
+- **One specific product (Molly Maid's "Pan Scraper") intermittently fails to add to cart with a
+  raw platform exception** - `Index was out of range...` on one attempt, `Object reference not set
+  to an instance of an object` on another, neither consistently, and this is genuinely separate
+  from the scope-shadowing bug documented above (confirmed by testing the identical sequence
+  against other, unaffected products, which worked cleanly every time both before and after that
+  fix shipped). Checked and ruled out: the "Default" price break checkbox being unchecked (normal
+  across every product on this tenant, not specific to this one) and the product's "Reserved"
+  inventory count (legitimate placed-but-unfulfilled orders, not orphaned test data). Whatever's
+  actually wrong is server-side, in this specific product's own data - price schedule and
+  inventory tracking config both looked normal in the admin UI, so the cause wasn't identified.
+  If this recurs on a future theme/tenant with a specific product behaving the same way, it's
+  likely a data issue on that product, not a theme bug - compare its full admin configuration
+  against a working product field-by-field, or ask Four51 support to check server-side.
