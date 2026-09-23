@@ -24,13 +24,18 @@ function ($scope, $routeParams, $location, $filter, $rootScope, $451, User, Orde
 				if ($scope.user.Company.GoogleAnalyticsCode) {
 					GoogleAnalytics.ecommerce(data, $scope.user);
 				}
+				// Navigate only once the user save lands. The route change re-runs Four51Ctrl's
+				// init(), which reloads the cart from the cached user's CurrentOrderID - leaving
+				// early let it read the stale ID and put the just-submitted order back in the cart.
+				// currentOrder is cleared by that same init(); nulling it here would only shadow
+				// the inherited value on this scope, not clear the cart.
+				var orderID = data.ID;
 				$scope.user.CurrentOrderID = null;
-				User.save($scope.user, function(data) {
-			        $scope.user = data;
-	                $scope.displayLoadingIndicator = false;
-		        });
-		        $scope.currentOrder = null;
-				$location.path('/order/new/' + data.ID);
+				function goToConfirmation() {
+					$scope.displayLoadingIndicator = false;
+					$location.path('/order/new/' + orderID);
+				}
+				User.save($scope.user, goToConfirmation, goToConfirmation);
 	        },
 	        function(ex) {
 				$scope.submitClicked = false;

@@ -141,8 +141,10 @@ function ($location, $route, $scope, $451, $timeout, $window, User, Order, Spend
             $scope.cartCount = null;
             // null specifically means "this session's own order was cleared" (e.g. Start New
             // Order) - safe to clear the mini-cart too. A non-null order that's no longer
-            // Unsubmitted is left alone below, same as cartCount's own handling.
-            if (!order) $scope.currentOrder = null;
+            // Unsubmitted only clears it when it's the very order the mini-cart is showing -
+            // i.e. the shopper just submitted their cart - never for someone else's order.
+            if (!order || ($scope.currentOrder && order.ID === $scope.currentOrder.ID))
+                $scope.currentOrder = null;
             return;
         }
         // Every Order.get/save broadcasts this event with whatever order it just touched, which
