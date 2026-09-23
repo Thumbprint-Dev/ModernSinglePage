@@ -588,6 +588,21 @@ body {
     font-family: var(--mt-font-body);
     background: var(--mt-color-white);
     border-bottom: 1px solid var(--mt-color-border);
+}
+
+/* position:sticky belongs on the wrapping <section> (index.html), not on <header class="mt-header">
+   itself - confirmed live (2026-09-23) that Chrome/Blink silently fails to stick the <header>
+   element in this exact nesting (inside a <navigation> custom element, itself inside #content's
+   flex column) even though getComputedStyle reports "sticky" and every classic cause (an ancestor
+   with non-visible overflow, a transform/filter/perspective/contain, a too-short containing block,
+   the inline default on the unknown <navigation> tag) was ruled out one at a time by forcing each
+   through with an inline !important override and re-measuring. position:fixed on <header> worked
+   immediately, proving nothing was fighting the positioning itself - moving position:sticky up one
+   level, onto <section class="hidden-print mt-header-sticky-wrap"> with <header> left unpositioned,
+   also worked immediately and is the minimal-diff fix (keeps the header in-flow, no compensating
+   padding needed elsewhere, unlike a switch to fixed). Do not move this back onto .mt-header without
+   re-verifying live - the failure was exact and reproducible, not a one-off. */
+.mt-header-sticky-wrap {
     position: sticky;
     top: 0;
     z-index: 1000;
