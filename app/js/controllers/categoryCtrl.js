@@ -136,8 +136,19 @@ function ($routeParams, $sce, $scope, $451, Category, Product, AppConst, Order, 
 			function(o) {
 				$scope.quickAddIndicator[product.InteropID] = false;
 				$scope.user.CurrentOrderID = o.ID;
+				// Merges the server's response into the EXISTING user object instead of
+				// replacing $scope.user with it - the same shadowing bug as currentOrder above,
+				// just one property over: "$scope.user = u" creates an own property on this
+				// (descendant) scope that disconnects it from Four51Ctrl's real $scope.user from
+				// that point on. The first add-to-cart in a page session still worked (Four51Ctrl's
+				// event:orderUpdate guard checks $scope.user.CurrentOrderID before this callback's
+				// own User.save had returned and shadowed it), but any add after that mutated only
+				// this scope's now-disconnected copy - Four51Ctrl's real user.CurrentOrderID never
+				// updated, so its guard silently stopped matching and currentOrder stopped syncing,
+				// while cartCount (computed straight from the broadcast, no such guard) kept
+				// updating - exactly the "badge says 1, mini-cart says empty" split reported live.
 				User.save($scope.user, function(u) {
-					$scope.user = u;
+					angular.extend($scope.user, u);
 				});
 			},
 			function(ex) {
