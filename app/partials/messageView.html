@@ -5,7 +5,7 @@
             <p class="mt-pdp-meta">{{'Date' | r | xlat}}: {{message.DateSent | date:user.Culture.DateFormat.long}}</p>
             <p class="mt-pdp-meta">{{'To' | r | xlat}}: {{message.ToName}}</p>
             <p class="mt-pdp-meta">{{'From' | r | xlat}}: {{message.FromName}}</p>
-            <pre class="mt-messages-body">{{message.Body}}</pre>
+            <div ng-bind-html="message.Body" class="mt-messages-body"></div>
 
             <div class="mt-messages-actions">
                 <button id="451_btn_del" ng-click="delete($event)" type="button" class="mt-cart-remove-link">{{'Delete' | r | xlat}}</button>
