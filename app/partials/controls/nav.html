@@ -38,7 +38,7 @@
                     <p class="mt-minicart-empty" ng-if="!currentOrder.LineItems.length">{{'Your cart is empty' | r | xlat}}</p>
                     <div ng-if="currentOrder.LineItems.length">
                         <div class="mt-minicart-items">
-                            <div class="mt-minicart-item" ng-repeat="item in currentOrder.LineItems" ng-if="!(item.IsKitParent && item.KitIsInvalid)">
+                            <div class="mt-minicart-item" ng-repeat="item in currentOrder.LineItems track by (item.ID || item.Product.InteropID)" ng-if="!(item.IsKitParent && item.KitIsInvalid)">
                                 <img class="mt-minicart-item-photo mt-real-photo" ng-if="item.Variant.LargeImageUrl || item.Product.SmallImageUrl" ng-src="{{item.Variant.LargeImageUrl || item.Product.SmallImageUrl}}" />
                                 <div class="mt-placeholder-photo mt-minicart-item-photo" ng-if="!(item.Variant.LargeImageUrl || item.Product.SmallImageUrl)"></div>
                                 <div class="mt-minicart-item-info">
