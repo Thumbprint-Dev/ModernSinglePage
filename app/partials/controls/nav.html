@@ -38,7 +38,17 @@
                     <p class="mt-minicart-empty" ng-if="!currentOrder.LineItems.length">{{'Your cart is empty' | r | xlat}}</p>
                     <div ng-if="currentOrder.LineItems.length">
                         <div class="mt-minicart-items">
-                            <div class="mt-minicart-item" ng-repeat="item in currentOrder.LineItems track by (item.ID || item.Product.InteropID)" ng-if="!(item.IsKitParent && item.KitIsInvalid)">
+                            <!-- track by deliberately never uses item.ID: a newly-added item has no ID yet
+                                 (addOrMergeLineItem pushes it client-side before the server confirms), so an
+                                 ID-based key would itself change once the server response replaces currentOrder
+                                 wholesale a moment later - ng-repeat would then see "old key gone, new key
+                                 appeared" and briefly duplicate the row, even though it's the same line item.
+                                 Product+Variant InteropID stays identical from the optimistic push through the
+                                 confirmed response, so it's stable across that transition. Confirmed live
+                                 (2026-09-24) via a DOM+scope recorder: the underlying LineItems array never had a
+                                 duplicate at any point, only the rendered DOM did, for exactly as long as the
+                                 old and new keys briefly coexisted. -->
+                            <div class="mt-minicart-item" ng-repeat="item in currentOrder.LineItems track by (item.Product.InteropID + (item.Variant ? '-' + item.Variant.InteropID : ''))" ng-if="!(item.IsKitParent && item.KitIsInvalid)">
                                 <img class="mt-minicart-item-photo mt-real-photo" ng-if="item.Variant.LargeImageUrl || item.Product.SmallImageUrl" ng-src="{{item.Variant.LargeImageUrl || item.Product.SmallImageUrl}}" />
                                 <div class="mt-placeholder-photo mt-minicart-item-photo" ng-if="!(item.Variant.LargeImageUrl || item.Product.SmallImageUrl)"></div>
                                 <div class="mt-minicart-item-info">
