@@ -1354,9 +1354,21 @@ body {
 /* trustedDescription() (productDisplayService.js) renders Product.Description verbatim as HTML
    with no sanitization or tag stripping - if the admin's rich-text field actually saved real
    <ul>/<li> markup, this styles it; browser-default list styling is otherwise easy to lose track
-   of and can look cramped against the rest of the page's type scale. */
-.mt-pdt-description ul,
+   of and can look cramped against the rest of the page's type scale.
+   list-style-type has to be set explicitly here, not just padding - bootstrap-451.css resets
+   EVERY <ul> on the site to list-style-type:none (a global, unscoped `ul { ... }` rule meant for
+   nav-style lists), so an admin-authored bullet list rendered with correct indentation but no
+   visible bullet marker at all until this restored it. Confirmed live (2026-09-23) via a
+   product's actual rendered description: real <ul><li> markup, list-style-type computed as
+   "none" on both the <ul> and <li>. */
+.mt-pdt-description ul {
+    list-style-type: disc;
+    margin: 0 0 12px;
+    padding-left: 20px;
+}
+
 .mt-pdt-description ol {
+    list-style-type: decimal;
     margin: 0 0 12px;
     padding-left: 20px;
 }
