@@ -184,7 +184,7 @@ body {
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--mt-color-muted);
-    margin: 0 0 18px;
+    margin: 18px 0 18px;
 }
 
 .mt-hero {
@@ -239,6 +239,14 @@ body {
     color: var(--mt-color-text-soft);
     max-width: 480px;
     margin: 0 0 24px;
+}
+
+/* Each line's bottom margin spaces it from the next one. Whichever line ends up
+   last -- the subheading once hero.showButton is off, or the heading when there is
+   no subheading either -- would otherwise add its margin to the 64px padding and
+   leave the copy sitting high in the hero. */
+.mt-hero .mt-container > :last-child {
+    margin-bottom: 0;
 }
 
 .mt-btn-accent {
