@@ -131,34 +131,40 @@ function ($scope, $rootScope, $routeParams, $route, $location, $451, Product, Pr
 		);
 	}
 
+	// Uses a local "order" variable rather than reading/writing $scope.currentOrder throughout,
+	// on purpose - this controller (productCtrl.js, via ng-view) is a real descendant of
+	// Four51Ctrl's scope, so the old "if (!$scope.currentOrder) $scope.currentOrder = {}"
+	// pattern, the moment it ran once with no existing cart, created a permanent OWN property on
+	// THIS scope that shadows Four51Ctrl's inherited one from then on - this page would stop
+	// picking up Four51Ctrl's own event:orderUpdate-driven updates (e.g. a mini-cart removal)
+	// for the rest of its lifetime, exactly the bug fixed in categoryCtrl.js's
+	// addSimpleProductToCart (see that comment for the full trace - same class of bug, same fix).
+	// Order.save's own event:orderUpdate broadcast (fires on success too) keeps the real,
+	// inherited currentOrder in sync without this controller ever touching it directly.
 	$scope.addToOrder = function(){
 		if($scope.lineItemErrors && $scope.lineItemErrors.length){
 			$scope.showAddToCartErrors = true;
 			return;
 		}
-		if(!$scope.currentOrder){
-			$scope.currentOrder = { };
-			$scope.currentOrder.LineItems = [];
-		}
-		if (!$scope.currentOrder.LineItems)
-			$scope.currentOrder.LineItems = [];
+		var order = $scope.currentOrder || { LineItems: [] };
+		if (!order.LineItems)
+			order.LineItems = [];
 		var pendingAdds = [];
 		if($scope.allowAddFromVariantList){
 			angular.forEach($scope.variantLineItems, function(item){
 				if(item.Quantity > 0){
-					pendingAdds.push(ProductDisplayService.addOrMergeLineItem($scope.currentOrder, item));
-					$scope.currentOrder.Type = item.PriceSchedule.OrderType;
+					pendingAdds.push(ProductDisplayService.addOrMergeLineItem(order, item));
+					order.Type = item.PriceSchedule.OrderType;
 				}
 			});
 		}else{
-			pendingAdds.push(ProductDisplayService.addOrMergeLineItem($scope.currentOrder, $scope.LineItem));
-			$scope.currentOrder.Type = $scope.LineItem.PriceSchedule.OrderType;
+			pendingAdds.push(ProductDisplayService.addOrMergeLineItem(order, $scope.LineItem));
+			order.Type = $scope.LineItem.PriceSchedule.OrderType;
 		}
 		$scope.addToOrderIndicator = true;
-		//$scope.currentOrder.Type = (!$scope.LineItem.Product.IsVariantLevelInventory && $scope.variantLineItems) ? $scope.variantLineItems[$scope.LineItem.Product.Variants[0].InteropID].PriceSchedule.OrderType : $scope.LineItem.PriceSchedule.OrderType;
 		// shipper rates are not recalcuated when a line item is added. clearing out the shipper to force new selection, like 1.0
-		Order.clearshipping($scope.currentOrder).
-			save($scope.currentOrder,
+		Order.clearshipping(order).
+			save(order,
 				function(o){
 					$scope.user.CurrentOrderID = o.ID;
 					User.save($scope.user, function(){

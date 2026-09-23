@@ -109,22 +109,31 @@ function ($routeParams, $sce, $scope, $451, Category, Product, AppConst, Order, 
 		return (product.QuantityAvailable > 0 ? product.QuantityAvailable : 0) <= 0;
 	};
 
+	// Neither function below assigns $scope.currentOrder itself, on purpose - this controller
+	// (categoryCtrl.js, via ng-view) is a real descendant of Four51Ctrl's scope, so a direct
+	// assignment here does work for this page's OWN reads, but it also permanently SHADOWS the
+	// inherited value from that point on: this scope stops picking up Four51Ctrl's own
+	// event:orderUpdate-driven updates (see that listener there), since a shadowing own-property
+	// always wins over inheritance once set. First add-to-cart on a page looked fine (nothing
+	// shadowed yet), but removing that item from the mini-cart afterward correctly updated
+	// Four51Ctrl's real currentOrder while this scope's now-shadowed copy stayed frozen on the
+	// stale order - so a second add-to-cart merged into a LineItem the server had already
+	// deleted, and came back with a raw "Object reference not set to an instance of an object"
+	// exception. Using a local variable here instead, and letting Order.save's own
+	// event:orderUpdate broadcast (it fires on success too, not just failure) update the real,
+	// inherited currentOrder, keeps this page in sync indefinitely instead of just once.
 	function addSimpleProductToCart(product) {
-		if (!$scope.currentOrder) {
-			$scope.currentOrder = {};
-			$scope.currentOrder.LineItems = [];
-		}
-		if (!$scope.currentOrder.LineItems) $scope.currentOrder.LineItems = [];
+		var order = $scope.currentOrder || { LineItems: [] };
+		if (!order.LineItems) order.LineItems = [];
 		var lineItem = {
 			Product: product,
 			PriceSchedule: product.StandardPriceSchedule,
 			Quantity: 1
 		};
-		var pending = ProductDisplayService.addOrMergeLineItem($scope.currentOrder, lineItem);
-		$scope.currentOrder.Type = lineItem.PriceSchedule.OrderType;
-		Order.clearshipping($scope.currentOrder).save($scope.currentOrder,
+		var pending = ProductDisplayService.addOrMergeLineItem(order, lineItem);
+		order.Type = lineItem.PriceSchedule.OrderType;
+		Order.clearshipping(order).save(order,
 			function(o) {
-				$scope.currentOrder = o;
 				$scope.quickAddIndicator[product.InteropID] = false;
 				$scope.user.CurrentOrderID = o.ID;
 				User.save($scope.user, function(u) {
@@ -148,9 +157,7 @@ function ($routeParams, $sce, $scope, $451, Category, Product, AppConst, Order, 
 				product: function() { return product; },
 				currentOrder: function() { return $scope.currentOrder; }
 			}
-		}).result.then(function(updatedOrder) {
-			$scope.currentOrder = updatedOrder;
-		}, angular.noop);
+		}).result.then(angular.noop, angular.noop);
 	}
 
 	function hasVariantOrSpec(product) {
