@@ -1,5 +1,40 @@
-four51.app.controller('KitCtrl', ['$scope', '$location', '$routeParams', 'Kit', 'ProductDisplayService', 'Order', 'User', function($scope, $location, $routeParams, Kit, ProductDisplayService, Order, User) {
+four51.app.controller('KitCtrl', ['$scope', '$location', '$route', '$routeParams', 'Kit', 'ProductDisplayService', 'Order', 'User', function($scope, $location, $route, $routeParams, Kit, ProductDisplayService, Order, User) {
 	$scope.addToOrderText = 'Add Kit to Cart';
+
+	// This page addresses the kit by its POSITION in the cart (/kit/:id/:lineitemid, where
+	// lineitemid is an array index). Removing anything ahead of it from the mini-cart shifted the
+	// kit down a slot, so the next save looked up order.LineItems[staleIndex], got undefined, and
+	// Kit.mapKitToOrder threw ("Cannot read properties of undefined (reading 'IsKitChild')") -
+	// the save itself had succeeded, but the page stuck. A removal could also leave this scope
+	// holding a stale order (saveOrder/saveItem assign currentOrder here). Track the kit by its
+	// line item ID instead, and re-route whenever it moves: to its new index, or back to the
+	// kit's start page if the kit itself was removed.
+	var kitLineItemID = null;
+	function lineItemIDs(order) {
+		var ids = [];
+		angular.forEach(order.LineItems, function(li) { ids.push(li.ID); });
+		return ids.sort().join(',');
+	}
+	$scope.$on('event:orderUpdate', function(event, order) {
+		if (!kitLineItemID) return;
+		if (!order) {
+			$location.path('/kit/' + $routeParams.id).replace();
+			return;
+		}
+		if (order.ID !== $scope.user.CurrentOrderID) return;
+		var newIndex = -1;
+		angular.forEach(order.LineItems, function(li, i) {
+			if (li.ID === kitLineItemID) newIndex = i;
+		});
+		if (newIndex < 0) {
+			$location.path('/kit/' + $routeParams.id).replace();
+		} else if (String(newIndex) !== String($scope.kitIndex)) {
+			$location.path('/kit/' + $routeParams.id + '/' + newIndex).replace();
+		} else if ($scope.hasOwnProperty('currentOrder') && order !== $scope.currentOrder &&
+			lineItemIDs(order) !== lineItemIDs($scope.currentOrder)) {
+			$route.reload();
+		}
+	});
 	$scope.updateKitLineItemText = 'Update';
 
 	$scope.settings = {
@@ -14,6 +49,7 @@ four51.app.controller('KitCtrl', ['$scope', '$location', '$routeParams', 'Kit', 
 		$scope.LineItem = $routeParams.lineitemid ? $scope.currentOrder.LineItems[$routeParams.lineitemid] : {};
 		if($routeParams.lineitemid){
 			$scope.kitIndex = $routeParams.lineitemid;
+			kitLineItemID = $scope.LineItem.ID || null;
 		}
 		$scope.LineItem.IsKitParent = true;
 		$scope.Kit = kit;
@@ -179,6 +215,7 @@ four51.app.controller('KitCtrl', ['$scope', '$location', '$routeParams', 'Kit', 
 			$scope.currentOrder = order;
 			$scope.kitIndex = $routeParams.lineitemid ? $routeParams.lineitemid : $scope.currentOrder.LineItems.length - 1;
 			var currentLineItem = order.LineItems[$scope.kitIndex];
+			kitLineItemID = currentLineItem.ID;
 			Kit.mapKitToOrder($scope.Kit, currentLineItem);
 			$scope.user.CurrentOrderID = order.ID;
 			User.save($scope.user, function () {
