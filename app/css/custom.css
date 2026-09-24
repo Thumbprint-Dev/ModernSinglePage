@@ -5626,3 +5626,574 @@ body.msp-drawer-lock {
         gap: 14px;
     }
 }
+
+
+/* ===== ModernSinglePage: text link ===== */
+.msp-text-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--mt-color-ink);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+.msp-text-link:hover,
+.msp-text-link:focus {
+    color: var(--mt-color-text-soft);
+}
+
+
+/* ===== ModernSinglePage: story ===== */
+.msp-story {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: var(--mt-color-bg-alt);
+    min-height: 640px;
+}
+.msp-story-media {
+    position: relative;
+    background: #D6CCBC;
+    overflow: hidden;
+}
+.msp-story-media img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.msp-story-copy {
+    align-self: center;
+    max-width: 560px;
+    padding: 96px 80px;
+    box-sizing: content-box;
+}
+.msp-story-title {
+    margin: 0 0 24px;
+    font-family: var(--mt-font-display);
+    font-weight: 400;
+    font-size: 56px;
+    line-height: 1.02;
+    letter-spacing: -0.015em;
+    color: var(--mt-color-ink);
+}
+.msp-story-title em,
+.msp-hero-title em {
+    font-style: italic;
+}
+.msp-story-text {
+    margin: 0 0 16px;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--mt-color-text);
+}
+.msp-story .msp-text-link {
+    margin-top: 12px;
+}
+@media (max-width: 1023px) {
+    .msp-story {
+        grid-template-columns: 1fr;
+        min-height: 0;
+    }
+    .msp-story-media {
+        aspect-ratio: 4 / 3;
+    }
+    .msp-story-copy {
+        max-width: none;
+        padding: 64px var(--msp-gutter);
+        box-sizing: border-box;
+    }
+}
+@media (max-width: 767px) {
+    .msp-story-title {
+        font-size: 42px;
+    }
+    .msp-story-text {
+        font-size: 16px;
+    }
+}
+
+
+/* ===== ModernSinglePage: FAQ ===== */
+.msp-faq-row {
+    display: grid;
+    grid-template-columns: 4fr 7fr;
+    gap: 64px;
+    align-items: start;
+}
+.msp-faq-contact {
+    margin: 20px 0 0;
+    font-size: 15px;
+    color: var(--mt-color-text);
+}
+.msp-faq-contact a {
+    color: var(--mt-color-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+.msp-faq-list {
+    border-top: 1px solid var(--mt-color-border-strong);
+}
+.msp-faq-item {
+    border-bottom: 1px solid var(--mt-color-border-strong);
+}
+.msp-faq-q {
+    margin: 0;
+    font: inherit;
+}
+.msp-faq-q button {
+    width: 100%;
+    min-height: 72px;
+    padding: 20px 0;
+    border: 0;
+    background: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    text-align: left;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--mt-color-ink);
+    cursor: pointer;
+}
+.msp-faq-q button:focus-visible {
+    outline: 2px solid var(--mt-color-accent);
+    outline-offset: 2px;
+}
+.msp-faq-sign {
+    flex-shrink: 0;
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1;
+}
+.msp-faq-a p {
+    margin: 0;
+    padding: 0 48px 24px 0;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--mt-color-text);
+    white-space: pre-line;
+}
+@media (max-width: 1023px) {
+    .msp-faq-row {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+}
+@media (max-width: 767px) {
+    .msp-faq-q button {
+        font-size: 16px;
+        min-height: 64px;
+    }
+    .msp-faq-a p {
+        padding-right: 0;
+    }
+}
+
+
+/* ===== ModernSinglePage: footer ===== */
+.msp-footer {
+    background: var(--mt-color-ink);
+    color: var(--mt-color-on-ink);
+    padding: 72px 0 32px;
+    font-family: var(--mt-font-body);
+}
+.msp-footer a {
+    color: var(--mt-color-on-ink);
+    text-decoration: none;
+}
+.msp-footer a:hover,
+.msp-footer a:focus {
+    color: #fff;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+.msp-footer a:focus-visible {
+    outline: 2px solid var(--mt-color-on-ink);
+    outline-offset: 2px;
+}
+.msp-footer-top {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 48px;
+    padding-bottom: 56px;
+}
+.msp-footer-name {
+    margin: 0 0 16px;
+    font-family: var(--mt-font-display);
+    font-size: 34px;
+    line-height: 1;
+}
+.msp-footer-blurb {
+    margin: 0;
+    max-width: 360px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #BDB6AA;
+}
+.msp-footer-cols {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 32px;
+}
+.msp-footer-heading {
+    margin: 0 0 16px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #BDB6AA;
+}
+.msp-footer-col ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.msp-footer-col li {
+    margin: 0 0 10px;
+    font-size: 14px;
+}
+.msp-footer-bottom {
+    border-top: 1px solid #3A3833;
+    padding-top: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px 32px;
+    font-size: 12px;
+    color: #BDB6AA;
+}
+.msp-footer-bottom p {
+    margin: 0;
+}
+.msp-footer-bottom a {
+    color: #BDB6AA;
+}
+.msp-footer-legal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+}
+.msp-footer-legal span {
+    display: contents;
+}
+@media (max-width: 1023px) {
+    .msp-footer-top {
+        grid-template-columns: 1fr;
+    }
+}
+@media (max-width: 767px) {
+    .msp-footer {
+        padding-top: 56px;
+    }
+    .msp-footer-cols {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .msp-footer-name {
+        font-size: 30px;
+    }
+}
+
+
+/* ===== ModernSinglePage: form fields (single product + quick-add modal) ===== */
+/* The spec fields come from the admin-managed spec form (ocselectionfield etc., ordercloud-
+   specforms.js): hide the decorative icon, small-caps label, bordered 48px control - the
+   .view-form-icon recipe from THEME-DEVELOPMENT-NOTES.md, in this theme's tokens. */
+.msp-single .view-form-icon,
+.mt-quickadd-modal-body .view-form-icon {
+    margin: 0 0 20px;
+}
+.msp-single .view-form-icon label,
+.msp-single-qty label,
+.mt-quickadd-modal-body .view-form-icon label,
+.mt-quickadd-modal-body .mt-field label {
+    display: block;
+    margin: 0 0 8px;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--mt-color-ink);
+}
+.msp-single .view-form-icon label.required:after,
+.mt-quickadd-modal-body .view-form-icon label.required:after {
+    content: " *";
+    color: var(--mt-color-danger);
+}
+.msp-single .view-form-icon .fa,
+.mt-quickadd-modal-body .view-form-icon .fa {
+    display: none;
+}
+.msp-single .view-form-icon .form-control,
+.msp-single .quantity .form-control,
+.mt-quickadd-modal-body .view-form-icon .form-control,
+.mt-quickadd-modal-body .quantity .form-control {
+    height: 48px;
+    padding: 0 14px;
+    border: 1px solid var(--mt-color-border-strong);
+    border-radius: 8px;
+    background: var(--mt-color-bg);
+    font-size: 15px;
+    color: var(--mt-color-ink);
+    box-shadow: none;
+}
+.msp-single .view-form-icon .form-control:focus,
+.msp-single .quantity .form-control:focus,
+.mt-quickadd-modal-body .view-form-icon .form-control:focus,
+.mt-quickadd-modal-body .quantity .form-control:focus {
+    border-color: var(--mt-color-ink);
+    outline: 2px solid var(--mt-color-accent);
+    outline-offset: 1px;
+    box-shadow: none;
+}
+.msp-single .quantity .form-control,
+.mt-quickadd-modal-body .quantity .form-control {
+    max-width: 140px;
+}
+
+
+/* ===== ModernSinglePage: single-product mode ===== */
+.msp-single {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: 72px;
+    align-items: start;
+}
+.msp-single-gallery {
+    position: relative;
+}
+.msp-single-gallery .mt-lightbox-images {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+/* Only the selected image shows large; the lightbox template lists them all. */
+.msp-single-gallery .mt-lightbox-images li {
+    display: none;
+}
+.msp-single-gallery .mt-lightbox-images li:first-child:not(:has(~ li .active)),
+.msp-single-gallery .mt-lightbox-images li:has(> .active) {
+    display: block;
+}
+.msp-single-gallery .mt-lightbox-images a {
+    aspect-ratio: 1 / 1;
+    border-radius: 4px;
+    background: #E6DFD3;
+    overflow: hidden;
+    cursor: zoom-in;
+}
+/* The template renders each image twice: a zoomable copy (.hidden-xs) and a plain phone copy
+   (.visible-xs). Say which shows where explicitly - a display rule above would outrank
+   bootstrap's own .hidden-xs/.visible-xs and show both. */
+.msp-single-gallery .mt-lightbox-images a.hidden-xs { display: block; }
+.msp-single-gallery .mt-lightbox-images a.visible-xs { display: none !important; }
+@media (max-width: 767px) {
+    .msp-single-gallery .mt-lightbox-images a.hidden-xs { display: none; }
+    .msp-single-gallery .mt-lightbox-images a.visible-xs { display: block !important; }
+}
+.msp-single-gallery .mt-lightbox-image-large {
+    width: 100%;
+    height: 100%;
+    padding: 8%;
+    box-sizing: border-box;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+}
+.msp-single-gallery .mt-lightbox-thumbs {
+    list-style: none;
+    margin: 16px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+/* Same stray clearfix pseudo-elements as .msp-trust-row - they'd take the first grid cell. */
+.msp-single-gallery .mt-lightbox-thumbs::before,
+.msp-single-gallery .mt-lightbox-thumbs::after {
+    content: none;
+}
+.msp-single-gallery .mt-lightbox-thumbs a {
+    display: block;
+    aspect-ratio: 1 / 1;
+    border: 1.5px solid transparent;
+    border-radius: 4px;
+    background: #E6DFD3;
+    overflow: hidden;
+    cursor: pointer;
+}
+.msp-single-gallery .mt-lightbox-thumbs a.active {
+    border-color: var(--mt-color-ink);
+}
+.msp-single-gallery .mt-lightbox-thumb {
+    width: 100%;
+    height: 100%;
+    padding: 8%;
+    box-sizing: border-box;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+}
+
+.msp-single-info {
+    position: sticky;
+    top: calc(var(--msp-header-height) + 36px);
+}
+.msp-single-name {
+    margin: 0 0 12px;
+    font-family: var(--mt-font-display);
+    font-weight: 400;
+    font-size: 60px;
+    line-height: 1;
+    letter-spacing: -0.015em;
+    color: var(--mt-color-ink);
+}
+.msp-single-price {
+    margin: 0 0 16px;
+    font-size: 22px;
+    color: var(--mt-color-ink);
+}
+.msp-single-price span {
+    font-size: 15px;
+    color: var(--mt-color-muted);
+}
+.msp-single-desc {
+    padding-bottom: 28px;
+    margin-bottom: 28px;
+    border-bottom: 1px solid var(--mt-color-border);
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--mt-color-text);
+}
+/* Admin-authored HTML: bootstrap-451.css strips list bullets site-wide (THEME-DEVELOPMENT-NOTES.md). */
+.msp-single-desc ul { list-style-type: disc; padding-left: 20px; margin: 0 0 12px; }
+.msp-single-desc ol { list-style-type: decimal; padding-left: 20px; margin: 0 0 12px; }
+.msp-single-desc p:last-child { margin-bottom: 0; }
+
+.msp-single-buy {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    margin-top: 8px;
+}
+.msp-single-qty {
+    flex: 0 0 auto;
+}
+.msp-single-add {
+    flex: 1 1 auto;
+    height: 56px;
+    font-size: 16px;
+}
+.msp-single-errors {
+    margin: 16px 0 0;
+    padding: 10px 14px 10px 30px;
+    border-radius: 6px;
+    background: #F7E4E2;
+    font-size: 14px;
+    color: var(--mt-color-danger);
+    list-style-type: disc;
+}
+.msp-single-notes {
+    list-style: none;
+    margin: 24px 0;
+    padding: 0;
+}
+.msp-single-notes li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: var(--mt-color-text);
+}
+@media (max-width: 1023px) {
+    .msp-single {
+        grid-template-columns: 1fr;
+        gap: 36px;
+    }
+    .msp-single-info {
+        position: static;
+    }
+}
+@media (max-width: 767px) {
+    .msp-single-name {
+        font-size: 44px;
+    }
+    .msp-single-gallery .mt-lightbox-thumbs {
+        gap: 8px;
+    }
+}
+
+
+/* ===== ModernSinglePage: quick-add modal ===== */
+/* windowClass: 'msp-modal' (categoryCtrl.js's openQuickAddModal). */
+.msp-modal .modal-dialog {
+    width: 480px;
+    max-width: calc(100vw - 32px);
+    margin: 80px auto;
+}
+.msp-modal .modal-content {
+    border: 0;
+    border-radius: 12px;
+    background: var(--mt-color-bg);
+    box-shadow: 0 24px 64px rgba(27, 26, 23, 0.25);
+    font-family: var(--mt-font-body);
+    color: var(--mt-color-text);
+}
+.msp-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 24px 16px 8px 28px;
+    border-bottom: 0;
+}
+.msp-modal-title {
+    margin: 0;
+    font-family: var(--mt-font-display);
+    font-weight: 400;
+    font-size: 32px;
+    line-height: 1.05;
+    color: var(--mt-color-ink);
+}
+.msp-modal-price {
+    margin: 8px 0 0;
+    font-size: 17px;
+    color: var(--mt-color-ink);
+}
+.msp-modal .modal-body {
+    padding: 16px 28px 8px;
+}
+.msp-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 16px 28px 28px;
+    border-top: 0;
+}
+.msp-modal-footer .msp-btn {
+    height: 48px;
+}
+.msp-modal-footer .msp-btn + .msp-btn {
+    margin-left: 0;
+}
+/* Backdrop in the design's scrim colour. */
+.msp-modal ~ .modal-backdrop,
+.modal-backdrop.in {
+    background: rgb(27, 26, 23);
+}
+@media (max-width: 767px) {
+    .msp-modal .modal-dialog {
+        margin: 24px auto;
+    }
+    .msp-modal-footer .msp-btn {
+        flex: 1 1 0;
+    }
+}
+
+/* kitaddtoorderspecs renders its own variant preview above the fields for IsVBOSS products; the
+   gallery on the left already follows the selected variant, so this would show it twice. */
+.msp-single-options > kitaddtoorderspecs > div > figure {
+    display: none;
+}

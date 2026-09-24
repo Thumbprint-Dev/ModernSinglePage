@@ -1,13 +1,45 @@
-<footer class="mt-footer">
-    <div class="mt-container mt-footer-inner">
-        <p class="mt-footer-line">
-            <a href="https://thumbprint.com" target="_blank">{{'Powered by' | xlat}} Thumbprint</a>
-            &middot; {{'Copyright' | xlat}} © {{year}} Thumbprint. {{'All Rights Reserved' | xlat}}.
-        </p>
-        <span class="mt-footer-links" ng-if="!(user.Permissions.contains('HideTerms'))">
-            <a class="mt-footer-link" href="https://thumbprint.com/terms-of-use/" target="_blank" rel="noopener">{{'Terms of Use' | xlat}}</a>
-            <a class="mt-footer-link" href="https://thumbprint.com/privacy/" target="_blank" rel="noopener">{{'Privacy Policy' | xlat}}</a>
-            <a class="mt-footer-link" href="https://thumbprint.com/return-policy-and-limited-warranty/" target="_blank" rel="noopener">{{'Return Policy' | xlat}}</a>
-        </span>
+<!-- Site footer, every page. Brand block + link columns from site.json footer; the bottom row
+     keeps the original Thumbprint copyright and legal links. id="contact" is the header's Contact
+     link target, reachable from any page because the footer is on every page. -->
+<footer class="msp-footer" id="contact">
+    <div class="msp-container">
+        <div class="msp-footer-top">
+            <div class="msp-footer-brand">
+                <p class="msp-footer-name">{{site.name || user.Company.Name || 'Storefront'}}</p>
+                <p class="msp-footer-blurb" ng-if="site.footer.blurb">{{site.footer.blurb | r | xlat}}</p>
+            </div>
+            <nav class="msp-footer-cols" aria-label="{{'Footer' | r | xlat}}" ng-if="site.footer.columns.length">
+                <div class="msp-footer-col" ng-repeat="col in site.footer.columns">
+                    <p class="msp-footer-heading" ng-if="col.heading">{{col.heading | r | xlat}}</p>
+                    <ul>
+                        <li ng-repeat="link in col.links">
+                            <a ng-href="{{link.url.charAt(0) == '#' ? 'catalog' : link.url}}"
+                               ng-click="link.url.charAt(0) == '#' && goToSection(link.url.substr(1), $event)"
+                               ng-attr-target="{{link.url.indexOf('http') == 0 ? '_blank' : undefined}}"
+                               ng-attr-rel="{{link.url.indexOf('http') == 0 ? 'noopener' : undefined}}">{{link.label | r | xlat}}</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+
+        <div class="msp-footer-bottom">
+            <p class="msp-footer-copy">
+                &copy; {{year}} {{site.name || user.Company.Name}}. {{'All Rights Reserved' | xlat}}.
+                <span ng-if="!user.Permissions.contains('UnBrandedSite')">
+                    <a href="https://thumbprint.com" target="_blank" rel="noopener">{{'Powered by' | xlat}} Thumbprint</a>
+                </span>
+            </p>
+            <p class="msp-footer-legal">
+                <a ng-repeat="link in site.footer.legalLinks" ng-href="{{link.url}}"
+                   ng-attr-target="{{link.url.indexOf('http') == 0 ? '_blank' : undefined}}"
+                   ng-attr-rel="{{link.url.indexOf('http') == 0 ? 'noopener' : undefined}}">{{link.label | r | xlat}}</a>
+                <span ng-if="!user.Permissions.contains('HideTerms') && !user.Permissions.contains('UnBrandedSite')">
+                    <a href="https://thumbprint.com/terms-of-use/" target="_blank" rel="noopener">{{'Terms of Use' | xlat}}</a>
+                    <a href="https://thumbprint.com/privacy/" target="_blank" rel="noopener">{{'Privacy Policy' | xlat}}</a>
+                    <a href="https://thumbprint.com/return-policy-and-limited-warranty/" target="_blank" rel="noopener">{{'Return Policy' | xlat}}</a>
+                </span>
+            </p>
+        </div>
     </div>
 </footer>

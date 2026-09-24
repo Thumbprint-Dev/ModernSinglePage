@@ -10,7 +10,7 @@
         <div class="msp-container msp-hero-inner">
             <div class="msp-hero-copy">
                 <p class="msp-eyebrow" ng-if="site.hero.eyebrow">{{site.hero.eyebrow | r | xlat}}</p>
-                <h1 class="msp-hero-title" ng-if="site.hero.heading">{{site.hero.heading | r | xlat}}</h1>
+                <h1 class="msp-hero-title" ng-if="site.hero.heading">{{site.hero.heading | r | xlat}}<em ng-if="site.hero.headingItalic"> {{site.hero.headingItalic | r | xlat}}</em></h1>
                 <p class="msp-hero-sub" ng-if="site.hero.subheading">{{site.hero.subheading | r | xlat}}</p>
             </div>
             <div class="msp-hero-actions" ng-if="site.hero.showButton && site.hero.buttonText || site.hero.secondaryButtonText && site.story.heading">
@@ -41,7 +41,8 @@
     <!-- Shop: the site.json shop category, up to 12 products. -->
     <div id="shop" class="msp-section msp-shop" ng-if="shopProducts">
         <div class="msp-container">
-            <div class="msp-section-head">
+            <!-- One-product mode names the section in the product's own eyebrow instead. -->
+            <div class="msp-section-head" ng-if="shopProducts.length != 1">
                 <div>
                     <p class="msp-eyebrow" ng-if="site.shop.eyebrow">{{site.shop.eyebrow | r | xlat}}</p>
                     <h2 class="msp-section-title" ng-if="site.shop.heading">{{site.shop.heading | r | xlat}}</h2>
@@ -51,8 +52,53 @@
                 </p>
             </div>
             <p class="msp-shop-empty" ng-if="!shopProducts.length">{{'No products are available right now.' | r | xlat}}</p>
-            <div class="msp-grid msp-grid-cols-{{shopGridCols}}" ng-if="shopProducts.length">
+            <div class="msp-grid msp-grid-cols-{{shopGridCols}}" ng-if="shopProducts.length > 1">
                 <div class="msp-grid-item" ng-repeat="product in shopProducts track by product.InteropID" ng-include="'partials/controls/mspProductCard.html'"></div>
+            </div>
+            <!-- Exactly one product: a product detail in place of the grid. -->
+            <div ng-if="shopProducts.length == 1" ng-controller="SingleProductCtrl" ng-include="'partials/controls/mspSingleProduct.html'"></div>
+        </div>
+    </div>
+
+    <!-- Story: site.json story. Hidden (with the header's About link) until it has a heading. -->
+    <div id="story" class="msp-story" ng-if="site.story.heading">
+        <div class="msp-story-media">
+            <img ng-if="site.story.image" ng-src="{{site.story.image}}" alt="" />
+        </div>
+        <div class="msp-story-copy">
+            <p class="msp-eyebrow" ng-if="site.story.eyebrow">{{site.story.eyebrow | r | xlat}}</p>
+            <h2 class="msp-story-title">{{site.story.heading | r | xlat}}<em ng-if="site.story.headingItalic"> {{site.story.headingItalic | r | xlat}}</em></h2>
+            <p class="msp-story-text" ng-repeat="paragraph in site.story.paragraphs">{{paragraph | r | xlat}}</p>
+            <a ng-if="site.story.linkText" href="catalog" class="msp-text-link" ng-click="goToSection('shop', $event)">
+                {{site.story.linkText | r | xlat}}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+            </a>
+        </div>
+    </div>
+
+    <!-- FAQ: site.json faq.items. One item open at a time. -->
+    <div id="faq" class="msp-section msp-faq" ng-if="site.faq.items.length">
+        <div class="msp-container msp-faq-row">
+            <div class="msp-faq-intro">
+                <p class="msp-eyebrow" ng-if="site.faq.eyebrow">{{site.faq.eyebrow | r | xlat}}</p>
+                <h2 class="msp-section-title" ng-if="site.faq.heading">{{site.faq.heading | r | xlat}}</h2>
+                <p class="msp-faq-contact" ng-if="site.faq.email">
+                    {{site.faq.intro | r | xlat}} <a ng-href="mailto:{{site.faq.email}}">{{site.faq.email}}</a>
+                </p>
+            </div>
+            <div class="msp-faq-list">
+                <div class="msp-faq-item" ng-repeat="item in site.faq.items">
+                    <h3 class="msp-faq-q">
+                        <button type="button" id="msp-faq-q-{{$index}}" aria-controls="msp-faq-a-{{$index}}" aria-expanded="{{faqState.open == $index}}"
+                                ng-click="faqState.open = (faqState.open == $index ? -1 : $index)">
+                            <span>{{item.question | r | xlat}}</span>
+                            <span class="msp-faq-sign" aria-hidden="true">{{faqState.open == $index ? '&minus;' : '+'}}</span>
+                        </button>
+                    </h3>
+                    <div class="msp-faq-a" id="msp-faq-a-{{$index}}" role="region" aria-labelledby="msp-faq-q-{{$index}}" ng-show="faqState.open == $index">
+                        <p>{{item.answer | r | xlat}}</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

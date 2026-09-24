@@ -24,6 +24,8 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			mobileImage: '',
 			eyebrow: 'Fall 2026 Collection',
 			heading: 'Gear your team for the season ahead.',
+			// Set in italics after heading, like the design's "Made to be used, *every day.*"
+			headingItalic: '',
 			subheading: 'New apparel, drinkware and print kits, priced for your group.',
 			// false hides the hero's call-to-action button while keeping its
 			// buttonText/buttonHref in the file, ready to switch back on.
@@ -54,6 +56,42 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			// falls back to the site's Featured category (AppConst). The layout is built
 			// for 1-12 products, so only the first 12 are shown.
 			categoryInteropID: ''
+		},
+		// 50/50 image + copy section (the header's About link). Blank heading hides the section
+		// and the link.
+		story: {
+			eyebrow: 'Our story',
+			heading: '',
+			headingItalic: '',
+			// Each entry is one paragraph.
+			paragraphs: [],
+			image: '',
+			// Link under the copy that scrolls to the shop. Blank hides it.
+			linkText: 'Shop now'
+		},
+		// Accordion (the header's FAQ link). Each item is { "question": "...", "answer": "..." };
+		// no items hides the section and the link.
+		faq: {
+			eyebrow: 'Help',
+			heading: 'Questions, answered.',
+			// "Still wondering? Email <email>" under the heading. Blank email hides the line.
+			intro: 'Still wondering? Email',
+			email: '',
+			items: []
+		},
+		// Site footer, on every page (the header's Contact link). Blank blurb hides it; columns
+		// and legalLinks replace the defaults whole when a site sets them.
+		footer: {
+			blurb: '',
+			// Each column is { "heading": "...", "links": [{ "label": "...", "url": "..." }] }. A url
+			// of "#shop", "#story", "#faq" or "#contact" scrolls to that section; "mailto:" and
+			// "tel:" work too; anything else is a normal link.
+			columns: [
+				{ heading: 'Shop', links: [{ label: 'The collection', url: '#shop' }, { label: 'Order history', url: 'order' }, { label: 'Favorite products', url: 'favoriteproducts' }] },
+				{ heading: 'Help', links: [{ label: 'FAQ', url: '#faq' }, { label: 'Contact us', url: 'contactus' }] }
+			],
+			// Links in the bottom row, next to the copyright line.
+			legalLinks: []
 		},
 		login: {
 			// Where "Need an account?" goes. Blank uses the native self-service
@@ -143,6 +181,33 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 		});
 		return output;
 	}
+
+	// Lists of objects, by section.key: each entry is rebuilt from the fields it is allowed to
+	// have, and dropped if the required ones are missing - one bad entry never fails the file.
+	function link(entry) {
+		if (!angular.isObject(entry) || !angular.isString(entry.label) || !entry.label.trim()) return null;
+		if (!isSafeUrl(entry.url)) return null;
+		return { label: entry.label.trim(), url: entry.url.trim() };
+	}
+	function objectList(value, shape) {
+		var output = [];
+		angular.forEach(value, function(entry) {
+			var clean = shape(entry);
+			if (clean) output.push(clean);
+		});
+		return output;
+	}
+	var OBJECT_LISTS = {
+		'faq.items': function(entry) {
+			if (!angular.isObject(entry) || !angular.isString(entry.question) || !entry.question.trim() || !angular.isString(entry.answer)) return null;
+			return { question: entry.question.trim(), answer: entry.answer.trim() };
+		},
+		'footer.columns': function(entry) {
+			if (!angular.isObject(entry) || !angular.isString(entry.heading)) return null;
+			return { heading: entry.heading.trim(), links: objectList(entry.links, link) };
+		},
+		'footer.legalLinks': link
+	};
 
 	function isSafeUrl(value) {
 		return angular.isString(value) && value.trim() !== '' && !EXECUTABLE_SCHEME.test(value);
@@ -286,7 +351,8 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 				// instead of ["UPS Ground"]) was stored as a string and then iterated
 				// character by character downstream, which threw inside checkout.
 				if (angular.isArray(value)) {
-					if (angular.isArray(override)) defaults[key] = stringList(override);
+					var shape = OBJECT_LISTS[section + '.' + key];
+					if (angular.isArray(override)) defaults[key] = shape ? objectList(override, shape) : stringList(override);
 					else if (override !== undefined) $log.warn('SiteConfig: ' + section + '.' + key + ' must be a list, ignoring -- ' + angular.toJson(override));
 				}
 				// A number takes only a real, non-negative number -- a quoted "75" is ignored the

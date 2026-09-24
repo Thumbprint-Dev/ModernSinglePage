@@ -107,6 +107,10 @@ function ($routeParams, $sce, $scope, $451, Category, Product, AppConst, Order, 
 		return false;
 	};
 
+	// FAQ accordion: which item is open (-1 for none). An object so the ng-repeat's child scopes
+	// write to this one rather than each shadowing its own copy.
+	$scope.faqState = { open: 0 };
+
 	var siteConfigLoaded = false;
 	SiteConfig.loaded.then(function() {
 		siteConfigLoaded = true;
@@ -221,6 +225,7 @@ function ($routeParams, $sce, $scope, $451, Category, Product, AppConst, Order, 
 			// the order had already saved server-side: modal stuck on its spinner, mini-cart never
 			// updated (the throw also skipped Order.save's event:orderUpdate broadcast).
 			scope: $scope,
+			windowClass: 'msp-modal',
 			templateUrl: 'partials/controls/quickAddModal.html',
 			controller: 'QuickAddModalCtrl',
 			resolve: {
