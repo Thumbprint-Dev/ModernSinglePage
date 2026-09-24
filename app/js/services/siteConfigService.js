@@ -79,13 +79,16 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			email: '',
 			items: []
 		},
-		// Pop-up shown once each time someone signs in (not on every page load). active turns it
-		// on and off; it only shows when it also has a heading or text. Leave
+		// Pop-up shown after sign-in. active turns it on and off; it only shows when it also has a
+		// heading or text. frequency: "day" (once a day per customer), "login" (once per sign-in)
+		// or "once" (once per message - editing the eyebrow, heading or text shows it again).
+		// Editing the message also re-shows it under "day" and "login". Leave
 		// secondaryButtonText blank for a single button. A button url of "#shop"/"#story"/
 		// "#faq"/"#contact" scrolls there, a blank url just closes the pop-up, anything else is
 		// followed as a link (full https:// links open in a new tab).
 		welcome: {
 			active: false,
+			frequency: 'day',
 			eyebrow: '',
 			heading: '',
 			text: '',

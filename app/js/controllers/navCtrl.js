@@ -1,5 +1,5 @@
-four51.app.controller('NavCtrl', ['$location', '$route', '$scope', '$rootScope', '$document', '$451', '$timeout', '$window', 'User', 'Order', 'SpendingAccount', 'AppConst', 'OrderConfig', 'SectionNav', 'SiteConfig', 'Security',
-function ($location, $route, $scope, $rootScope, $document, $451, $timeout, $window, User, Order, SpendingAccount, AppConst, OrderConfig, SectionNav, SiteConfig, Security) {
+four51.app.controller('NavCtrl', ['$location', '$route', '$scope', '$rootScope', '$document', '$451', '$timeout', '$window', 'User', 'Order', 'SpendingAccount', 'AppConst', 'OrderConfig', 'SectionNav', 'SiteConfig', 'Security', '$log',
+function ($location, $route, $scope, $rootScope, $document, $451, $timeout, $window, User, Order, SpendingAccount, AppConst, OrderConfig, SectionNav, SiteConfig, Security, $log) {
     // Four51 InteropIDs are unique platform-wide, so Featured/All Products may carry a uniqueness
     // suffix (e.g. "featured-gp") - match by prefix, not exact equality. Mirrors the same
     // exclusion categoryCtrl.js already applies to the home page's "Shop by category" tiles.
@@ -112,16 +112,24 @@ function ($location, $route, $scope, $rootScope, $document, $451, $timeout, $win
     };
 
     // ===== Sign-in pop-up (site.json welcome) =====
-    // Once per sign-in session, not per page load: remembered against a hash of the session's
-    // auth token, so a new sign-in - through the login form or an AutoLogon link alike - shows it
-    // again, and reloads within the same session don't. Shares the drawers' backdrop, Esc and
+    // How often it shows is site.json welcome.frequency, remembered in localStorage per customer:
+    //   "day"   - once per calendar day (the default)
+    //   "login" - once per sign-in session, keyed on a hash of the session's auth token, so the
+    //             login form and AutoLogon links both count and reloads don't
+    //   "once"  - once per message, ever
+    // Every mark also carries a hash of the message itself, so editing the eyebrow/heading/text
+    // shows the new message again under any frequency. Shares the drawers' backdrop, Esc and
     // focus handling (drawer.open == 'welcome').
     var WELCOME_KEY = 'msp-welcome-seen.' + $451.apiName;
+    var WELCOME_FREQUENCIES = ['day', 'login', 'once'];
+    function hashString(value) {
+        var hash = 5381;
+        for (var i = 0; i < value.length; i++) hash = ((hash << 5) + hash + value.charCodeAt(i)) | 0;
+        return String(hash);
+    }
     function sessionMark() {
         var token = Security.auth() || '';
-        var hash = 5381;
-        for (var i = 0; i < token.length; i++) hash = ((hash << 5) + hash + token.charCodeAt(i)) | 0;
-        if (token) return String(hash);
+        if (token) return 'login-' + hashString(token);
         // No readable token (e.g. an HttpOnly cookie on some tenant): fall back to once per tab.
         try {
             var tab = sessionStorage.getItem(WELCOME_KEY + '.tab');
@@ -129,11 +137,29 @@ function ($location, $route, $scope, $rootScope, $document, $451, $timeout, $win
             return 'tab-' + tab;
         } catch (e) { return 'tab'; }
     }
+    function today() {
+        var d = new Date();
+        return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+    }
+    function welcomeMark(w) {
+        var frequency = w.frequency;
+        if (WELCOME_FREQUENCIES.indexOf(frequency) < 0) {
+            $log.warn('SiteConfig: welcome.frequency must be "day", "login" or "once", using "day" -- ' + frequency);
+            frequency = 'day';
+        }
+        var message = hashString([w.eyebrow, w.heading, w.text].join('|'));
+        if (frequency == 'once') return 'once-' + message;
+        if (frequency == 'login') return sessionMark() + '-' + message;
+        return 'day-' + today() + '-' + message;
+    }
+    function welcomeKey() {
+        return WELCOME_KEY + '.' + ($scope.user.ID || $scope.user.Username || 'user');
+    }
     function welcomeSeen(mark) {
-        try { return localStorage.getItem(WELCOME_KEY) === mark; } catch (e) { return false; }
+        try { return localStorage.getItem(welcomeKey()) === mark; } catch (e) { return false; }
     }
     function rememberWelcome(mark) {
-        try { localStorage.setItem(WELCOME_KEY, mark); } catch (e) { /* private mode: shows once per page load instead */ }
+        try { localStorage.setItem(welcomeKey(), mark); } catch (e) { /* private mode: can't remember, so it shows once per page load */ }
     }
     $scope.welcomeHasContent = function() {
         var w = $scope.site && $scope.site.welcome;
@@ -144,8 +170,8 @@ function ($location, $route, $scope, $rootScope, $document, $451, $timeout, $win
         if (welcomeChecked || !$scope.user || $scope.user.Type == 'TempCustomer') return;
         welcomeChecked = true;
         if (!$scope.welcomeHasContent()) return;
-        var mark = sessionMark();
-        if (!mark || welcomeSeen(mark)) return;
+        var mark = welcomeMark($scope.site.welcome);
+        if (welcomeSeen(mark)) return;
         rememberWelcome(mark);
         // After the page's first paint, so the pop-up isn't the first thing to flash in.
         $timeout(function() { if (!$scope.drawer.open) $scope.openDrawer('welcome'); }, 600);
