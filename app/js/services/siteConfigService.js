@@ -371,6 +371,10 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 				// well as extend it. Non-string entries are dropped instead of failing
 				// the whole file.
 				else if (angular.isString(override) && override !== '') defaults[key] = override;
+				// null clears a text default ("" can't, since blank means "keep the default") - how
+				// a site hides something the theme shows by default, like the hero eyebrow or the
+				// "Our story" button.
+				else if (override === null && angular.isString(value)) defaults[key] = '';
 			});
 		});
 

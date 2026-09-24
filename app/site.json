@@ -1,41 +1,113 @@
 {
-	"_readme": "Per-site branding. Blank values fall back to the theme/platform defaults, so only fill in what this site changes. See THEME-DEVELOPMENT-NOTES.md, 'Per-site branding: app/site.json'.",
+	"_readme": "Every setting this theme reads, at its default value. This file is the template: a site's own site.json in Four51 only needs the keys it changes - leave the rest out and they keep these defaults. Sections merge one level deep, so {\"hero\": {\"heading\": \"...\"}} changes just the heading. A blank string (\"\") also keeps the default; null clears text the theme shows by default (e.g. \"eyebrow\": null). Lists replace the default list whole. Keys starting with _ are notes and are ignored. A key only works if siteConfigService.js knows it - see THEME-DEVELOPMENT-NOTES.md, 'Per-site branding: app/site.json'.",
+	"_help_name": "name: store name for the header logo text, footer and tab title. Blank uses the Four51 company name. favicon: URL of a .png/.ico; blank keeps storefrontfavicon.ico.",
 	"name": "",
 	"favicon": "",
 	"logo": {
+		"_help": "url: header logo image; blank uses the company logo set in Four51, then the store name as text. alt: its alt text.",
 		"url": "",
 		"alt": ""
 	},
-	"shop": {
-		"_help_categoryInteropID": "categoryInteropID: InteropID of the Four51 category the one-page shop lists (the first 12 products). Set it in this site's own site.json, not the theme repo. Blank falls back to the site's Featured category.",
-		"categoryInteropID": ""
-	},
-	"login": {
-		"_help_createAccountUrl": "createAccountUrl: where 'Need an account?' goes. Blank uses the built-in signup page at /admin, which needs the site to give anonymous visitors a temp session; otherwise paste the site's Four51 AutoLogon link.",
-		"createAccountUrl": ""
-	},
-	"theme": {
-		"accent": "",
-		"accentDark": "",
-		"fontFamily": "",
-		"fontUrl": ""
+	"announcement": {
+		"_help": "messages: short lines for the dark bar above the header, e.g. [\"Free shipping on orders over $75\"]. Empty hides the bar. Phones show the first line only.",
+		"messages": []
 	},
 	"hero": {
+		"_help": "image: 2400x1360 photo; mobileImage: 1200x1800 used below 768px (blank reuses image). Without an image the tinted placeholder shows. headingItalic: italic text after heading. buttonHref: 'catalog' or '#shop' scrolls to the shop, anything else is a link. showButton: true/false. secondaryButtonText: outlined button to the story section, only shown when story.heading is set.",
 		"image": "",
+		"mobileImage": "",
 		"eyebrow": "Fall 2026 Collection",
 		"heading": "Gear your team for the season ahead.",
+		"headingItalic": "",
 		"subheading": "New apparel, drinkware and print kits, priced for your group.",
 		"showButton": true,
 		"buttonText": "Shop the collection",
-		"buttonHref": "catalog"
+		"buttonHref": "catalog",
+		"secondaryButtonText": "Our story"
+	},
+	"trust": {
+		"_help": "items: up to four short lines under the hero, e.g. [\"Free shipping over $75\", \"30-day returns\", \"Secure checkout\", \"Ships in 3 business days\"]. Icons go by position: truck, returns, lock, clock. The first two also appear under Add to cart in one-product mode. Empty hides the strip.",
+		"items": []
+	},
+	"shop": {
+		"_help": "categoryInteropID: the Four51 category the shop lists (first 12 products) - set this per site. Blank falls back to the Featured category. With exactly one product the shop shows it as a product detail instead of a grid.",
+		"eyebrow": "Shop",
+		"heading": "The Collection",
+		"categoryInteropID": ""
+	},
+	"story": {
+		"_help": "The About section: image + copy. heading is required - blank hides the section and the header's About link. paragraphs: one string per paragraph. linkText: link that scrolls to the shop; null hides it.",
+		"eyebrow": "Our story",
+		"heading": "",
+		"headingItalic": "",
+		"paragraphs": [],
+		"image": "",
+		"linkText": "Shop now"
+	},
+	"faq": {
+		"_help": "items: [{\"question\": \"...\", \"answer\": \"...\"}]. No items hides the section and the header's FAQ link. email: shown after intro under the heading; blank hides that line.",
+		"eyebrow": "Help",
+		"heading": "Questions, answered.",
+		"intro": "Still wondering? Email",
+		"email": "",
+		"items": []
+	},
+	"footer": {
+		"_help": "On every page. blurb: short line under the store name. columns: [{\"heading\": \"Help\", \"links\": [{\"label\": \"FAQ\", \"url\": \"#faq\"}]}] - #shop, #story, #faq and #contact scroll in-page; mailto:, tel:, site routes (order, contactus) and full URLs also work. legalLinks: [{\"label\": \"Privacy\", \"url\": \"https://...\"}] in the bottom row. Setting columns or legalLinks replaces the default list whole.",
+		"blurb": "",
+		"columns": [
+			{
+				"heading": "Shop",
+				"links": [
+					{
+						"label": "The collection",
+						"url": "#shop"
+					},
+					{
+						"label": "Order history",
+						"url": "order"
+					},
+					{
+						"label": "Favorite products",
+						"url": "favoriteproducts"
+					}
+				]
+			},
+			{
+				"heading": "Help",
+				"links": [
+					{
+						"label": "FAQ",
+						"url": "#faq"
+					},
+					{
+						"label": "Contact us",
+						"url": "contactus"
+					}
+				]
+			}
+		],
+		"legalLinks": []
+	},
+	"login": {
+		"_help": "createAccountUrl: where 'Need an account?' on the login page goes. Blank uses the built-in signup at /admin, which needs the site to give anonymous visitors a temp session; otherwise paste the site's Four51 AutoLogon link.",
+		"createAccountUrl": ""
+	},
+	"theme": {
+		"_help": "accent: brand colour for buttons, links and badges (needs 4.5:1 contrast both as text on #F4F1EC and behind white text); accentDark: hover shade, blank derives it. fontFamily / displayFontFamily: body sans and heading serif family names; fontUrl: a stylesheet that loads them (e.g. a Google Fonts URL) - a family name alone loads nothing.",
+		"accent": "",
+		"accentDark": "",
+		"fontFamily": "",
+		"fontUrl": "",
+		"displayFontFamily": ""
 	},
 	"shipping": {
-		"_help_allowedDomesticMethods": "allowedDomesticMethods: what a DOMESTIC order may use. Matched on the name Four51 returns, trimmed and case-insensitive, and the whole name must match - `Fedex International` does not match `Fedex International Priority`, so list each variant you want. Leave it empty for no restriction. Methods seen: `Bulk Shipping (over 150 lbs)`, `Fedex International`, `UPS Ground`, `UPS 3 Day Select`, `UPS 2nd Day Air`, `UPS Next Day Air Saver`, `UPS Next Day Air`, `UPS Next Day Air Early A.M.`.",
-		"_help_allowedInternationalMethods": "allowedInternationalMethods: what an order shipping OUTSIDE domesticCountries may use. The rule is symmetric - an international address sees only these, and a domestic address never sees them, so a carrier listed here is automatically kept out of domestic checkout. Leave it empty and country plays no part at all. A name matching nothing empties the dropdown and logs a warning to the console.",
-		"_help_domesticCountries": "domesticCountries: country codes treated as domestic, as the address stores them. Everything else counts as international. Empty falls back to US. Canada and Mexico are NOT domestic unless listed here. Note this is country only.",
-		
-		"allowedDomesticMethods": ["UPS Ground"],
-		"allowedInternationalMethods": ["Fedex International"],
-		"domesticCountries": ["US"]
+		"_help": "allowedDomesticMethods / allowedInternationalMethods: shipping method names the checkout may offer (exact names as Four51 returns them, case-insensitive); empty = no restriction. A name matching nothing empties the dropdown and logs a warning. domesticCountries: country codes counted as domestic. freeShippingThreshold: order subtotal for free shipping as a number (75, not \"$75\") - drives the cart drawer's progress bar only; 0 hides the bar.",
+		"allowedDomesticMethods": [],
+		"allowedInternationalMethods": [],
+		"domesticCountries": [
+			"US"
+		],
+		"freeShippingThreshold": 0
 	}
 }

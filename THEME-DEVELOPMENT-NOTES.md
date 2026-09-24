@@ -272,6 +272,15 @@ modals with `scope: $scope`. Confirm with a throwaway controller that captures i
 check `.user` on it. Don't read `.modal-content`'s scope: the modal-window directive has an
 isolate scope, so that check gives a false result.
 
+**`QuickAddModalCtrl` shadowed `$scope.user` too, even with `scope: $scope`.** Its `User.get`
+callback did `$scope.user = user`, so `confirmAdd()`'s `user.CurrentOrderID = o.ID` landed on the
+modal's own copy. When the modal made the *first* item in a new cart, Four51Ctrl's
+`order.ID === user.CurrentOrderID` guard never matched: the add saved server-side but the cart
+badge and drawer stayed empty until a reload. Adds into an existing cart were fine, which is why
+it hid. Fixed by merging (`angular.extend($scope.user, user)`) instead of assigning. ModernTheme
+still has the original line - port the fix. Any new inline add-to-cart flow (the one-product
+shop's `SingleProductCtrl`) follows the same merge rule.
+
 **Kit routes address the kit by array index (`/kit/:id/:lineitemid`, where `lineitemid` is
 its position in `LineItems`), not by ID.** Removing anything *ahead* of the kit from the mini-cart
 shifted it down a slot. The next component save then read `order.LineItems[staleIndex]` and
@@ -716,6 +725,23 @@ link to `/admin`, styled like the existing "Need help logging on?" link already 
 There is no CMS behind this theme, and the platform has no field for a home-page
 hero. `app/site.json` fills that gap: one deployed file per site, editable in
 Four51 without forking the theme.
+
+**ModernSinglePage: the repo copy is the complete template.** `app/site.json` lists every key
+the theme reads, at exactly the defaults hard-coded in `siteConfigService.js`, with a `_help`
+note per section. A site's own copy in Four51 replaces the file, so it only needs the keys it
+changes - everything left out keeps its default. Generate the template from the service rather
+than hand-editing it, or the two drift: load the factory in Node with a stub `angular`/`$http`
+and serialise `settings`. Rules worth knowing when filling one in:
+
+- `""` keeps the default (same as leaving the key out); `null` clears a text default - the only
+  way to hide something the theme shows by default, like `hero.eyebrow`.
+- Numbers (`shipping.freeShippingThreshold`) take a real number only; `"75"` is ignored with a
+  warning, the same rule as quoted booleans.
+- Lists of objects (`faq.items`, `footer.columns`, `footer.legalLinks`) are rebuilt field by
+  field from a per-key shape in `OBJECT_LISTS`; entries missing a required field, and links
+  with an executable scheme, are dropped individually rather than failing the file.
+- Locally, `.env` `SITE_JSON=` points the dev server at a site's own copy (`*.local.json`,
+  gitignored) in place of the repo template.
 
 ```json
 {
