@@ -1,6 +1,24 @@
-four51.app.controller('CheckOutViewCtrl', ['$scope', '$routeParams', '$location', '$filter', '$rootScope', '$451', 'User', 'Order', 'OrderConfig', 'AddressList', 'GoogleAnalytics',
-function ($scope, $routeParams, $location, $filter, $rootScope, $451, User, Order, OrderConfig, AddressList, GoogleAnalytics) {
+four51.app.controller('CheckOutViewCtrl', ['$scope', '$routeParams', '$location', '$route', '$filter', '$rootScope', '$451', 'User', 'Order', 'OrderConfig', 'AddressList', 'GoogleAnalytics',
+function ($scope, $routeParams, $location, $route, $filter, $rootScope, $451, User, Order, OrderConfig, AddressList, GoogleAnalytics) {
 	$scope.errorSection = 'open';
+
+	// Same shadowing hazard as cartCtrl.js: saveChanges() below assigns currentOrder on this
+	// scope, so a mini-cart removal made mid-checkout never reached it, and submitting sent the
+	// deleted line item back to the server. Reload the route instead of swapping the order in
+	// place - the shipping/billing/payment directives hold references into it, and a reload
+	// re-reads the fresh, inherited order (or bounces to the catalog if the cart is now empty).
+	// Keyed on the set of line item IDs, so the directives' own shipping/payment saves - which
+	// never add or remove lines - don't trigger it.
+	function lineItemIDs(order) {
+		var ids = [];
+		angular.forEach(order.LineItems, function(li) { ids.push(li.ID); });
+		return ids.sort().join(',');
+	}
+	$scope.$on('event:orderUpdate', function(event, order) {
+		if ($scope.isEditforApproval || $scope.submitClicked || !$scope.currentOrder || order === $scope.currentOrder) return;
+		if (!order || (order.ID === $scope.currentOrder.ID && lineItemIDs(order) !== lineItemIDs($scope.currentOrder)))
+			$route.reload();
+	});
 
 	$scope.isEditforApproval = $routeParams.id != null && $scope.user.Permissions.contains('EditApprovalOrder');
 	if ($scope.isEditforApproval) {

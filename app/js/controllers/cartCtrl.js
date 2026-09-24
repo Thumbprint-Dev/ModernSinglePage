@@ -20,6 +20,28 @@ function ($scope, $routeParams, $location, $451, $timeout, Order, OrderConfig, U
 		});
 	}
 
+	// Every save/remove below assigns "$scope.currentOrder = ..." on THIS scope, shadowing
+	// Four51Ctrl's copy from then on - so a mini-cart removal made while this page is open
+	// (navCtrl -> Order.deletelineitem -> event:orderUpdate) only ever updated Four51Ctrl's copy.
+	// This page kept showing the removed item, and its next autosave sent it back to the server,
+	// which answered "Object reference not set to an instance of an object". Take the fresh order
+	// whenever an update for this same order arrives with a different set of line items - our own
+	// saves broadcast the very object we just assigned, so they never trip this.
+	function lineItemIDs(order) {
+		var ids = [];
+		angular.forEach(order.LineItems, function(li) { ids.push(li.ID); });
+		return ids.sort().join(',');
+	}
+	$scope.$on('event:orderUpdate', function(event, order) {
+		if ($scope.isEditforApproval || !$scope.currentOrder || order === $scope.currentOrder) return;
+		if (!order) {
+			$scope.currentOrder = null;
+			return;
+		}
+		if (order.ID === $scope.currentOrder.ID && lineItemIDs(order) !== lineItemIDs($scope.currentOrder))
+			$scope.currentOrder = order;
+	});
+
 	$scope.currentDate = new Date();
 	$scope.errorMessage = null;
 	$scope.continueShopping = function() {
