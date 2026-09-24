@@ -248,6 +248,35 @@ assignment on a scope in between, not a missing update. `angular.element(el).sco
 browser console, on an element from each suspect view, lets you directly compare
 `scope.currentOrder === otherScope.currentOrder` (identity, not just value) to confirm.
 
+**The stock page controllers shadow `currentOrder` too - and that's only safe until something else
+changes the order while that page is open.** `cartCtrl.js` and `checkOutViewCtrl.js` (also
+`orderHistoryViewCtrl.js`, `favoriteOrderCtrl.js`, `lineItemEditCtrl.js`, the kit/spec controllers
+and the checkout directives) all do `$scope.currentOrder = data` after their own saves. That's fine
+in isolation, but the mini-cart is always on screen: removing an item from it while the cart page
+was open left the cart page holding the deleted line item, and its next quantity autosave got the
+same "Object reference not set" error back. Fix pattern used: each such page listens for
+`event:orderUpdate`, ignores its own saves (they broadcast the exact object it just assigned, so
+`order === $scope.currentOrder`), and reacts only when an update for the **same order ID** arrives
+with a **different set of line item IDs**. The cart page swaps in the fresh order. Checkout does
+`$route.reload()` instead, because its shipping/billing/payment directives hold references into the
+order; keying on line item membership means those directives' own shipping/payment saves never
+trigger the reload. When auditing a new theme, grep for `$scope.currentOrder = ` and ask of each
+hit: "what happens if the mini-cart changes the order while this view is open?"
+
+**`$modal.open()` (ui-bootstrap 0.10) parents the modal's scope to `$rootScope` unless you pass
+`scope:`.** `$rootScope` sits *above* `Four51Ctrl` on `<html>`, so a modal inherits neither
+`$scope.user` nor `$scope.currentOrder`. The quick-add modal's `$scope.user.CurrentOrderID = o.ID`
+threw right after the order had already saved server-side: spinner stuck forever, and the throw
+also skipped `_then`'s `event:orderUpdate` broadcast, so the mini-cart never updated. Always open
+modals with `scope: $scope`. Confirm with a throwaway controller that captures its `$scope` and
+check `.user` on it. Don't read `.modal-content`'s scope: the modal-window directive has an
+isolate scope, so that check gives a false result.
+
+**Quantity inputs are `type="text"`, so `lineitem.Quantity` is a string.** Any arithmetic on it
+needs `parseInt(x, 10)`. `addOrMergeLineItem()` did `existing.Quantity + lineItem.Quantity`, and
+adding 2 more of an item already in the cart at 1 produced quantity **12**. Server-returned
+quantities are numbers, which is why category-page adds (hard-coded `Quantity: 1`) never showed it.
+
 ### `ng-repeat` needs a stable `track by` key when the underlying object gets replaced wholesale
 
 Directly downstream of the above: because `Four51Ctrl.js`'s `event:orderUpdate` listener replaces
@@ -909,6 +938,13 @@ to push the new object in as well.
 
 ## Debugging techniques that paid off this session
 
+- **Verify a deploy from the running app, not with `curl`.** The theme's
+  `…/js/<host>.<site>.source.js` is a ~1.9KB loader stub when fetched without a session, so grepping
+  it for new code always says "not deployed". Grepping it in a signed-in tab is no better. What works
+  is reading the live controller source from the loaded module:
+  `angular.module('451order')._invokeQueue` → find the `[name, fn]` entry → `String(fn)`. The code is
+  minified, so search for string literals (event names, `reload()`), not local function names.
+
 - **A native `confirm()`/`alert()` dialog will hang browser automation tools.** Both Claude's
   built-in browser and the Claude-in-Chrome extension dispatch clicks/keys through the DOM/CDP,
   which cannot interact with an OS-level native dialog - triggering one (e.g. clicking the
@@ -969,6 +1005,8 @@ to push the new object in as well.
   file with a cache-busting query string) before concluding a fix didn't work — the browser doing
   the visual check is very likely just serving a stale cached copy of an asset, not proof the
   deploy failed. This happened repeatedly this session; the deploy was fine every time.
+  **This only works for `.css`/`.html`.** JS is served through a bundled loader that `curl`
+  can't see into. For JS changes, use the `_invokeQueue` check under "Debugging techniques".
 - Auto-deploy on merge is usually near-instant (seconds to ~1 minute), but **it can silently
   stall for a specific commit** — confirmed once this session via the same `curl`-the-live-file
   check above, still showing the pre-merge content 10+ minutes after merging with no sign of
