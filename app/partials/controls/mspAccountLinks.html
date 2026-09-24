@@ -1,0 +1,42 @@
+<!-- Account links, shared by the header's account dropdown and the phone menu drawer. -->
+<li class="msp-account-balance" ng-repeat="acct in purchaseSpendingAccounts">
+    <span class="msp-account-balance-label">{{acct.Label}}</span>
+    <span>{{acct.Balance | culturecurrency}} {{'available' | r | xlat}}</span>
+</li>
+<li class="divider" ng-if="purchaseSpendingAccounts.length"></li>
+<li id="451qa_order_link" ng-if="user.Type == 'Customer'">
+    <a href="order">{{'Order History' | r | xlat}}</a>
+</li>
+<li id="451qa_user_link" ng-show="user.Permissions.contains('ViewSelfAdmin')" class="admin">
+    <a href="admin">{{'User Information' | r | xlat}}</a>
+</li>
+<li id="451qa_addy_link" ng-show="user.Type == 'Customer' && (user.Permissions.contains('CreateShipToAddress') || user.Permissions.contains('CreateBillToAddress'))" class="addresses">
+    <a href="addresses">{{'Addresses' | r | xlat}}</a>
+</li>
+<li id="451qa_mesg_link" ng-show="user.Type == 'Customer' && user.Permissions.contains('ViewMessaging')" class="messages">
+    <a href="message">{{'Notifications' | r | xlat}}</a>
+</li>
+<li class="favorites" ng-show="user.Type == 'Customer'">
+    <a id="451qa_fave_link" href="favoriteorders">{{'Favorite Orders' | r | xlat}}</a>
+</li>
+<li class="favorites" ng-show="user.Type == 'Customer'">
+    <a href="favoriteproducts">{{'Favorite Products' | r | xlat}}</a>
+</li>
+<li ng-show="user.Type == 'Customer' && user.Permissions.contains('AdvancedReporting')">
+    <a id="451qa_reports_link" href="reports">{{'Reports' | r | xlat}}</a>
+</li>
+<li id="451qa_contact_link" ng-show="user.Permissions.contains('ViewContactUs')" class="contactus">
+    <a href="contactus">{{'Contact Us' | r | xlat}}</a>
+</li>
+<li ng-if="user.Permissions.contains('MultipleShoppingCart') && currentOrder">
+    <a href="#" neworder class="neworder" ng-click="$event.preventDefault(); newOrderLoadingIndicator = true;startNewOrder()">
+        {{"Start" | r | xlat}} {{"New" | r | xlat}} {{"Order" | r | xlat}}
+    </a>
+</li>
+<li class="divider" ng-show="user.Type!='TempCustomer' || isInGroup('TPAdmin')"></li>
+<li ng-show="user.Type!='TempCustomer'" class="logout">
+    <a href="#" class="451_btn_logout" ng-click="$event.preventDefault(); Logout()">{{'Log Out' | r | xlat}}</a>
+</li>
+<li ng-if="isInGroup('TPAdmin')">
+    <a href="#" ng-click="$event.preventDefault(); Clear()">{{'Clear Cache' | r | xlat}}</a>
+</li>

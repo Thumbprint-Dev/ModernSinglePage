@@ -28,6 +28,11 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			buttonText: 'Shop the collection',
 			buttonHref: 'catalog'
 		},
+		announcement: {
+			// Short lines shown in the ink bar above the header, separated by a dot. Empty
+			// hides the bar entirely.
+			messages: []
+		},
 		shop: {
 			// InteropID of the Four51 category the one-page shop section lists. Set it
 			// in each site's own site.json, not here -- it names that site's data. Blank
@@ -55,7 +60,11 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			// Stylesheet that delivers fontFamily as a webfont, injected as a
 			// <link>. Without it, fontFamily renders only for visitors who happen
 			// to have the font installed locally.
-			fontUrl: ''
+			fontUrl: '',
+			// Overrides --mt-font-display, the serif used for the logo text, hero and section
+			// headings. Same rules as fontFamily; FALLBACK_DISPLAY_FONTS is appended behind it.
+			// Its webfont still has to be delivered by fontUrl (one stylesheet can carry both).
+			displayFontFamily: ''
 		},
 		shipping: {
 			// The only shipping method names the checkout dropdowns may offer, matched
@@ -94,10 +103,11 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 	// the way back to its default serif.
 	var GENERIC = /(^|,)\s*(sans-serif|serif|monospace|cursive|fantasy|system-ui)\s*$/i;
 
-	// What custom.css sets --mt-font-body to. Duplicated here on purpose: this is
+	// What custom.css sets --mt-font-body / --mt-font-display to. Duplicated here on purpose: this is
 	// the fallback appended behind a site's own font, and it should not silently
 	// change if the stylesheet's default is retuned.
-	var FALLBACK_FONTS = "'Inter', 'Droid Sans', sans-serif";
+	var FALLBACK_FONTS = "'Instrument Sans', system-ui, sans-serif";
+	var FALLBACK_DISPLAY_FONTS = "'Instrument Serif', Georgia, serif";
 
 	// These land in a href/src attribute set through the DOM, never innerHTML, so
 	// the only real hazard is a scheme that executes.
@@ -169,13 +179,20 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			else $log.warn('SiteConfig: theme.fontUrl is not a usable URL, ignoring -- ' + url);
 		}
 
+		applyFamily(root, '--mt-font-body', 'fontFamily', FALLBACK_FONTS);
+		applyFamily(root, '--mt-font-display', 'displayFontFamily', FALLBACK_DISPLAY_FONTS);
+	}
+
+	function applyFamily(root, property, key, fallback) {
+		var family = (settings.theme[key] || '').trim();
+
 		if (!family) return;
 		if (!FONT.test(family)) {
-			$log.warn('SiteConfig: theme.fontFamily is not a font name, ignoring -- ' + family);
+			$log.warn('SiteConfig: theme.' + key + ' is not a font name, ignoring -- ' + family);
 			return;
 		}
 
-		root.style.setProperty('--mt-font-body', GENERIC.test(family) ? family : family + ', ' + FALLBACK_FONTS);
+		root.style.setProperty(property, GENERIC.test(family) ? family : family + ', ' + fallback);
 	}
 
 	function loadStylesheet(url) {

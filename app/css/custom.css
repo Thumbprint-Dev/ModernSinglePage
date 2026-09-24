@@ -36,28 +36,50 @@ Template: Howdy
    stops, etc. used once or twice) are left as literals rather than tokenized, since they aren't
    really "the brand," just local tweaks. */
 :root {
-    /* Text */
-    --mt-color-text: #262420;
-    --mt-color-text-strong: #211F19;
-    --mt-color-text-soft: #4A463C;
-    --mt-color-muted: #726D5F;
+    /* ModernSinglePage palette (design/design-tokens.json). The token names are ModernTheme's,
+       so every inherited page (cart, checkout, account) picks the new palette up as-is. */
 
-    /* Accent (links, buttons, active states) */
-    --mt-color-accent: #0F6B63;
-    --mt-color-accent-dark: #0C544E;
+    /* Text */
+    --mt-color-text: #3A362F;         /* textBody */
+    --mt-color-text-strong: #1B1A17;  /* ink */
+    --mt-color-text-soft: #3A362F;
+    --mt-color-muted: #6B655C;        /* 4.5:1+ on the ground */
+
+    /* Accent (links, buttons, active states). site.json theme.accent overrides both. */
+    --mt-color-accent: #2F4A3A;
+    --mt-color-accent-dark: #273D30;  /* siteConfigService's darken(accent, 0.18) */
 
     /* Surfaces */
-    --mt-color-bg: #FAF8F4;
+    --mt-color-bg: #F4F1EC;           /* ground */
+    --mt-color-bg-alt: #EAE5DC;       /* groundAlt: story section, drawer footer family */
     --mt-color-white: #fff;
-    --mt-color-border: #E8E4DA;
-    --mt-color-divider: #F0EDE4;
+    --mt-color-border: #DDD7CD;
+    --mt-color-border-strong: #C9C2B6;
+    --mt-color-divider: #EAE5DC;
+    --mt-color-ink: #1B1A17;
+    --mt-color-on-ink: #F4F1EC;
+    --mt-color-scrim: rgba(27, 26, 23, 0.45);
 
     /* Semantic */
     --mt-color-danger: #B3261E;
     --mt-color-warning: #A85D00;
 
-    /* Typography */
-    --mt-font-body: 'Inter', 'Droid Sans', sans-serif;
+    /* Typography. site.json theme.fontFamily / theme.displayFontFamily override these. */
+    --mt-font-body: 'Instrument Sans', system-ui, sans-serif;
+    --mt-font-display: 'Instrument Serif', Georgia, serif;
+
+    /* Layout + motion */
+    --msp-container-max: 1360px;
+    --msp-gutter: 40px;
+    --msp-header-height: 76px;
+    --msp-ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+@media (max-width: 767px) {
+    :root {
+        --msp-gutter: 20px;
+        --msp-header-height: 60px;
+    }
 }
 
 
@@ -4426,4 +4448,422 @@ input[datepicker-popup] {
     flex: 1;
     justify-content: center;
     text-align: center;
+}
+
+/* ===== ModernSinglePage: base ===== */
+/* One type system for the whole site. ModernTheme only set --mt-font-body on its page roots, so
+   anything outside them fell back to bootstrap-451.css's Droid Sans; this theme is new enough
+   that nothing depends on that. */
+body {
+    font-family: var(--mt-font-body);
+    color: var(--mt-color-text);
+    background: var(--mt-color-bg);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* 1360px of content plus the gutters, matching the design at 1440 (content starts 40px in). */
+.msp-container {
+    max-width: calc(var(--msp-container-max) + 2 * var(--msp-gutter));
+    margin: 0 auto;
+    padding-left: var(--msp-gutter);
+    padding-right: var(--msp-gutter);
+    box-sizing: border-box;
+}
+
+/* 44px touch target for every icon-only control. */
+.msp-icon-btn {
+    width: 44px;
+    height: 44px;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    color: var(--mt-color-ink);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    cursor: pointer;
+}
+.msp-icon-btn:hover,
+.msp-icon-btn:focus {
+    color: var(--mt-color-ink);
+    background: var(--mt-color-bg-alt);
+    text-decoration: none;
+}
+.msp-icon-btn:focus-visible,
+.msp-cart-btn:focus-visible,
+.msp-header-nav a:focus-visible,
+.msp-brand:focus-visible,
+.msp-menu a:focus-visible,
+.msp-menu button:focus-visible {
+    outline: 2px solid var(--mt-color-accent);
+    outline-offset: 2px;
+}
+
+/* Page behind an open drawer stays put. */
+body.msp-drawer-lock {
+    overflow: hidden;
+}
+
+
+/* ===== ModernSinglePage: announcement bar ===== */
+.msp-announcement {
+    background: var(--mt-color-ink);
+    color: var(--mt-color-on-ink);
+    min-height: 40px;
+    padding: 8px var(--msp-gutter);
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 4px 24px;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-align: center;
+}
+.msp-announcement-sep {
+    opacity: 0.5;
+}
+@media (max-width: 767px) {
+    .msp-announcement {
+        min-height: 36px;
+        font-size: 12px;
+        gap: 2px 12px;
+    }
+    /* Two messages don't fit one phone line; show the first only. */
+    .msp-announcement-sep,
+    .msp-announcement-sep ~ span {
+        display: none;
+    }
+}
+
+
+/* ===== ModernSinglePage: header ===== */
+/* Sticky comes from .mt-header-sticky-wrap (index.html), one level up - see the note on that
+   rule above for why it can't live on <header>. */
+.msp-header {
+    font-family: var(--mt-font-body);
+    background: var(--mt-color-bg);
+    border-bottom: 1px solid var(--mt-color-border);
+}
+
+/* nav left / logo centre / actions right, each a third. */
+.msp-header-row {
+    height: var(--msp-header-height);
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: center;
+}
+
+.msp-header-nav {
+    display: flex;
+    gap: 32px;
+    font-size: 15px;
+}
+.msp-header-nav a {
+    color: var(--mt-color-ink);
+    text-decoration: none;
+}
+.msp-header-nav a:hover {
+    color: var(--mt-color-text-soft);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.msp-menu-btn {
+    display: none;
+}
+
+.msp-brand {
+    justify-self: center;
+    display: flex;
+    align-items: center;
+    color: var(--mt-color-ink);
+    text-decoration: none;
+    font-family: var(--mt-font-display);
+    font-size: 32px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.msp-brand:hover,
+.msp-brand:focus {
+    color: var(--mt-color-ink);
+    text-decoration: none;
+}
+/* Explicit height: an SVG logo with only a viewBox lays out at 0x0 inside a flex container
+   (THEME-DEVELOPMENT-NOTES.md, the molly_maid-logo.svg entry). */
+.msp-brand-logo {
+    height: 40px;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.msp-header-actions {
+    justify-self: end;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.msp-cart-btn {
+    height: 44px;
+    padding: 0 14px 0 10px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--mt-color-ink);
+    cursor: pointer;
+}
+.msp-cart-btn:hover,
+.msp-cart-btn:focus {
+    color: var(--mt-color-ink);
+    background: var(--mt-color-bg-alt);
+    text-decoration: none;
+}
+.msp-cart-badge {
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    box-sizing: border-box;
+    border-radius: 11px;
+    background: var(--mt-color-accent);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Account dropdown (ui-bootstrap's dropdownToggle drives .open). */
+.msp-account-menu {
+    min-width: 240px;
+    padding: 8px 0;
+    margin-top: 8px;
+    border: 1px solid var(--mt-color-border);
+    border-radius: 8px;
+    background: var(--mt-color-bg);
+    box-shadow: 0 12px 32px rgba(27, 26, 23, 0.12);
+    font-size: 14px;
+}
+.msp-account-menu > li > a {
+    padding: 10px 20px;
+    color: var(--mt-color-ink);
+}
+.msp-account-menu > li > a:hover,
+.msp-account-menu > li > a:focus {
+    background: var(--mt-color-bg-alt);
+    color: var(--mt-color-ink);
+}
+.msp-account-menu .divider {
+    background: var(--mt-color-border);
+    margin: 6px 0;
+}
+.msp-account-balance {
+    padding: 6px 20px;
+    display: flex;
+    flex-direction: column;
+    font-size: 13px;
+    color: var(--mt-color-text);
+}
+.msp-account-balance-label {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--mt-color-muted);
+}
+
+/* Search row, under the header at every width. */
+.msp-search {
+    border-top: 1px solid var(--mt-color-border);
+    background: var(--mt-color-bg);
+}
+.msp-search-row {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--mt-color-muted);
+}
+.msp-search-row input {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 44px;
+    border: 0;
+    background: transparent;
+    font-size: 17px;
+    color: var(--mt-color-ink);
+    outline: none;
+}
+.msp-search-row input::placeholder {
+    color: var(--mt-color-muted);
+}
+
+/* 768-1023px takes the phone header pattern (menu / logo / cart), per the handoff README. */
+@media (max-width: 1023px) {
+    .msp-header-row {
+        padding-left: 8px;
+        padding-right: 8px;
+        grid-template-columns: 44px minmax(0, 1fr) auto;
+        gap: 8px;
+    }
+    .msp-header-nav,
+    .msp-hide-compact {
+        display: none;
+    }
+    .msp-menu-btn {
+        display: inline-flex;
+    }
+    .msp-search-row {
+        padding-left: var(--msp-gutter);
+        padding-right: 8px;
+    }
+}
+@media (max-width: 767px) {
+    .msp-brand {
+        font-size: 26px;
+    }
+    .msp-brand-logo {
+        height: 32px;
+    }
+    .msp-cart-btn {
+        padding: 0 10px;
+    }
+}
+
+
+/* ===== ModernSinglePage: drawers (menu now, cart next) ===== */
+/* Shared backdrop. visibility switches after the fade so the closed scrim can't take clicks. */
+.msp-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 1040;
+    background: var(--mt-color-scrim);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 300ms ease, visibility 0s linear 300ms;
+}
+.msp-scrim.msp-open {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 300ms ease, visibility 0s;
+}
+
+/* visibility: hidden after the slide-out, so a closed drawer isn't focusable. */
+.msp-drawer {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    z-index: 1050;
+    box-sizing: border-box;
+    background: var(--mt-color-bg);
+    color: var(--mt-color-ink);
+    display: flex;
+    flex-direction: column;
+    visibility: hidden;
+    transition: transform 380ms var(--msp-ease-drawer), visibility 0s linear 380ms;
+    overscroll-behavior: contain;
+}
+.msp-drawer.msp-open {
+    transform: translateX(0);
+    visibility: visible;
+    transition: transform 380ms var(--msp-ease-drawer), visibility 0s;
+}
+.msp-drawer-left {
+    left: 0;
+    transform: translateX(-100%);
+}
+.msp-drawer-right {
+    right: 0;
+    transform: translateX(100%);
+}
+@media (prefers-reduced-motion: reduce) {
+    .msp-drawer,
+    .msp-drawer.msp-open,
+    .msp-scrim,
+    .msp-scrim.msp-open {
+        transition-duration: 0s;
+        transition-delay: 0s;
+    }
+}
+
+/* Phone/tablet menu: large serif section links, account + search at the bottom. */
+.msp-menu {
+    width: 320px;
+    max-width: 85vw;
+    padding: 8px 24px 28px;
+    overflow-y: auto;
+}
+.msp-menu-top {
+    display: flex;
+    margin: 0 -10px 24px;
+}
+.msp-menu-links {
+    border-top: 1px solid var(--mt-color-border);
+}
+.msp-menu-links a {
+    min-height: 64px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--mt-color-border);
+    color: var(--mt-color-ink);
+    text-decoration: none;
+    font-family: var(--mt-font-display);
+    font-size: 32px;
+    line-height: 1.1;
+}
+.msp-menu-links a:hover,
+.msp-menu-links a:focus {
+    color: var(--mt-color-text-soft);
+    text-decoration: none;
+}
+.msp-menu-footer {
+    margin-top: auto;
+    padding-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.msp-menu-util {
+    min-height: 44px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    color: var(--mt-color-ink);
+    text-align: left;
+    cursor: pointer;
+}
+.msp-menu-account {
+    margin: 0 0 8px 30px;
+    padding: 0;
+    list-style: none;
+    font-size: 15px;
+}
+.msp-menu-account > li > a {
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+    color: var(--mt-color-text);
+    text-decoration: none;
+}
+.msp-menu-account .divider {
+    height: 1px;
+    margin: 6px 0;
+    background: var(--mt-color-border);
+}
+.msp-menu-account .msp-account-balance {
+    padding: 4px 0;
 }

@@ -1,38 +1,38 @@
-<header class="mt-header" role="banner">
-    <div class="mt-header-row mt-container">
-        <a id="451qa_home_link" href="catalog" class="mt-brand" ng-show="Four51User.isAuthenticated()" aria-label="{{'Go to store home' | r | xlat}}">
-            <img ng-if="site.logo.url || user.Company.LogoUrl" ng-src="{{site.logo.url || user.Company.LogoUrl}}" class="mt-brand-logo" alt="{{site.logo.alt || user.Company.Name || 'Storefront'}}" />
-            <span ng-if="!(site.logo.url || user.Company.LogoUrl)">{{user.Company.Name || 'Storefront'}}</span>
+<header class="msp-header" role="banner">
+    <div class="msp-container msp-header-row">
+        <!-- Desktop: in-page section links, left column. Collapses into the menu drawer below 1024px. -->
+        <nav class="msp-header-nav" aria-label="{{'Main' | r | xlat}}">
+            <a href="catalog" ng-repeat="link in sectionLinks" ng-click="goToSection(link.id, $event)">{{link.label | r | xlat}}</a>
+        </nav>
+
+        <button type="button" class="msp-icon-btn msp-menu-btn" ng-click="openDrawer('menu', $event)"
+                aria-label="{{'Open menu' | r | xlat}}" aria-expanded="{{drawer.open == 'menu'}}" aria-controls="msp-menu">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"></path></svg>
+        </button>
+
+        <a id="451qa_home_link" href="catalog" class="msp-brand" ng-click="goToSection('top', $event)" aria-label="{{'Go to store home' | r | xlat}}">
+            <img ng-if="site.logo.url || user.Company.LogoUrl" ng-src="{{site.logo.url || user.Company.LogoUrl}}" class="msp-brand-logo" alt="{{site.logo.alt || site.name || user.Company.Name || 'Storefront'}}" />
+            <span ng-if="!(site.logo.url || user.Company.LogoUrl)">{{site.name || user.Company.Name || 'Storefront'}}</span>
         </a>
 
-        <form class="mt-search" ng-class="{'mt-search-open': mobileSearchOpen}" ng-submit="doSearch(); mobileSearchOpen = false" role="search">
-            <label for="mt-store-search" class="sr-only">{{'Search' | r | xlat}}</label>
-            <input id="mt-store-search" type="search" ng-model="searchTerm" placeholder="{{'Search products, SKUs, categories' | r | xlat}}&hellip;" />
-            <button type="submit" class="mt-search-submit" aria-label="{{'Search' | r | xlat}}">
-                <i class="fa fa-search"></i>
+        <div class="msp-header-actions">
+            <button type="button" class="msp-icon-btn msp-hide-compact" ng-click="toggleSearch()"
+                    aria-label="{{'Search' | r | xlat}}" aria-expanded="{{!!ui.searchOpen}}" aria-controls="msp-search">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
             </button>
-            <button type="button" class="mt-search-close" ng-click="mobileSearchOpen = false" aria-label="{{'Close search' | r | xlat}}">
-                <i class="fa fa-times"></i>
-            </button>
-        </form>
 
-        <div class="mt-header-actions">
-            <button type="button" class="mt-search-toggle" ng-click="mobileSearchOpen = !mobileSearchOpen" aria-label="{{'Search' | r | xlat}}" aria-expanded="{{!!mobileSearchOpen}}">
-                <i class="fa fa-search"></i>
-            </button>
-            <div class="mt-budget-stack hidden-xs" ng-if="purchaseSpendingAccounts.length">
-                <div class="mt-budget" ng-repeat="acct in purchaseSpendingAccounts">
-                    <span class="mt-budget-label">{{acct.Label}}</span>
-                    <span class="mt-budget-value">{{acct.Balance | culturecurrency}} {{'available' | r | xlat}}</span>
-                </div>
+            <div class="dropdown msp-account msp-hide-compact" ng-class="{'active': isActive(['admin', 'addresses', 'address', 'messages', 'message', 'favoriteorders', 'favoriteproducts', 'order'])}">
+                <a id="451qa_acct_link2" href="#" class="msp-icon-btn dropdown-toggle" data-toggle="dropdown" ng-click="$event.preventDefault()" aria-label="{{'Account' | r | xlat}}">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-right msp-account-menu" ng-include="'partials/controls/mspAccountLinks.html'"></ul>
             </div>
-            <a id="451qa_order_link" href="order" class="mt-header-btn hidden-xs" ng-if="user.Type == 'Customer'">
-                {{'Order History' | r | xlat}}
-            </a>
+
             <div class="dropdown mt-minicart">
-                <a id="451qa_cart_link" class="mt-header-btn mt-cart-btn dropdown-toggle" data-toggle="dropdown" aria-label="{{'View cart' | r | xlat}}">
-                    {{'Cart' | r | xlat}}
-                    <span class="mt-cart-badge" ng-if="cartCount">{{cartCount}}</span>
+                <a id="451qa_cart_link" href="#" class="msp-cart-btn dropdown-toggle" data-toggle="dropdown" ng-click="$event.preventDefault()"
+                   aria-label="{{'Open cart' | r | xlat}}, {{cartCount || 0}} {{'items' | r | xlat}}">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 12H6.2L5 8z"></path><path d="M9 8V6a3 3 0 016 0v2"></path></svg>
+                    <span class="msp-cart-badge">{{cartCount || 0}}</span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right mt-minicart-panel">
                     <p class="mt-minicart-empty" ng-if="!currentOrder.LineItems.length">{{'Your cart is empty' | r | xlat}}</p>
@@ -74,61 +74,45 @@
                     </div>
                 </div>
             </div>
-            <div class="dropdown mt-account" ng-class="{'active': isActive(['admin', 'addresses', 'address', 'messages', 'message', 'favoriteorders', 'favoriteproducts'])}">
-                <a id="451qa_acct_link2" class="mt-header-btn dropdown-toggle" data-toggle="dropdown" aria-label="{{'Account' | r | xlat}}">
-                    <span ng-if="user.FirstName">{{user.FirstName}} {{(user.LastName || '')[0]}}</span><span ng-if="!user.FirstName">{{'Account' | r | xlat}}</span>
-                    <b class="caret"></b>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-right">
-                    <li class="visible-xs" ng-if="user.Type == 'Customer'">
-                        <a href="order">{{'Order History' | r | xlat}}</a>
-                    </li>
-                    <li id="451qa_user_link" ng-show="user.Permissions.contains('ViewSelfAdmin')" class="admin">
-                        <a href="admin">{{'User Information' | r | xlat}}</a>
-                    </li>
-                    <li id="451qa_addy_link" ng-show="user.Type == 'Customer' && (user.Permissions.contains('CreateShipToAddress') || user.Permissions.contains('CreateBillToAddress'))" class="addresses">
-                        <a href="addresses">{{'Addresses' | r | xlat}}</a>
-                    </li>
-                    <li id="451qa_mesg_link" ng-show="user.Type == 'Customer' && user.Permissions.contains('ViewMessaging')" class="messages">
-                        <a href="message">{{'Notifications' | r | xlat}}</a>
-                    </li>
-                    <li class="favorites" ng-show="user.Type == 'Customer'">
-                        <a id="451qa_fave_link" href="favoriteorders">{{'Favorite Orders' | r | xlat}}</a>
-                    </li>
-                    <li class="favorites" ng-show="user.Type == 'Customer'">
-                        <a href="favoriteproducts">{{'Favorite Products' | r | xlat}}</a>
-                    </li>
-                    <li ng-show="user.Type == 'Customer' && user.Permissions.contains('AdvancedReporting')">
-                        <a id="451qa_reports_link" href="reports">{{'Reports' | r | xlat}}</a>
-                    </li>
-                    <li id="451qa_contact_link" ng-show="user.Permissions.contains('ViewContactUs')" class="contactus">
-                        <a href="contactus">{{'Contact Us' | r | xlat}}</a>
-                    </li>
-                    <li>
-                        <a href="#" neworder ng-if="user.Permissions.contains('MultipleShoppingCart') && currentOrder" class="neworder" ng-click="$event.preventDefault(); newOrderLoadingIndicator = true;startNewOrder()">
-                            {{"Start" | r | xlat}} {{"New" | r | xlat}} {{"Order" | r | xlat}}
-                        </a>
-                    </li>
-                    <li class="divider" ng-show="user.Type!='TempCustomer' || isInGroup('TPAdmin')"></li>
-                    <li ng-show="user.Type!='TempCustomer'" class="logout">
-                        <a href="#" class="451_btn_logout" ng-click="$event.preventDefault(); Logout()">{{'Log Out' | r | xlat}}</a>
-                    </li>
-                    <li ng-if="isInGroup('TPAdmin')">
-                        <a href="#" ng-click="$event.preventDefault(); Clear()">{{'Clear Cache' | r | xlat}}</a>
-                    </li>
-                </ul>
-            </div>
         </div>
     </div>
 
-    <nav class="mt-cat-nav" aria-label="{{'Product categories' | r | xlat}}" ng-if="tree.length">
-        <div class="mt-container mt-cat-nav-row">
-            <div class="mt-cat-nav-item" ng-repeat="cat in tree | filter:isNavCategory" ng-class="{'has-children': cat.SubCategories.length}">
-                <a ng-href="catalog/{{cat.InteropID}}" ng-class="{active: isCategoryActive(cat)}" ng-bind-html="cat.Name"></a>
-                <div class="mt-cat-dropdown" ng-if="cat.SubCategories.length">
-                    <a ng-repeat="sub in cat.SubCategories" ng-href="catalog/{{sub.InteropID}}" ng-class="{active: isInPath(sub.InteropID)}" ng-bind-html="sub.Name"></a>
-                </div>
-            </div>
+    <!-- One search row for every width, opened from the header's search icon or the menu drawer. -->
+    <form id="msp-search" class="msp-search" ng-show="ui.searchOpen" ng-submit="doSearch(); ui.searchOpen = false" role="search">
+        <div class="msp-container msp-search-row">
+            <label for="mt-store-search" class="sr-only">{{'Search' | r | xlat}}</label>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+            <input id="mt-store-search" type="search" ng-model="searchTerm" placeholder="{{'Search products' | r | xlat}}&hellip;" />
+            <button type="button" class="msp-icon-btn" ng-click="ui.searchOpen = false" aria-label="{{'Close search' | r | xlat}}">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+            </button>
         </div>
-    </nav>
+    </form>
 </header>
+
+<!-- Drawers share one backdrop; only one is open at a time (drawer.open). -->
+<div class="msp-scrim" ng-class="{'msp-open': drawer.open}" ng-click="closeDrawer()" aria-hidden="true"></div>
+
+<nav id="msp-menu" class="msp-drawer msp-drawer-left msp-menu" ng-class="{'msp-open': drawer.open == 'menu'}"
+     role="dialog" aria-modal="true" aria-label="{{'Menu' | r | xlat}}" aria-hidden="{{drawer.open != 'menu'}}"
+     msp-focus-trap="drawer.open == 'menu'">
+    <div class="msp-menu-top">
+        <button type="button" class="msp-icon-btn" ng-click="closeDrawer()" aria-label="{{'Close menu' | r | xlat}}" data-msp-autofocus>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+        </button>
+    </div>
+    <div class="msp-menu-links">
+        <a href="catalog" ng-repeat="link in sectionLinks" ng-click="goToSection(link.id, $event)">{{link.label | r | xlat}}</a>
+    </div>
+    <div class="msp-menu-footer">
+        <button type="button" class="msp-menu-util" ng-click="ui.menuAccountOpen = !ui.menuAccountOpen" aria-expanded="{{!!ui.menuAccountOpen}}">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg>
+            {{'Account' | r | xlat}}
+        </button>
+        <ul class="msp-menu-account" ng-if="ui.menuAccountOpen" ng-include="'partials/controls/mspAccountLinks.html'" ng-click="closeDrawer()"></ul>
+        <button type="button" class="msp-menu-util" ng-click="closeDrawer(); toggleSearch(true)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+            {{'Search' | r | xlat}}
+        </button>
+    </div>
+</nav>

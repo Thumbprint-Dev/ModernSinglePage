@@ -22,7 +22,8 @@
 	<link rel="stylesheet" href="css/theme.css" data-group="source" />
 	<link rel="stylesheet" href="css/custom.css" data-group="source" />
     <link rel="preconnect" href="//fonts.googleapis.com" />
-    <link href="//fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" type="text/css" />
+    <link rel="preconnect" href="//fonts.gstatic.com" crossorigin />
+    <link href="//fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="css/animate.min.css" />
     <!--[if lt IE 9]>
     <div style="position:absolute; top:0; left:0; right:0; bottom:0; background-position:center center; background-size:cover; background-repeat:no-repeat;"></div>
@@ -48,6 +49,11 @@
         <login />
     </section>
     <section ng-if="Four51User.isAuthenticated()" id="content">
+        <!-- Scrolls away above the sticky header, so it sits outside the sticky wrap. -->
+        <section class="hidden-print msp-announcement" ng-if="user.Type != 'TempCustomer' && site.announcement.messages.length">
+            <span ng-repeat-start="message in site.announcement.messages">{{message | r | xlat}}</span>
+            <span class="msp-announcement-sep" aria-hidden="true" ng-repeat-end ng-if="!$last">&middot;</span>
+        </section>
         <section class="hidden-print mt-header-sticky-wrap" ng-if="user.Type != 'TempCustomer'">
             <navigation />
         </section>

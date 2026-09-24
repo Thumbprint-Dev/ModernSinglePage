@@ -1,5 +1,5 @@
-four51.app.controller('NavCtrl', ['$location', '$route', '$scope', '$451', '$timeout', '$window', 'User', 'Order', 'SpendingAccount', 'AppConst',
-function ($location, $route, $scope, $451, $timeout, $window, User, Order, SpendingAccount, AppConst) {
+four51.app.controller('NavCtrl', ['$location', '$route', '$scope', '$rootScope', '$document', '$451', '$timeout', '$window', 'User', 'Order', 'SpendingAccount', 'AppConst',
+function ($location, $route, $scope, $rootScope, $document, $451, $timeout, $window, User, Order, SpendingAccount, AppConst) {
     // Four51 InteropIDs are unique platform-wide, so Featured/All Products may carry a uniqueness
     // suffix (e.g. "featured-gp") - match by prefix, not exact equality. Mirrors the same
     // exclusion categoryCtrl.js already applies to the home page's "Shop by category" tiles.
@@ -26,6 +26,98 @@ function ($location, $route, $scope, $451, $timeout, $window, User, Order, Spend
             });
         }
     });
+
+    // Header UI state. Objects, not bare primitives: the account links are ng-included, and a
+    // bare name written from inside ng-include/ng-if lands on that child scope instead (the
+    // sortSelection lesson in THEME-DEVELOPMENT-NOTES.md).
+    $scope.ui = { searchOpen: false, menuAccountOpen: false };
+    // Which drawer is open: 'menu', 'cart', or null. The drawers share one backdrop, so only
+    // one is ever open at a time.
+    $scope.drawer = { open: null };
+
+    var drawerTrigger = null;
+    $scope.openDrawer = function(name, $event) {
+        drawerTrigger = $event && $event.currentTarget;
+        $scope.ui.searchOpen = false;
+        $scope.drawer.open = name;
+    };
+    $scope.closeDrawer = function() {
+        if (!$scope.drawer.open) return;
+        $scope.drawer.open = null;
+        $scope.ui.menuAccountOpen = false;
+        // Hand focus back to whatever opened the drawer, per the design's accessibility notes.
+        if (drawerTrigger && document.body.contains(drawerTrigger)) {
+            var trigger = drawerTrigger;
+            $timeout(function() { trigger.focus(); });
+        }
+        drawerTrigger = null;
+    };
+    // The page behind an open drawer should not scroll.
+    $scope.$watch('drawer.open', function(open) {
+        angular.element(document.body).toggleClass('msp-drawer-lock', !!open);
+    });
+    function onKeydown(e) {
+        if (e.keyCode !== 27) return;
+        if ($scope.drawer.open) $scope.$apply($scope.closeDrawer);
+        else if ($scope.ui.searchOpen) $scope.$apply(function() { $scope.ui.searchOpen = false; });
+    }
+    $document.on('keydown', onKeydown);
+    $scope.$on('$destroy', function() {
+        $document.off('keydown', onKeydown);
+        angular.element(document.body).removeClass('msp-drawer-lock');
+    });
+    // Any route change closes whatever is open.
+    $scope.$on('$routeChangeStart', function() {
+        $scope.drawer.open = null;
+        $scope.ui.searchOpen = false;
+    });
+
+    $scope.toggleSearch = function(forceOpen) {
+        $scope.ui.searchOpen = forceOpen || !$scope.ui.searchOpen;
+        if ($scope.ui.searchOpen)
+            $timeout(function() {
+                var input = document.getElementById('mt-store-search');
+                if (input) input.focus();
+            });
+    };
+
+    // The one-page layout's sections, in page order. About and FAQ only link when the site has
+    // that section to show; Shop and Contact (the footer) are always on the page.
+    // Built in a watch, not a function the template calls: ng-repeat over a fresh array on every
+    // digest never settles, and Angular 1.2 re-renders the list each pass until it gives up.
+    function hasStory() { var site = $scope.site || {}; return !!(site.story && site.story.heading); }
+    function hasFaq() { var site = $scope.site || {}; return !!(site.faq && site.faq.items && site.faq.items.length); }
+    $scope.$watch(function() { return [hasStory(), hasFaq()].join(); }, function() {
+        var links = [{ id: 'shop', label: 'Shop' }];
+        if (hasStory()) links.push({ id: 'story', label: 'About' });
+        if (hasFaq()) links.push({ id: 'faq', label: 'FAQ' });
+        links.push({ id: 'contact', label: 'Contact' });
+        $scope.sectionLinks = links;
+    });
+
+    // Section links are real hrefs to catalog (so they work opened in a new tab), but a plain
+    // click scrolls in-page. From any other route, go home first and scroll once the view has
+    // rendered. preventDefault keeps the native navigation from racing the handler - the
+    // href="#" logout bug in THEME-DEVELOPMENT-NOTES.md.
+    function scrollToSection(id) {
+        if (id === 'top') return $window.scrollTo({ top: 0, behavior: 'smooth' });
+        var el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    $scope.goToSection = function(id, $event) {
+        if ($event && ($event.metaKey || $event.ctrlKey || $event.shiftKey || $event.button === 1)) return;
+        if ($event) $event.preventDefault();
+        $scope.closeDrawer();
+
+        if ($location.path() === '/catalog') return scrollToSection(id);
+
+        var off = $rootScope.$on('$viewContentLoaded', function() {
+            off();
+            // Let the home page's own content (tree, products) render before measuring.
+            $timeout(function() { scrollToSection(id); }, 400);
+        });
+        $location.path('/catalog');
+    };
 
     $scope.doSearch = function(){
         if ($scope.searchTerm)
