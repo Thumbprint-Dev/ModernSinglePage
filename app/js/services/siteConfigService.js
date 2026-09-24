@@ -204,7 +204,10 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 		},
 		'footer.columns': function(entry) {
 			if (!angular.isObject(entry) || !angular.isString(entry.heading)) return null;
-			return { heading: entry.heading.trim(), links: objectList(entry.links, link) };
+			var links = objectList(entry.links, link);
+			// No usable links means an unfilled template slot - a heading alone isn't a column.
+			if (!links.length) return null;
+			return { heading: entry.heading.trim(), links: links };
 		},
 		'footer.legalLinks': link
 	};
@@ -390,6 +393,13 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 	// request resolves. The URL is relative to <base href>, i.e. the deployed app
 	// folder -- the same way partials are loaded.
 	var loaded = $http.get('site.json', { cache: true }).then(function(response) {
+		// $http only parses a body that looks like JSON (starts with { or [), so a file pasted
+		// without its outer braces arrives as a plain string and every key silently falls back
+		// to its default. Say so, rather than leaving the site looking half-configured.
+		if (!angular.isObject(response.data) || angular.isArray(response.data)) {
+			$log.warn('SiteConfig: site.json is not a valid JSON object (check the outer { } braces and commas) -- using theme defaults');
+			return settings;
+		}
 		apply(response.data);
 		return settings;
 	}, function() {

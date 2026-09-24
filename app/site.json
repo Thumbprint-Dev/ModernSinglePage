@@ -1,5 +1,5 @@
 {
-	"_readme": "Every setting this theme reads, at its default value. This file is the template: a site's own site.json in Four51 only needs the keys it changes - leave the rest out and they keep these defaults. Sections merge one level deep, so {\"hero\": {\"heading\": \"...\"}} changes just the heading. A blank string (\"\") also keeps the default; null clears text the theme shows by default (e.g. \"eyebrow\": null). Lists replace the default list whole. Keys starting with _ are notes and are ignored. A key only works if siteConfigService.js knows it - see THEME-DEVELOPMENT-NOTES.md, 'Per-site branding: app/site.json'.",
+	"_readme": "Every setting this theme reads. To set up a new site, copy this whole file into the site's site.json in Four51 and fill in the blanks - or keep only the keys you change, since anything left out keeps the value shown here. It must stay valid JSON: keep the outer { } and the commas (paste it into a JSON validator if the site looks unconfigured; the browser console also warns). Blank values (\"\") and blank list slots are ignored, so unfilled slots are harmless. null clears text the theme shows by default (e.g. \"eyebrow\": null). Sections merge one level deep; lists replace the default list whole. Keys starting with _ are notes and are ignored. See THEME-DEVELOPMENT-NOTES.md, 'Per-site branding: app/site.json'.",
 	"_help_name": "name: store name for the header logo text, footer and tab title. Blank uses the Four51 company name. favicon: URL of a .png/.ico; blank keeps storefrontfavicon.ico.",
 	"name": "",
 	"favicon": "",
@@ -10,7 +10,10 @@
 	},
 	"announcement": {
 		"_help": "messages: short lines for the dark bar above the header, e.g. [\"Free shipping on orders over $75\"]. Empty hides the bar. Phones show the first line only.",
-		"messages": []
+		"messages": [
+			"",
+			""
+		]
 	},
 	"hero": {
 		"_help": "image: 2400x1360 photo; mobileImage: 1200x1800 used below 768px (blank reuses image). Without an image the tinted placeholder shows. headingItalic: italic text after heading. buttonHref: 'catalog' or '#shop' scrolls to the shop, anything else is a link. showButton: true/false. secondaryButtonText: outlined button to the story section, only shown when story.heading is set.",
@@ -27,7 +30,12 @@
 	},
 	"trust": {
 		"_help": "items: up to four short lines under the hero, e.g. [\"Free shipping over $75\", \"30-day returns\", \"Secure checkout\", \"Ships in 3 business days\"]. Icons go by position: truck, returns, lock, clock. The first two also appear under Add to cart in one-product mode. Empty hides the strip.",
-		"items": []
+		"items": [
+			"",
+			"",
+			"",
+			""
+		]
 	},
 	"shop": {
 		"_help": "categoryInteropID: the Four51 category the shop lists (first 12 products) - set this per site. Blank falls back to the Featured category. With exactly one product the shop shows it as a product detail instead of a grid.",
@@ -40,7 +48,10 @@
 		"eyebrow": "Our story",
 		"heading": "",
 		"headingItalic": "",
-		"paragraphs": [],
+		"paragraphs": [
+			"",
+			""
+		],
 		"image": "",
 		"linkText": "Shop now"
 	},
@@ -50,7 +61,24 @@
 		"heading": "Questions, answered.",
 		"intro": "Still wondering? Email",
 		"email": "",
-		"items": []
+		"items": [
+			{
+				"question": "",
+				"answer": ""
+			},
+			{
+				"question": "",
+				"answer": ""
+			},
+			{
+				"question": "",
+				"answer": ""
+			},
+			{
+				"question": "",
+				"answer": ""
+			}
+		]
 	},
 	"footer": {
 		"_help": "On every page. blurb: short line under the store name. columns: [{\"heading\": \"Help\", \"links\": [{\"label\": \"FAQ\", \"url\": \"#faq\"}]}] - #shop, #story, #faq and #contact scroll in-page; mailto:, tel:, site routes (order, contactus) and full URLs also work. legalLinks: [{\"label\": \"Privacy\", \"url\": \"https://...\"}] in the bottom row. Setting columns or legalLinks replaces the default list whole.",
@@ -85,9 +113,31 @@
 						"url": "contactus"
 					}
 				]
+			},
+			{
+				"heading": "Contact",
+				"links": [
+					{
+						"label": "",
+						"url": "mailto:"
+					},
+					{
+						"label": "",
+						"url": "tel:"
+					}
+				]
 			}
 		],
-		"legalLinks": []
+		"legalLinks": [
+			{
+				"label": "",
+				"url": ""
+			},
+			{
+				"label": "",
+				"url": ""
+			}
+		]
 	},
 	"login": {
 		"_help": "createAccountUrl: where 'Need an account?' on the login page goes. Blank uses the built-in signup at /admin, which needs the site to give anonymous visitors a temp session; otherwise paste the site's Four51 AutoLogon link.",
