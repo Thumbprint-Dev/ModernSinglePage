@@ -79,6 +79,19 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			email: '',
 			items: []
 		},
+		// Contact band above the footer (the header's Contact link): the Contact Us page's details
+		// plus a short form. The form opens the customer's email app addressed to email, with
+		// their name, email and message filled in - the theme has no server to send mail itself.
+		// Blank email hides the form, keeping the details.
+		contact: {
+			eyebrow: 'Contact',
+			heading: 'Any questions?',
+			text: 'Questions or need help with an order? Need general site support?',
+			hours: 'Monday – Friday, 8am to 5pm ET',
+			hoursNote: 'Feel free to contact us outside of these hours and one of our team members will respond as soon as possible!',
+			email: 'support@thumbprint.com',
+			subject: 'Website message'
+		},
 		// Site footer, on every page (the header's Contact link). Blank blurb hides it; columns
 		// and legalLinks replace the defaults whole when a site sets them.
 		footer: {

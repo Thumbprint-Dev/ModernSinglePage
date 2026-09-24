@@ -80,6 +80,16 @@
 			}
 		]
 	},
+	"contact": {
+		"_help": "Green band above the footer (the header's Contact link): these details plus a short name/email/message form. Send opens the customer's email app addressed to email, with their message filled in - the theme has no server to send mail itself. Blank email hides the form and the 'Email us at' line. null hides any line.",
+		"eyebrow": "Contact",
+		"heading": "Any questions?",
+		"text": "Questions or need help with an order? Need general site support?",
+		"hours": "Monday – Friday, 8am to 5pm ET",
+		"hoursNote": "Feel free to contact us outside of these hours and one of our team members will respond as soon as possible!",
+		"email": "support@thumbprint.com",
+		"subject": "Website message"
+	},
 	"footer": {
 		"_help": "On every page. blurb: short line under the store name. columns: [{\"heading\": \"Help\", \"links\": [{\"label\": \"FAQ\", \"url\": \"#faq\"}]}] - #shop, #story, #faq and #contact scroll in-page; mailto:, tel:, site routes (order, contactus) and full URLs also work. legalLinks: [{\"label\": \"Privacy\", \"url\": \"https://...\"}] in the bottom row. Setting columns or legalLinks replaces the default list whole.",
 		"blurb": "",

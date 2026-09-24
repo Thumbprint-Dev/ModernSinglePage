@@ -103,6 +103,53 @@
         </div>
     </div>
 
+    <!-- Contact: the design's accent band (where its newsletter was), with the Contact Us page's
+         details and a short form that opens the shopper's email app. -->
+    <div id="contact" class="msp-contact">
+        <div class="msp-container msp-contact-row">
+            <div class="msp-contact-info">
+                <p class="msp-eyebrow" ng-if="site.contact.eyebrow">{{site.contact.eyebrow | r | xlat}}</p>
+                <h2 class="msp-contact-title" ng-if="site.contact.heading">{{site.contact.heading | r | xlat}}</h2>
+                <p class="msp-contact-text" ng-if="site.contact.text">{{site.contact.text | r | xlat}}</p>
+                <p class="msp-contact-text" ng-if="site.contact.email">
+                    {{'Email us at' | r | xlat}} <a ng-href="mailto:{{site.contact.email}}">{{site.contact.email}}</a>
+                </p>
+                <p class="msp-contact-hours" ng-if="site.contact.hours">
+                    <strong>{{site.contact.hours | r | xlat}}</strong>
+                    <span ng-if="site.contact.hoursNote">{{site.contact.hoursNote | r | xlat}}</span>
+                </p>
+            </div>
+
+            <form name="contactFormCtrl" class="msp-contact-form" ng-class="{'msp-contact-attempted': contactForm.attempted}" novalidate ng-if="site.contact.email" ng-submit="sendContact(contactFormCtrl)">
+                <div class="msp-contact-fields">
+                    <div class="msp-contact-field">
+                        <label for="msp-contact-name">{{'Name' | r | xlat}}</label>
+                        <input id="msp-contact-name" name="name" type="text" autocomplete="name" required maxlength="100" ng-model="contactForm.name" />
+                    </div>
+                    <div class="msp-contact-field">
+                        <label for="msp-contact-email">{{'Email' | r | xlat}}</label>
+                        <input id="msp-contact-email" name="email" type="email" autocomplete="email" required maxlength="150" ng-model="contactForm.email" />
+                    </div>
+                </div>
+                <div class="msp-contact-field">
+                    <label for="msp-contact-message">{{'Message' | r | xlat}}</label>
+                    <textarea id="msp-contact-message" name="message" rows="4" required maxlength="1000" ng-model="contactForm.message"></textarea>
+                </div>
+                <p class="msp-contact-error" role="alert" ng-show="contactForm.attempted && contactFormCtrl.$invalid">
+                    <span ng-if="contactFormCtrl.name.$error.required || contactFormCtrl.message.$error.required">{{'Please add your name and a message.' | r | xlat}}</span>
+                    <span ng-if="contactFormCtrl.email.$invalid">{{'Please enter a valid email address.' | r | xlat}}</span>
+                </p>
+                <div class="msp-contact-actions">
+                    <button type="submit" class="msp-btn msp-btn-light">{{'Send message' | r | xlat}}</button>
+                    <p class="msp-contact-note" aria-live="polite">
+                        <span ng-if="!contactForm.sent">{{'Opens your email app, addressed to' | r | xlat}} {{site.contact.email}}.</span>
+                        <span ng-if="contactForm.sent">{{'Your email app should now be open with your message - press send there to finish.' | r | xlat}}</span>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+
 </section>
 
 <section ng-if="!isHome" class="mt-plp">

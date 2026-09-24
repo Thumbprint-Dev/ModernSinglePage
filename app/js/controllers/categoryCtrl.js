@@ -1,5 +1,5 @@
-four51.app.controller('CategoryCtrl', ['$routeParams', '$sce', '$scope', '$451', 'Category', 'Product', 'AppConst', 'Order', 'User', '$modal', 'ProductDisplayService', 'SiteConfig', '$log', '$rootScope',
-function ($routeParams, $sce, $scope, $451, Category, Product, AppConst, Order, User, $modal, ProductDisplayService, SiteConfig, $log, $rootScope) {
+four51.app.controller('CategoryCtrl', ['$routeParams', '$sce', '$scope', '$451', 'Category', 'Product', 'AppConst', 'Order', 'User', '$modal', 'ProductDisplayService', 'SiteConfig', '$log', '$rootScope', '$window',
+function ($routeParams, $sce, $scope, $451, Category, Product, AppConst, Order, User, $modal, ProductDisplayService, SiteConfig, $log, $rootScope, $window) {
 	$scope.isHome = !$routeParams.categoryInteropID;
 
 	// Computes the home page's "Shop by category" tiles and the "Browse full catalog" tile's
@@ -110,6 +110,29 @@ function ($routeParams, $sce, $scope, $451, Category, Product, AppConst, Order, 
 	// FAQ accordion: which item is open (-1 for none). An object so the ng-repeat's child scopes
 	// write to this one rather than each shadowing its own copy.
 	$scope.faqState = { open: 0 };
+
+	// Contact form: builds a mailto: to site.json contact.email with the shopper's words in it.
+	// Name and email start as the signed-in user's, since every visitor here is signed in.
+	$scope.contactForm = { name: '', email: '', message: '', sent: false };
+	var contactPrefilled = false;
+	$scope.$watch('user', function(user) {
+		if (!user || contactPrefilled || user.Type == 'TempCustomer') return;
+		contactPrefilled = true;
+		$scope.contactForm.name = [user.FirstName, user.LastName].filter(Boolean).join(' ');
+		$scope.contactForm.email = user.Email || '';
+	});
+	$scope.sendContact = function(form) {
+		if (form.$invalid) {
+			$scope.contactForm.attempted = true;
+			return;
+		}
+		var c = $scope.contactForm;
+		var body = 'Name: ' + c.name + '\nEmail: ' + c.email + '\n\n' + c.message;
+		var subject = (SiteConfig.settings.contact.subject || 'Website message') + ' - ' + c.name;
+		$window.location.href = 'mailto:' + encodeURIComponent(SiteConfig.settings.contact.email) +
+			'?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+		c.sent = true;
+	};
 
 	var siteConfigLoaded = false;
 	SiteConfig.loaded.then(function() {

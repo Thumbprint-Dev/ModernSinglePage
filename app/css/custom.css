@@ -6337,3 +6337,177 @@ body.msp-drawer-lock {
 .mt-checkout-inner > .mt-pdp-title {
     margin-bottom: 32px;
 }
+
+
+/* ===== ModernSinglePage: contact band ===== */
+/* The design's newsletter band (accent background, light type), carrying the Contact Us page's
+   details and a short form instead. Colours follow --mt-color-accent, so site.json's
+   theme.accent recolours it too. */
+.msp-contact {
+    background: var(--mt-color-accent);
+    color: #fff;
+    padding: 96px 0;
+}
+.msp-contact-row {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 72px;
+    align-items: start;
+}
+.msp-contact .msp-eyebrow {
+    color: rgba(255, 255, 255, 0.75);
+}
+.msp-contact-title {
+    margin: 0 0 20px;
+    font-family: var(--mt-font-display);
+    font-weight: 400;
+    font-size: 56px;
+    line-height: 1;
+    letter-spacing: -0.015em;
+    color: #fff;
+}
+.msp-contact-text {
+    margin: 0 0 12px;
+    font-size: 16px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.85);
+}
+.msp-contact a {
+    color: #fff;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+.msp-contact-hours {
+    margin: 24px 0 0;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 15px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.85);
+}
+.msp-contact-hours strong {
+    display: block;
+    font-weight: 500;
+    color: #fff;
+}
+
+.msp-contact-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+.msp-contact-field {
+    margin-bottom: 16px;
+}
+.msp-contact-field label {
+    display: block;
+    margin: 0 0 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.85);
+}
+.msp-contact-field input,
+.msp-contact-field textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    font: inherit;
+    font-size: 15px;
+}
+.msp-contact-field input {
+    height: 52px;
+    padding: 0 22px;
+    border-radius: 999px;
+}
+.msp-contact-field textarea {
+    min-height: 128px;
+    padding: 14px 22px;
+    border-radius: 24px;
+    resize: vertical;
+}
+.msp-contact-field input:focus,
+.msp-contact-field textarea:focus {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+    border-color: #fff;
+}
+.msp-contact-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+.msp-btn-light {
+    background: var(--mt-color-bg);
+    color: var(--mt-color-ink);
+}
+.msp-btn-light:hover,
+.msp-btn-light:focus {
+    background: #fff;
+    color: var(--mt-color-ink);
+}
+.msp-btn-light:focus-visible {
+    outline-color: #fff;
+}
+.msp-contact-note {
+    margin: 0;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.75);
+}
+.msp-contact-error {
+    margin: 0 0 16px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.18);
+    font-size: 14px;
+    color: #fff;
+}
+.msp-contact-error span + span::before {
+    content: ' ';
+}
+@media (max-width: 1023px) {
+    .msp-contact-row {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+}
+@media (max-width: 767px) {
+    .msp-contact {
+        padding: 64px 0;
+    }
+    .msp-contact-title {
+        font-size: 42px;
+    }
+    .msp-contact-fields {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+    .msp-contact-actions .msp-btn {
+        width: 100%;
+    }
+}
+
+/* bootstrap-451.css paints every .ng-invalid field red from page load - an empty required field
+   is "invalid" before anyone has typed. Keep the band's own border until Send has been tried. */
+.msp-contact-field input.ng-invalid,
+.msp-contact-field textarea.ng-invalid {
+    border-color: rgba(255, 255, 255, 0.35);
+    box-shadow: none;
+}
+.msp-contact-attempted .msp-contact-field input.ng-invalid,
+.msp-contact-attempted .msp-contact-field textarea.ng-invalid {
+    border-color: #F2B8B0;
+    box-shadow: 0 0 0 1px #F2B8B0;
+}
+/* The same bootstrap rule greys invalid text (#ccc) and has a heavier :focus variant. */
+.msp-contact .msp-contact-field input.ng-invalid,
+.msp-contact .msp-contact-field textarea.ng-invalid {
+    color: #fff;
+}
+.msp-contact .msp-contact-field input.ng-invalid:focus,
+.msp-contact .msp-contact-field textarea.ng-invalid:focus {
+    border-color: #fff;
+    box-shadow: none;
+}
