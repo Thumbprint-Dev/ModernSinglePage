@@ -272,6 +272,20 @@ modals with `scope: $scope`. Confirm with a throwaway controller that captures i
 check `.user` on it. Don't read `.modal-content`'s scope: the modal-window directive has an
 isolate scope, so that check gives a false result.
 
+**Kit routes address the kit by array index (`/kit/:id/:lineitemid`, where `lineitemid` is
+its position in `LineItems`), not by ID.** Removing anything *ahead* of the kit from the mini-cart
+shifted it down a slot. The next component save then read `order.LineItems[staleIndex]` and
+`Kit.mapKitToOrder` threw on `undefined`: the save had succeeded, but the page was stuck.
+`kitCtrl.js` now remembers the kit's line item ID and re-routes to its new index whenever it moves.
+The deeper kit routes (spec form, variant) still use the same index scheme. Unfinished kits are
+hidden from the mini-cart, so a kit can't remove *itself* from under its own page that way.
+
+**Derive UI counts from the owned state, not from event payloads.** The cart badge used to count
+whatever order the last `event:orderUpdate` carried. After a full page load it was blank whenever
+that first broadcast fired before `navCtrl` existed (seen on the kit page), even though the
+mini-cart, bound to `currentOrder`, was correct. A `$watch` on a function of the inherited
+`currentOrder` can't drift out of sync that way.
+
 **Quantity inputs are `type="text"`, so `lineitem.Quantity` is a string.** Any arithmetic on it
 needs `parseInt(x, 10)`. `addOrMergeLineItem()` did `existing.Quantity + lineItem.Quantity`, and
 adding 2 more of an item already in the cart at 1 produced quantity **12**. Server-returned
