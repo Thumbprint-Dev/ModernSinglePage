@@ -448,7 +448,9 @@ four51.app.factory('ProductDisplayService', ['$sce', '$451', 'Variant', 'Product
 		var existing = findMatchingLineItem(currentOrder, lineItem);
 		if (existing) {
 			var previousQuantity = existing.Quantity;
-			existing.Quantity = (existing.Quantity || 0) + (lineItem.Quantity || 0);
+			// parseInt both sides: the PDP/quick-add quantity box is a type="text" input, so its
+			// ng-model value is a STRING - a plain "+" string-concatenated 1 + "2" into "12".
+			existing.Quantity = (parseInt(existing.Quantity, 10) || 0) + (parseInt(lineItem.Quantity, 10) || 0);
 			return { lineItem: existing, undo: function() { existing.Quantity = previousQuantity; } };
 		}
 		currentOrder.LineItems.push(lineItem);
