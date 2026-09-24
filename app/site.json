@@ -6,6 +6,10 @@
 		"url": "",
 		"alt": ""
 	},
+	"shop": {
+		"_help_categoryInteropID": "categoryInteropID: InteropID of the Four51 category the one-page shop lists (the first 12 products). Set it in this site's own site.json, not the theme repo. Blank falls back to the site's Featured category.",
+		"categoryInteropID": ""
+	},
 	"login": {
 		"_help_createAccountUrl": "createAccountUrl: where 'Need an account?' goes. Blank uses the built-in signup page at /admin, which needs the site to give anonymous visitors a temp session; otherwise paste the site's Four51 AutoLogon link.",
 		"createAccountUrl": ""

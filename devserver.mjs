@@ -56,6 +56,13 @@ const SITE = {
 	url: env.SITE_URL || DEFAULT_SITE.url
 }
 
+// Optional stand-in for app/site.json, relative to the repo root -- see serveStatic.
+const SITE_JSON = env.SITE_JSON ? path.resolve(ROOT, env.SITE_JSON) : ''
+if (SITE_JSON && !fs.existsSync(SITE_JSON)) {
+	console.error(`Error: SITE_JSON file not found -- ${SITE_JSON}`)
+	process.exit(1)
+}
+
 const MIME = {
 	'.html': 'text/html; charset=utf-8',
 	'.js': 'text/javascript; charset=utf-8',
@@ -259,6 +266,15 @@ function main() {
 		let rel = decodeURIComponent(urlPath.slice(mount.length))
 		if (rel === '' || rel.endsWith('/')) rel += 'index.html'
 
+		// A site's real site.json is its own copy, not the repo's blank defaults.
+		// SITE_JSON points at a local file holding that copy, so the page runs
+		// with the site's settings (shop category, branding) without editing the
+		// repo file. Blank serves app/site.json as usual.
+		if (rel === 'site.json' && SITE_JSON) {
+			res.writeHead(200, { 'content-type': MIME['.json'], 'cache-control': 'no-store' })
+			return fs.createReadStream(SITE_JSON).pipe(res)
+		}
+
 		const file = path.join(APP_DIR, rel)
 		// Guard against ../ escaping the app directory.
 		if (!file.startsWith(APP_DIR + path.sep) && file !== APP_DIR) return send(res, 403, 'Forbidden')
@@ -339,6 +355,7 @@ function main() {
   api       ${upstream.origin}/api/${appPath}/*
             ^ from ${source} -- confirm this is the environment you want
   orders    ${orders}
+  site.json ${SITE_JSON ? path.relative(ROOT, SITE_JSON) + '  (SITE_JSON -- stands in for app/site.json)' : 'app/site.json'}
 
   open      http://localhost:${args.port}${mount}
 

@@ -26,3 +26,6 @@ app/PDT.html
 
 # Local dev server site config -- copy .env.example and edit
 .env
+
+# Per-site site.json copies for the dev server (SITE_JSON in .env)
+*.local.json

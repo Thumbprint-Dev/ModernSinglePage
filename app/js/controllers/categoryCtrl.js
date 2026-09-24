@@ -1,5 +1,5 @@
-four51.app.controller('CategoryCtrl', ['$routeParams', '$sce', '$scope', '$451', 'Category', 'Product', 'AppConst', 'Order', 'User', '$modal', 'ProductDisplayService',
-function ($routeParams, $sce, $scope, $451, Category, Product, AppConst, Order, User, $modal, ProductDisplayService) {
+four51.app.controller('CategoryCtrl', ['$routeParams', '$sce', '$scope', '$451', 'Category', 'Product', 'AppConst', 'Order', 'User', '$modal', 'ProductDisplayService', 'SiteConfig', '$log',
+function ($routeParams, $sce, $scope, $451, Category, Product, AppConst, Order, User, $modal, ProductDisplayService, SiteConfig, $log) {
 	$scope.isHome = !$routeParams.categoryInteropID;
 
 	// Computes the home page's "Shop by category" tiles and the "Browse full catalog" tile's
@@ -53,17 +53,45 @@ function ($routeParams, $sce, $scope, $451, Category, Product, AppConst, Order, 
 		// the 1:1 ratio without any other layout changes.
 		$scope.deptTileClass = eligible.length <= 2 ? 'col-sm-6' : (eligible.length == 3 ? 'col-sm-4' : 'col-sm-3');
 
-		// Deferred until the real featured category (with its actual, possibly-suffixed
-		// InteropID) is resolved above, rather than searching on the bare config prefix directly -
-		// guarded so this only ever fires once even though computeHomeCategoryLists() re-runs
-		// whenever the tree reloads.
-		if ($scope.isHome && $scope.featuredCategory && !$scope.featuredProductsFetched) {
-			$scope.featuredProductsFetched = true;
-			Product.search($scope.featuredCategory.InteropID, null, null, function (products) {
-				$scope.featuredProducts = products;
-			}, 1, 20);
-		}
+		loadShopProducts();
 	}
+
+	// The one-page shop lists one category: site.json's shop.categoryInteropID, set per site,
+	// or the Featured category resolved above when that is blank. Waits for both the tree and
+	// SiteConfig.loaded - a fast tree would otherwise search before the site's own file
+	// arrives - and is guarded so it fires once even though computeHomeCategoryLists() re-runs
+	// whenever the tree reloads.
+	//
+	// Product.search() hands back its shared productCache array, which the next search empties
+	// in place, and pads it past the requested page with plain numbers. Copy the real product
+	// objects out rather than keeping that reference.
+	var SHOP_MAX_PRODUCTS = 12;
+	function loadShopProducts() {
+		if (!$scope.isHome || !$scope.tree || !siteConfigLoaded || $scope.shopProductsFetched) return;
+
+		var configured = (SiteConfig.settings.shop.categoryInteropID || '').trim();
+		var categoryID = configured || ($scope.featuredCategory && $scope.featuredCategory.InteropID);
+		if (!categoryID) return;
+
+		$scope.shopProductsFetched = true;
+		Product.search(categoryID, null, null, function (products, count) {
+			var list = (products || []).filter(angular.isObject);
+			if (!list.length && configured)
+				$log.warn('Shop: category "' + configured + '" from site.json returned no products -- check shop.categoryInteropID');
+			if (count > SHOP_MAX_PRODUCTS)
+				$log.warn('Shop: category "' + categoryID + '" has ' + count + ' products; the shop shows the first ' + SHOP_MAX_PRODUCTS);
+
+			$scope.shopProducts = list.slice(0, SHOP_MAX_PRODUCTS);
+			// The current home template still reads featuredProducts.
+			$scope.featuredProducts = $scope.shopProducts;
+		}, 1, SHOP_MAX_PRODUCTS);
+	}
+
+	var siteConfigLoaded = false;
+	SiteConfig.loaded.then(function() {
+		siteConfigLoaded = true;
+		loadShopProducts();
+	});
 	computeHomeCategoryLists();
 
 	// Quick add-to-cart from a product card (home featured carousel and PLP grid). Product.search()

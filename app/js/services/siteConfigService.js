@@ -28,6 +28,13 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			buttonText: 'Shop the collection',
 			buttonHref: 'catalog'
 		},
+		shop: {
+			// InteropID of the Four51 category the one-page shop section lists. Set it
+			// in each site's own site.json, not here -- it names that site's data. Blank
+			// falls back to the site's Featured category (AppConst). The layout is built
+			// for 1-12 products, so only the first 12 are shown.
+			categoryInteropID: ''
+		},
 		login: {
 			// Where "Need an account?" goes. Blank uses the native self-service
 			// signup at /admin (partials/userView.html in its TempCustomer branch),
