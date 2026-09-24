@@ -11,6 +11,7 @@
 	"welcome": {
 		"_help": "Pop-up shown after sign-in. frequency: \"day\" = once a day per customer (default), \"login\" = once per sign-in, \"once\" = once per message; editing the eyebrow, heading or text shows it again under any of them. active: true to turn it on, false to turn it off - it also needs a heading or text. image: optional photo shown beside the copy. One button: fill in primaryButtonText and leave secondaryButtonText blank. Button urls: \"#shop\", \"#story\", \"#faq\" or \"#contact\" scroll there; blank just closes the pop-up (e.g. \"Got it\"); a site route (order, favoriteproducts) or full https:// link goes there, https:// in a new tab.",
 		"active": false,
+		"_frequencyOptions": "Options for frequency: \"day\" = once a day per customer, \"login\" = once each time they sign in, \"once\" = one time per message. Changing the eyebrow, heading or text shows it again with any option.",
 		"frequency": "day",
 		"eyebrow": "",
 		"heading": "",
