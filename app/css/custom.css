@@ -6598,6 +6598,7 @@ body.msp-drawer-lock {
     margin-top: 28px;
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: 12px;
 }
 @media (prefers-reduced-motion: reduce) {
