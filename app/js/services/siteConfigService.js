@@ -18,7 +18,10 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			alt: ''
 		},
 		hero: {
+			// 2400x1360 landscape. mobileImage (1200x1800 portrait) replaces it below 768px;
+			// blank reuses image there too.
 			image: '',
+			mobileImage: '',
 			eyebrow: 'Fall 2026 Collection',
 			heading: 'Gear your team for the season ahead.',
 			subheading: 'New apparel, drinkware and print kits, priced for your group.',
@@ -26,7 +29,17 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			// buttonText/buttonHref in the file, ready to switch back on.
 			showButton: true,
 			buttonText: 'Shop the collection',
-			buttonHref: 'catalog'
+			// 'catalog' (the default) and '#shop' scroll to the shop section; anything else is
+			// followed as a normal link.
+			buttonHref: 'catalog',
+			// Outlined second button that scrolls to the story section. Only shown when the
+			// site has a story to scroll to. Blank hides it.
+			secondaryButtonText: 'Our story'
+		},
+		// Icon + text strip under the hero. Icons go by position: truck, returns arrow,
+		// lock, clock. Empty hides the strip.
+		trust: {
+			items: []
 		},
 		announcement: {
 			// Short lines shown in the ink bar above the header, separated by a dot. Empty
@@ -34,6 +47,8 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			messages: []
 		},
 		shop: {
+			eyebrow: 'Shop',
+			heading: 'The Collection',
 			// InteropID of the Four51 category the one-page shop section lists. Set it
 			// in each site's own site.json, not here -- it names that site's data. Blank
 			// falls back to the site's Featured category (AppConst). The layout is built
@@ -82,7 +97,11 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			// Country codes counted as domestic, as the address returns them. Defaults
 			// to US alone; note that Canada and Mexico are not domestic here unless a
 			// site says so.
-			domesticCountries: ['US']
+			domesticCountries: ['US'],
+			// Order subtotal that earns free shipping, as a plain number (75, not "$75"). Drives
+			// the cart drawer's progress bar; 0 hides the bar. Display only -- the platform's
+			// shipping rates decide what is actually charged.
+			freeShippingThreshold: 0
 		},
 		// Applied to the hero element by ngStyle; recomputed whenever the file lands.
 		heroStyle: {}
@@ -269,6 +288,12 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 				if (angular.isArray(value)) {
 					if (angular.isArray(override)) defaults[key] = stringList(override);
 					else if (override !== undefined) $log.warn('SiteConfig: ' + section + '.' + key + ' must be a list, ignoring -- ' + angular.toJson(override));
+				}
+				// A number takes only a real, non-negative number -- a quoted "75" is ignored the
+				// same way a quoted "false" is below.
+				else if (typeof value === 'number') {
+					if (typeof override === 'number' && isFinite(override) && override >= 0) defaults[key] = override;
+					else if (override !== undefined) $log.warn('SiteConfig: ' + section + '.' + key + ' must be a number, ignoring -- ' + angular.toJson(override));
 				}
 				// A switch takes only a real true/false. A quoted "false" is a non-empty
 				// string, which would read as on -- the opposite of what was written.

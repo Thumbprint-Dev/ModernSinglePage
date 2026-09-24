@@ -1,75 +1,58 @@
-<section ng-if="isHome" class="mt-home">
+<section ng-if="isHome" class="msp-home" id="top">
 
-    <div class="mt-hero" ng-class="{'mt-hero-image': site.hero.image}" ng-style="site.heroStyle">
-        <div class="mt-container">
-            <p class="mt-eyebrow" ng-if="site.hero.eyebrow">{{site.hero.eyebrow | r | xlat}}</p>
-            <h1 ng-if="site.hero.heading">{{site.hero.heading | r | xlat}}</h1>
-            <p class="mt-hero-sub" ng-if="site.hero.subheading">{{site.hero.subheading | r | xlat}}</p>
-            <a ng-if="site.hero.showButton && site.hero.buttonText" ng-href="{{site.hero.buttonHref}}" class="mt-btn-accent">{{site.hero.buttonText | r | xlat}}</a>
-        </div>
-    </div>
-
-    <div class="mt-container mt-section" ng-if="shopByCategories.length">
-        <h2 class="mt-eyebrow">{{'Shop by category' | r | xlat}}</h2>
-        <div class="row">
-            <div class="{{deptTileClass}}" ng-repeat="dept in shopByCategories">
-                <a ng-href="catalog/{{dept.InteropID}}" class="mt-dept-tile">
-                    <img ng-if="dept.Image.URL" ng-src="{{dept.Image.URL}}" class="mt-placeholder-photo mt-real-photo" alt="" />
-                    <div ng-if="!dept.Image.URL" class="mt-placeholder-photo">{{'[lifestyle photo]' | r | xlat}}</div>
-                    <p class="mt-dept-name" ng-bind-html="dept.Name"></p>
-                </a>
+    <!-- Hero: full bleed, copy bottom-left, buttons bottom-right. Photo from site.json
+         (hero.image / hero.mobileImage); without one, the tinted placeholder stays. -->
+    <div class="msp-hero" ng-class="{'msp-hero-has-image': site.hero.image}">
+        <picture class="msp-hero-media" ng-if="site.hero.image">
+            <source ng-if="site.hero.mobileImage" media="(max-width: 767px)" srcset="{{site.hero.mobileImage}}" />
+            <img ng-src="{{site.hero.image}}" alt="" />
+        </picture>
+        <div class="msp-container msp-hero-inner">
+            <div class="msp-hero-copy">
+                <p class="msp-eyebrow" ng-if="site.hero.eyebrow">{{site.hero.eyebrow | r | xlat}}</p>
+                <h1 class="msp-hero-title" ng-if="site.hero.heading">{{site.hero.heading | r | xlat}}</h1>
+                <p class="msp-hero-sub" ng-if="site.hero.subheading">{{site.hero.subheading | r | xlat}}</p>
             </div>
-        </div>
-    </div>
-
-    <div class="mt-container mt-section">
-        <h2 class="mt-eyebrow">{{'Quick actions' | r | xlat}}</h2>
-        <div class="row mt-quick-actions">
-            <div ng-class="allProductsCategory ? 'col-sm-4' : 'col-sm-6'">
-                <a href="order" class="mt-tile">
-                    <div class="mt-tile-icon"><i class="fa fa-clock-o"></i></div>
-                    <div class="mt-tile-body">
-                        <p class="mt-tile-title">{{'Past Orders' | r | xlat}}</p>
-                        <p class="mt-tile-sub">{{'Check status and reorder your recent orders' | r | xlat}}</p>
-                    </div>
+            <div class="msp-hero-actions" ng-if="site.hero.showButton && site.hero.buttonText || site.hero.secondaryButtonText && site.story.heading">
+                <a ng-if="site.hero.showButton && site.hero.buttonText" class="msp-btn msp-btn-ink"
+                   ng-href="{{(site.hero.buttonHref == 'catalog' || site.hero.buttonHref == '#shop') ? 'catalog' : site.hero.buttonHref}}"
+                   ng-click="(site.hero.buttonHref == 'catalog' || site.hero.buttonHref == '#shop') && goToSection('shop', $event)">
+                    {{site.hero.buttonText | r | xlat}}
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
                 </a>
-            </div>
-            <div ng-class="allProductsCategory ? 'col-sm-4' : 'col-sm-6'">
-                <a href="favoriteproducts" class="mt-tile">
-                    <div class="mt-tile-icon"><i class="fa fa-heart-o"></i></div>
-                    <div class="mt-tile-body">
-                        <p class="mt-tile-title">{{'Favorite Products' | r | xlat}}</p>
-                        <p class="mt-tile-sub">{{'Find and reorder your favorite products' | r | xlat}}</p>
-                    </div>
-                </a>
-            </div>
-            <!-- Only appears when a top-level category with InteropID exactly
-                 AppConst.allProductsCategoryInteropID exists (e.g. named "All Products" in the
-                 admin) - links straight to it as a real full-catalog browse. Otherwise there is
-                 nothing to link to, since Four51 has no unscoped whole-catalog view. -->
-            <div class="col-sm-4" ng-if="allProductsCategory">
-                <a ng-href="catalog/{{allProductsCategory.InteropID}}" class="mt-tile">
-                    <div class="mt-tile-icon"><i class="fa fa-book"></i></div>
-                    <div class="mt-tile-body">
-                        <p class="mt-tile-title">{{'Browse full catalog' | r | xlat}}</p>
-                        <p class="mt-tile-sub">{{'Your team\'s approved products' | r | xlat}}</p>
-                    </div>
-                </a>
+                <a ng-if="site.hero.secondaryButtonText && site.story.heading" href="catalog" class="msp-btn msp-btn-outline msp-hide-phone"
+                   ng-click="goToSection('story', $event)">{{site.hero.secondaryButtonText | r | xlat}}</a>
             </div>
         </div>
     </div>
 
-    <div class="mt-container mt-section" ng-if="featuredProducts.length">
-        <div class="mt-carousel-header">
-            <h2 class="mt-eyebrow">{{'Featured for your team' | r | xlat}}</h2>
-            <div class="mt-carousel-controls" ng-if="featuredProducts.length > 4">
-                <button type="button" class="mt-header-btn" ng-click="featuredPrev()" aria-label="{{'Previous' | r | xlat}}">&lsaquo;</button>
-                <button type="button" class="mt-header-btn" ng-click="featuredNext()" aria-label="{{'Next' | r | xlat}}">&rsaquo;</button>
+    <div class="msp-trust" ng-if="site.trust.items.length">
+        <ul class="msp-container msp-trust-row">
+            <li ng-repeat="item in site.trust.items" class="msp-trust-item">
+                <svg ng-if="$index % 4 == 0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h11v9H3z"></path><path d="M14 10h4l3 3v3h-7"></path><circle cx="7" cy="17.5" r="1.5"></circle><circle cx="17" cy="17.5" r="1.5"></circle></svg>
+                <svg ng-if="$index % 4 == 1" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.5-5.8"></path><path d="M4 4v4h4"></path></svg>
+                <svg ng-if="$index % 4 == 2" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="1.5"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+                <svg ng-if="$index % 4 == 3" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v4l3 2"></path></svg>
+                <span>{{item | r | xlat}}</span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Shop: the site.json shop category, up to 12 products. -->
+    <div id="shop" class="msp-section msp-shop" ng-if="shopProducts">
+        <div class="msp-container">
+            <div class="msp-section-head">
+                <div>
+                    <p class="msp-eyebrow" ng-if="site.shop.eyebrow">{{site.shop.eyebrow | r | xlat}}</p>
+                    <h2 class="msp-section-title" ng-if="site.shop.heading">{{site.shop.heading | r | xlat}}</h2>
+                </div>
+                <p class="msp-shop-count" ng-if="shopProducts.length">
+                    {{shopProducts.length}} {{(shopProducts.length == 1 ? 'product' : 'products') | r | xlat}}
+                </p>
             </div>
-        </div>
-        <div class="mt-carousel-viewport" mt-featured-carousel>
-            <div class="mt-carousel-track">
-                <div class="mt-carousel-card" ng-repeat="product in featuredProducts" ng-include="'partials/controls/mtProductCard.html'"></div>
+            <p class="msp-shop-empty" ng-if="!shopProducts.length">{{'No products are available right now.' | r | xlat}}</p>
+            <div class="msp-grid msp-grid-cols-{{shopGridCols}}" ng-if="shopProducts.length">
+                <div class="msp-grid-item" ng-repeat="product in shopProducts track by product.InteropID" ng-include="'partials/controls/mspProductCard.html'"></div>
             </div>
         </div>
     </div>

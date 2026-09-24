@@ -1,0 +1,46 @@
+<!-- One-page shop card. The add button follows ModernTheme's quick-add flow unchanged
+     (categoryCtrl.js): simple products add in one click, products with variants/specs or a
+     choice of restricted quantities open the quick-add modal, kits and VariableText go to their
+     own page. -->
+<div class="msp-card">
+    <div class="msp-card-media">
+        <a class="msp-card-image" href="{{product.Type == 'Kit' ? 'kit' : 'product'}}/{{product.InteropID}}" tabindex="-1" aria-hidden="true">
+            <img ng-if="product.LargeImageUrl || product.SmallImageUrl" ng-src="{{product.LargeImageUrl || product.SmallImageUrl}}" alt="" />
+        </a>
+        <button type="button" class="msp-card-fav" ng-if="user.Type == 'Customer'"
+                ng-click="$root.isFavorite(product.InteropID) ? $root.removeFavorite(product.InteropID) : $root.addFavorite(product.InteropID)"
+                aria-label="{{($root.isFavorite(product.InteropID) ? 'Remove from favorites' : 'Add to favorites') | r | xlat}}"
+                aria-pressed="{{!!$root.isFavorite(product.InteropID)}}">
+            <svg width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"
+                 ng-attr-fill="{{$root.isFavorite(product.InteropID) ? 'currentColor' : 'none'}}"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"></path></svg>
+        </button>
+
+        <button type="button" class="msp-card-add" ng-class="{'msp-card-add-done': productInCart(product)}"
+                ng-if="canQuickAdd(product) && !quickAddNeedsOptions[product.InteropID] && !productOutOfInventory(product)"
+                ng-click="quickAddToCart(product)" ng-disabled="quickAddIndicator[product.InteropID]"
+                aria-label="{{(productInCart(product) ? 'Add another' : 'Quick add') | r | xlat}}: {{product.Name}}">
+            <i ng-show="quickAddIndicator[product.InteropID]" class="fa fa-spinner fa-spin" aria-hidden="true"></i>
+            <span class="msp-card-add-label">{{(productInCart(product) ? 'Added — add another' : 'Quick add') | r | xlat}}</span>
+            <svg class="msp-card-add-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+        </button>
+        <button type="button" class="msp-card-add" disabled="disabled"
+                ng-if="canQuickAdd(product) && !quickAddNeedsOptions[product.InteropID] && productOutOfInventory(product)">
+            <span class="msp-card-add-label">{{'Out of stock' | r | xlat}}</span>
+        </button>
+        <a class="msp-card-add" ng-if="!canQuickAdd(product) || quickAddNeedsOptions[product.InteropID]"
+           href="{{product.Type == 'Kit' ? 'kit' : 'product'}}/{{product.InteropID}}"
+           aria-label="{{'Select options' | r | xlat}}: {{product.Name}}">
+            <span class="msp-card-add-label">{{'Select options' | r | xlat}}</span>
+            <svg class="msp-card-add-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>
+        </a>
+    </div>
+
+    <a class="msp-card-info" href="{{product.Type == 'Kit' ? 'kit' : 'product'}}/{{product.InteropID}}">
+        <span class="msp-card-name">{{product.Name}}</span>
+        <span class="msp-card-price" ng-if="product.StandardPriceSchedule.PriceBreaks[0] && !(user.Permissions.contains('HidePricing'))">
+            {{product.StandardPriceSchedule.PriceBreaks[0].Price | culturecurrency}}
+        </span>
+    </a>
+    <p class="msp-card-note" ng-show="quickAddNeedsOptions[product.InteropID]">{{'This item has options to choose before adding to your cart.' | r | xlat}}</p>
+    <p class="msp-card-note msp-card-error" role="alert" ng-show="quickAddError[product.InteropID]">{{quickAddError[product.InteropID] | xlat}}</p>
+</div>

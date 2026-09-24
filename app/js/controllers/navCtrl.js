@@ -1,5 +1,5 @@
-four51.app.controller('NavCtrl', ['$location', '$route', '$scope', '$rootScope', '$document', '$451', '$timeout', '$window', 'User', 'Order', 'SpendingAccount', 'AppConst',
-function ($location, $route, $scope, $rootScope, $document, $451, $timeout, $window, User, Order, SpendingAccount, AppConst) {
+four51.app.controller('NavCtrl', ['$location', '$route', '$scope', '$rootScope', '$document', '$451', '$timeout', '$window', 'User', 'Order', 'SpendingAccount', 'AppConst', 'OrderConfig', 'SectionNav',
+function ($location, $route, $scope, $rootScope, $document, $451, $timeout, $window, User, Order, SpendingAccount, AppConst, OrderConfig, SectionNav) {
     // Four51 InteropIDs are unique platform-wide, so Featured/All Products may carry a uniqueness
     // suffix (e.g. "featured-gp") - match by prefix, not exact equality. Mirrors the same
     // exclusion categoryCtrl.js already applies to the home page's "Shop by category" tiles.
@@ -37,7 +37,8 @@ function ($location, $route, $scope, $rootScope, $document, $451, $timeout, $win
 
     var drawerTrigger = null;
     $scope.openDrawer = function(name, $event) {
-        drawerTrigger = $event && $event.currentTarget;
+        // Opened by an add-to-cart rather than a click: focus returns to the cart button.
+        drawerTrigger = ($event && $event.currentTarget) || (name == 'cart' && document.getElementById('451qa_cart_link'));
         $scope.ui.searchOpen = false;
         $scope.drawer.open = name;
     };
@@ -95,28 +96,11 @@ function ($location, $route, $scope, $rootScope, $document, $451, $timeout, $win
         $scope.sectionLinks = links;
     });
 
-    // Section links are real hrefs to catalog (so they work opened in a new tab), but a plain
-    // click scrolls in-page. From any other route, go home first and scroll once the view has
-    // rendered. preventDefault keeps the native navigation from racing the handler - the
-    // href="#" logout bug in THEME-DEVELOPMENT-NOTES.md.
-    function scrollToSection(id) {
-        if (id === 'top') return $window.scrollTo({ top: 0, behavior: 'smooth' });
-        var el = document.getElementById(id);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    // Scrolling itself lives in SectionNav (Four51Ctrl exposes it as goToSection to every view);
+    // from the header and menu it also has to close the drawer.
     $scope.goToSection = function(id, $event) {
-        if ($event && ($event.metaKey || $event.ctrlKey || $event.shiftKey || $event.button === 1)) return;
-        if ($event) $event.preventDefault();
         $scope.closeDrawer();
-
-        if ($location.path() === '/catalog') return scrollToSection(id);
-
-        var off = $rootScope.$on('$viewContentLoaded', function() {
-            off();
-            // Let the home page's own content (tree, products) render before measuring.
-            $timeout(function() { scrollToSection(id); }, 400);
-        });
-        $location.path('/catalog');
+        SectionNav.goTo(id, $event);
     };
 
     $scope.doSearch = function(){
@@ -124,49 +108,169 @@ function ($location, $route, $scope, $rootScope, $document, $451, $timeout, $win
             $location.path('search/' + $scope.searchTerm);
     };
 
-    // Removing straight from the mini-cart, without leaving whatever page the shopper is
-    // browsing. Mirrors cartCtrl.js's removeItem(), minus the shipping-recalc/saveChanges
-    // afterward - the shopper isn't on the checkout flow here, so there's nothing to resave.
-    //
-    // Does NOT assign $scope.currentOrder itself, on purpose: <navigation> (this controller)
-    // gets its own scope as a SIBLING of ng-view, not an ancestor of it, so an assignment here
-    // only ever shadowed nav's own copy - every other page keeps reading Four51Ctrl's real
-    // currentOrder, which never changed, so a category-page add-to-cart right after a mini-cart
-    // removal sent the server a stale order and came back with a raw "Object reference not set
-    // to an instance of an object" exception. Order.deletelineitem already broadcasts
-    // event:orderUpdate on every call; Four51Ctrl.js listens for it and updates the one
-    // currentOrder every page actually inherits from - this just needs to trigger that.
-    $scope.removeMinicartItem = function(item){
-        if (!$scope.currentOrder || !confirm('Are you sure you wish to remove this item from your cart?'))
-            return;
-        Order.deletelineitem($scope.currentOrder.ID, item.ID, function(order){
+    // ===== Cart drawer =====
+    // Everything here reads and mutates the inherited currentOrder but never assigns
+    // $scope.currentOrder: this controller's scope is a SIBLING of ng-view, so an assignment would
+    // only shadow nav's own copy and every page would keep the stale order (the mini-cart bug in
+    // THEME-DEVELOPMENT-NOTES.md). Order.save / Order.deletelineitem broadcast event:orderUpdate,
+    // and Four51Ctrl.js swaps the one shared currentOrder in from that.
+
+    // Any add-to-cart opens the drawer (productCtrl.js, categoryCtrl.js's quick add and its modal).
+    $scope.$on('event:addedToCart', function() {
+        $scope.openDrawer('cart');
+    });
+
+    // A kit still mid-configuration is a real LineItem server-side, but not something the
+    // shopper has finished adding - same rule as cartCount below.
+    $scope.cartLines = [];
+    $scope.$watchCollection(function() {
+        return $scope.currentOrder && $scope.currentOrder.Status == 'Unsubmitted' ? $scope.currentOrder.LineItems : null;
+    }, function(items) {
+        $scope.cartLines = (items || []).filter(function(li) { return !(li.IsKitParent && li.KitIsInvalid); });
+    });
+
+    // The design's "Color / Size" line: the values the shopper chose for variant-defining or
+    // per-line specs, capped so a long personalization field doesn't take over the row.
+    $scope.lineDetail = function(item) {
+        var parts = [];
+        angular.forEach(item.Specs, function(spec) {
+            if (parts.length >= 3 || !spec || !(spec.DefinesVariant || spec.CanSetForLineItem)) return;
+            var value = spec.Value != null ? String(spec.Value).trim() : '';
+            if (value && value.length <= 40) parts.push(value);
+        });
+        return parts.join(' / ');
+    };
+
+    // Allowed quantities for a restricted price schedule, ascending; null when any quantity goes.
+    function allowedQuantities(item) {
+        var ps = item.PriceSchedule;
+        if (!ps || !ps.RestrictedQuantity || !ps.PriceBreaks) return null;
+        var qtys = [];
+        angular.forEach(ps.PriceBreaks, function(pb) {
+            var q = parseInt(pb.Quantity, 10);
+            if (q > 0 && qtys.indexOf(q) < 0) qtys.push(q);
+        });
+        return qtys.sort(function(a, b) { return a - b; });
+    }
+    function quantityOf(item) {
+        // Quantity inputs elsewhere are type="text", so this can arrive as a string ("1" + 1 = 11).
+        return parseInt(item.Quantity, 10) || 0;
+    }
+    // Kits change quantity on their own page; a restricted schedule with one allowed quantity has
+    // nothing to step between.
+    $scope.canStepQty = function(item) {
+        if (item.IsKitParent) return false;
+        var allowed = allowedQuantities(item);
+        return !allowed || allowed.length > 1;
+    };
+    function nextQuantity(item, delta) {
+        var qty = quantityOf(item);
+        var allowed = allowedQuantities(item);
+        if (allowed) {
+            var index = allowed.indexOf(qty);
+            if (index < 0) index = delta > 0 ? -1 : allowed.length;
+            var next = index + delta;
+            return next < 0 ? 0 : (next >= allowed.length ? qty : allowed[next]);
+        }
+        var min = (item.PriceSchedule && item.PriceSchedule.MinQuantity) || 1;
+        var result = qty + delta;
+        return result < min ? 0 : result;
+    }
+    $scope.isAtMinQty = function(item) { return nextQuantity(item, -1) === 0; };
+    $scope.isAtMaxQty = function(item) {
+        var ps = item.PriceSchedule;
+        var qty = quantityOf(item);
+        if (nextQuantity(item, 1) === qty) return true;
+        return !!(ps && ps.MaxQuantity > 0 && qty >= ps.MaxQuantity);
+    };
+
+    // Steps save after a short pause, so tapping + five times is one request, not five. Stepping
+    // below the minimum removes the line (the design's "quantity to 0 removes it").
+    var qtySaveTimer = null;
+    var afterCartSave = [];
+    $scope.cartSaving = false;
+    $scope.stepQty = function(item, delta) {
+        var next = nextQuantity(item, delta);
+        if (next === 0) return $scope.removeCartLine(item);
+        if (next === quantityOf(item)) return;
+        item.Quantity = next;
+        $scope.cartError = null;
+        $timeout.cancel(qtySaveTimer);
+        qtySaveTimer = $timeout(saveCart, 600);
+    };
+
+    function saveCart() {
+        qtySaveTimer = null;
+        var order = $scope.currentOrder;
+        if (!order) return;
+        $scope.cartSaving = true;
+        // Same preparation cartCtrl.js's saveChanges() does before Order.save.
+        OrderConfig.address(order, $scope.user);
+        angular.forEach(order.LineItems, function(li) {
+            if (li.DateNeeded) li.DateNeeded = new Date(li.DateNeeded).toDateString();
+        });
+        Order.save(order, function() {
+            $scope.cartSaving = false;
+            var callbacks = afterCartSave;
+            afterCartSave = [];
+            angular.forEach(callbacks, function(fn) { fn(); });
+        }, function(ex) {
+            $scope.cartSaving = false;
+            afterCartSave = [];
+            $scope.cartError = (ex && (ex.Detail || ex.Message)) || 'Unable to update your cart.';
+            // Put the drawer back on the last order the server accepted - Order.get serves the
+            // cached copy of it and broadcasts event:orderUpdate, which Four51Ctrl picks up.
+            Order.get(order.ID);
+        });
+    }
+
+    // No confirm(): the design removes straight from the drawer. Mirrors cartCtrl.js's
+    // removeItem() minus the shipping resave, since the shopper isn't in checkout.
+    $scope.removeCartLine = function(item) {
+        if (!$scope.currentOrder) return;
+        $scope.cartError = null;
+        if (qtySaveTimer) { $timeout.cancel(qtySaveTimer); qtySaveTimer = null; }
+        Order.deletelineitem($scope.currentOrder.ID, item.ID, function(order) {
             if (!order) {
                 $scope.user.CurrentOrderID = null;
                 User.save($scope.user);
             }
-        }, function(ex){
-            alert(ex.Message);
+        }, function(ex) {
+            $scope.cartError = (ex && (ex.Detail || ex.Message)) || 'Unable to remove that item.';
         });
     };
 
-    // Confirmation for staying on the page after Add to Cart (see productCtrl.js's
-    // addToOrder()) - pop the mini-cart open briefly instead of jumping to /cart. The dropdown
-    // (ui-bootstrap 0.10's dropdownToggle directive) has no is-open binding - it's a pure
-    // click-driven closure with no scope API at all - so opening/closing it programmatically
-    // means dispatching the same click events a shopper's own click would produce, rather than
-    // via a binding it doesn't support.
-    var minicartCloseTimer;
-    $scope.$on('event:addedToCart', function(){
-        var toggle = document.getElementById('451qa_cart_link');
-        if (!toggle) return;
-        if (!angular.element(toggle.parentElement).hasClass('open'))
-            toggle.click();
-        $timeout.cancel(minicartCloseTimer);
-        minicartCloseTimer = $timeout(function(){
-            if (angular.element(toggle.parentElement).hasClass('open'))
-                document.dispatchEvent(new MouseEvent('click', {bubbles: true}));
-        }, 4000);
-    });
+    // A pending quantity step has to reach the server before checkout reads the order.
+    $scope.goToCheckout = function($event) {
+        if (!qtySaveTimer && !$scope.cartSaving) return $scope.closeDrawer();
+        $event.preventDefault();
+        afterCartSave.push(function() {
+            $scope.closeDrawer();
+            $location.path('checkout');
+        });
+        if (qtySaveTimer) { $timeout.cancel(qtySaveTimer); saveCart(); }
+    };
+
+    // Closes the drawer; from anywhere but the home page it also takes the shopper back to it.
+    $scope.continueShopping = function($event) {
+        $scope.closeDrawer();
+        if ($location.path() !== '/catalog') SectionNav.goTo('shop', $event);
+    };
+
+    // Free-shipping bar, from site.json shipping.freeShippingThreshold. Display only.
+    function freeShippingThreshold() {
+        return ($scope.site && $scope.site.shipping && $scope.site.shipping.freeShippingThreshold) || 0;
+    }
+    $scope.freeShippingRemaining = function() {
+        var subtotal = ($scope.currentOrder && $scope.currentOrder.Subtotal) || 0;
+        return Math.max(0, freeShippingThreshold() - subtotal);
+    };
+    $scope.freeShippingPercent = function() {
+        var threshold = freeShippingThreshold();
+        if (!threshold) return 0;
+        var subtotal = ($scope.currentOrder && $scope.currentOrder.Subtotal) || 0;
+        return Math.min(100, Math.round(subtotal / threshold * 100));
+    };
 
     $scope.Logout = function(){
         // Dropping the token on its own just re-renders the login form under

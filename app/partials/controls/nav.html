@@ -28,52 +28,11 @@
                 <ul class="dropdown-menu dropdown-menu-right msp-account-menu" ng-include="'partials/controls/mspAccountLinks.html'"></ul>
             </div>
 
-            <div class="dropdown mt-minicart">
-                <a id="451qa_cart_link" href="#" class="msp-cart-btn dropdown-toggle" data-toggle="dropdown" ng-click="$event.preventDefault()"
-                   aria-label="{{'Open cart' | r | xlat}}, {{cartCount || 0}} {{'items' | r | xlat}}">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 12H6.2L5 8z"></path><path d="M9 8V6a3 3 0 016 0v2"></path></svg>
-                    <span class="msp-cart-badge">{{cartCount || 0}}</span>
-                </a>
-                <div class="dropdown-menu dropdown-menu-right mt-minicart-panel">
-                    <p class="mt-minicart-empty" ng-if="!currentOrder.LineItems.length">{{'Your cart is empty' | r | xlat}}</p>
-                    <div ng-if="currentOrder.LineItems.length">
-                        <div class="mt-minicart-items">
-                            <!-- track by deliberately never uses item.ID: a newly-added item has no ID yet
-                                 (addOrMergeLineItem pushes it client-side before the server confirms), so an
-                                 ID-based key would itself change once the server response replaces currentOrder
-                                 wholesale a moment later - ng-repeat would then see "old key gone, new key
-                                 appeared" and briefly duplicate the row, even though it's the same line item.
-                                 Product+Variant InteropID stays identical from the optimistic push through the
-                                 confirmed response, so it's stable across that transition. Confirmed live
-                                 (2026-09-24) via a DOM+scope recorder: the underlying LineItems array never had a
-                                 duplicate at any point, only the rendered DOM did, for exactly as long as the
-                                 old and new keys briefly coexisted. -->
-                            <div class="mt-minicart-item" ng-repeat="item in currentOrder.LineItems track by (item.Product.InteropID + (item.Variant ? '-' + item.Variant.InteropID : ''))" ng-if="!(item.IsKitParent && item.KitIsInvalid)">
-                                <img class="mt-minicart-item-photo mt-real-photo" ng-if="item.Variant.LargeImageUrl || item.Product.SmallImageUrl" ng-src="{{item.Variant.LargeImageUrl || item.Product.SmallImageUrl}}" />
-                                <div class="mt-placeholder-photo mt-minicart-item-photo" ng-if="!(item.Variant.LargeImageUrl || item.Product.SmallImageUrl)"></div>
-                                <div class="mt-minicart-item-info">
-                                    <p class="mt-minicart-item-name">{{item.Product.Name}}</p>
-                                    <p class="mt-minicart-item-meta">{{'Qty' | r | xlat}}: {{item.Quantity}}</p>
-                                </div>
-                                <p class="mt-minicart-item-price" ng-if="!(user.Permissions.contains('HidePricing'))">{{item.LineTotal | culturecurrency}}</p>
-                                <button type="button" class="mt-minicart-item-remove" ng-click="removeMinicartItem(item)" aria-label="{{'Remove' | r | xlat}}" title="{{'Remove' | r | xlat}}">
-                                    <i class="fa fa-times"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="mt-minicart-footer">
-                            <div class="mt-minicart-subtotal" ng-if="!(user.Permissions.contains('HidePricing'))">
-                                <span>{{'Subtotal' | r | xlat}}</span>
-                                <span>{{currentOrder.Subtotal | culturecurrency}}</span>
-                            </div>
-                            <div class="mt-minicart-actions">
-                                <a href="cart" class="mt-header-btn mt-minicart-view-btn">{{'View Cart' | r | xlat}}</a>
-                                <a href="checkout" class="mt-btn-accent mt-minicart-checkout-btn">{{'Checkout' | r | xlat}}</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <button type="button" id="451qa_cart_link" class="msp-cart-btn" ng-click="openDrawer('cart', $event)"
+                    aria-label="{{'Open cart' | r | xlat}}, {{cartCount || 0}} {{'items' | r | xlat}}" aria-expanded="{{drawer.open == 'cart'}}" aria-controls="msp-cart">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 12H6.2L5 8z"></path><path d="M9 8V6a3 3 0 016 0v2"></path></svg>
+                <span class="msp-cart-badge">{{cartCount || 0}}</span>
+            </button>
         </div>
     </div>
 
@@ -116,3 +75,76 @@
         </button>
     </div>
 </nav>
+
+<aside id="msp-cart" class="msp-drawer msp-drawer-right msp-cart" ng-class="{'msp-open': drawer.open == 'cart'}"
+       role="dialog" aria-modal="true" aria-labelledby="msp-cart-title" aria-hidden="{{drawer.open != 'cart'}}"
+       msp-focus-trap="drawer.open == 'cart'">
+    <div class="msp-cart-head">
+        <h2 id="msp-cart-title" class="msp-cart-title">{{'Your cart' | r | xlat}} <span class="msp-cart-title-count" ng-if="cartCount">({{cartCount}})</span></h2>
+        <button type="button" class="msp-icon-btn" ng-click="closeDrawer()" aria-label="{{'Close cart' | r | xlat}}" data-msp-autofocus>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+        </button>
+    </div>
+
+    <!-- Free-shipping progress: site.json shipping.freeShippingThreshold, display only. -->
+    <div class="msp-shipbar" ng-if="cartLines.length && site.shipping.freeShippingThreshold > 0 && !user.Permissions.contains('HidePricing')">
+        <p class="msp-shipbar-msg" aria-live="polite">
+            <span ng-if="freeShippingRemaining() > 0">{{'You\'re' | r | xlat}} {{freeShippingRemaining() | culturecurrency}} {{'away from free shipping.' | r | xlat}}</span>
+            <span ng-if="freeShippingRemaining() <= 0">{{'You\'ve unlocked free shipping.' | r | xlat}}</span>
+        </p>
+        <div class="msp-shipbar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{freeShippingPercent()}}" aria-label="{{'Progress to free shipping' | r | xlat}}">
+            <div class="msp-shipbar-fill" ng-style="{width: freeShippingPercent() + '%'}"></div>
+        </div>
+    </div>
+
+    <div class="msp-cart-body">
+        <div class="msp-cart-empty" ng-if="!cartLines.length">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 12H6.2L5 8z"></path><path d="M9 8V6a3 3 0 016 0v2"></path></svg>
+            <p class="msp-cart-empty-title">{{'Your cart is empty' | r | xlat}}</p>
+            <button type="button" class="msp-link-btn" ng-click="continueShopping($event)">{{'Continue shopping' | r | xlat}}</button>
+        </div>
+
+        <p class="msp-cart-error" role="alert" ng-if="cartError">{{cartError}}</p>
+
+        <!-- track by: see the note this replaces in git history - never item.ID, which a
+             freshly added line doesn't have until the server answers, so the key would change
+             and ng-repeat would briefly render the line twice. Product + Variant InteropID is
+             stable from the optimistic push through the confirmed response. -->
+        <ul class="msp-cart-lines" ng-if="cartLines.length">
+            <li class="msp-cart-line" ng-repeat="item in cartLines track by (item.Product.InteropID + (item.Variant ? '-' + item.Variant.InteropID : ''))">
+                <div class="msp-cart-thumb">
+                    <img ng-if="item.Variant.LargeImageUrl || item.Product.SmallImageUrl" ng-src="{{item.Variant.LargeImageUrl || item.Product.SmallImageUrl}}" alt="" />
+                </div>
+                <div class="msp-cart-line-body">
+                    <div class="msp-cart-line-top">
+                        <p class="msp-cart-line-name">{{item.Product.Name}}</p>
+                        <p class="msp-cart-line-price" ng-if="!(user.Permissions.contains('HidePricing'))">{{item.LineTotal | culturecurrency}}</p>
+                    </div>
+                    <p class="msp-cart-line-variant" ng-if="lineDetail(item)">{{lineDetail(item)}}</p>
+                    <div class="msp-cart-line-actions">
+                        <div class="msp-stepper" ng-if="canStepQty(item)" role="group" aria-label="{{'Quantity' | r | xlat}}, {{item.Product.Name}}">
+                            <button type="button" ng-click="stepQty(item, -1)" aria-label="{{(isAtMinQty(item) ? 'Remove' : 'Decrease quantity') | r | xlat}}">&minus;</button>
+                            <span aria-live="polite">{{item.Quantity}}</span>
+                            <button type="button" ng-click="stepQty(item, 1)" ng-disabled="isAtMaxQty(item)" aria-label="{{'Increase quantity' | r | xlat}}">+</button>
+                        </div>
+                        <p class="msp-cart-line-qty" ng-if="!canStepQty(item)">{{'Qty' | r | xlat}} {{item.Quantity}}</p>
+                        <button type="button" class="msp-link-btn msp-cart-remove" ng-click="removeCartLine(item)">{{'Remove' | r | xlat}}</button>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <div class="msp-cart-foot" ng-if="cartLines.length">
+        <div class="msp-cart-subtotal" ng-if="!(user.Permissions.contains('HidePricing'))">
+            <span>{{'Subtotal' | r | xlat}}</span>
+            <span>{{currentOrder.Subtotal | culturecurrency}}</span>
+        </div>
+        <p class="msp-cart-note">{{'Taxes and shipping calculated at checkout.' | r | xlat}}</p>
+        <a href="checkout" class="msp-btn msp-btn-accent msp-btn-block" ng-click="goToCheckout($event)" ng-class="{'msp-busy': cartSaving}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="1.5"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+            {{'Checkout' | r | xlat}}
+        </a>
+        <button type="button" class="msp-link-btn msp-cart-continue" ng-click="continueShopping($event)">{{'Continue shopping' | r | xlat}}</button>
+    </div>
+</aside>

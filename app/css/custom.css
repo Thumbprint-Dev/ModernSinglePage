@@ -4612,6 +4612,9 @@ body.msp-drawer-lock {
 }
 
 .msp-cart-btn {
+    border: 0;
+    background: transparent;
+    font: inherit;
     height: 44px;
     padding: 0 14px 0 10px;
     border-radius: 999px;
@@ -4866,4 +4869,760 @@ body.msp-drawer-lock {
 }
 .msp-menu-account .msp-account-balance {
     padding: 4px 0;
+}
+
+
+/* ===== ModernSinglePage: shared type + buttons ===== */
+.msp-eyebrow {
+    margin: 0 0 12px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--mt-color-text);
+}
+.msp-section-title {
+    margin: 0;
+    font-family: var(--mt-font-display);
+    font-weight: 400;
+    font-size: 60px;
+    line-height: 1;
+    letter-spacing: -0.015em;
+    color: var(--mt-color-ink);
+}
+
+.msp-btn {
+    height: 52px;
+    padding: 0 28px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+.msp-btn:hover,
+.msp-btn:focus {
+    text-decoration: none;
+}
+.msp-btn:focus-visible {
+    outline: 2px solid var(--mt-color-accent);
+    outline-offset: 3px;
+}
+.msp-btn-ink {
+    background: var(--mt-color-ink);
+    color: var(--mt-color-on-ink);
+}
+.msp-btn-ink:hover,
+.msp-btn-ink:focus {
+    background: #33312C;
+    color: var(--mt-color-on-ink);
+}
+.msp-btn-outline {
+    border-color: var(--mt-color-ink);
+    color: var(--mt-color-ink);
+    background: transparent;
+}
+.msp-btn-outline:hover,
+.msp-btn-outline:focus {
+    background: rgba(27, 26, 23, 0.06);
+    color: var(--mt-color-ink);
+}
+.msp-btn-accent {
+    background: var(--mt-color-accent);
+    color: #fff;
+}
+.msp-btn-accent:hover,
+.msp-btn-accent:focus {
+    background: var(--mt-color-accent-dark);
+    color: #fff;
+}
+.msp-btn-block {
+    display: flex;
+    width: 100%;
+    height: 56px;
+    font-size: 16px;
+}
+.msp-busy {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* Text-style button (Remove, Continue shopping). */
+.msp-link-btn {
+    border: 0;
+    padding: 4px 0;
+    background: none;
+    font-size: 14px;
+    color: var(--mt-color-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+.msp-link-btn:hover {
+    color: var(--mt-color-text-soft);
+}
+
+@media (max-width: 767px) {
+    .msp-section-title {
+        font-size: 44px;
+    }
+    .msp-hide-phone {
+        display: none !important;
+    }
+}
+
+
+/* ===== ModernSinglePage: home ===== */
+/* Full bleed: cancels .container-view's own 5px side padding (bootstrap-451.css) and the 20px
+   above it - match those real numbers, not a guess (THEME-DEVELOPMENT-NOTES.md). */
+.msp-home {
+    margin: -20px -5px 0;
+    background: var(--mt-color-bg);
+    color: var(--mt-color-text);
+}
+/* Anchored sections land below the sticky header, not under it. */
+.msp-home [id] {
+    scroll-margin-top: var(--msp-header-height);
+}
+
+.msp-section {
+    padding-top: 120px;
+    padding-bottom: 120px;
+}
+.msp-section-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 48px;
+}
+@media (max-width: 767px) {
+    .msp-section {
+        padding-top: 64px;
+        padding-bottom: 64px;
+    }
+    .msp-section-head {
+        margin-bottom: 32px;
+    }
+}
+
+
+/* ===== ModernSinglePage: hero ===== */
+.msp-hero {
+    position: relative;
+    height: 680px;
+    background: #C9BBA6;
+    overflow: hidden;
+    color: var(--mt-color-ink);
+}
+.msp-hero-media,
+.msp-hero-media img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+.msp-hero-media img {
+    object-fit: cover;
+}
+/* A photo gets a bottom scrim and white copy, so the text reads on any image. */
+.msp-hero.msp-hero-has-image::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(27, 26, 23, 0.55), rgba(27, 26, 23, 0) 60%);
+}
+.msp-hero.msp-hero-has-image {
+    color: #fff;
+}
+.msp-hero-inner {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    padding-bottom: 72px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 48px;
+}
+.msp-hero-copy {
+    max-width: 760px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.msp-hero .msp-eyebrow {
+    margin: 0;
+    color: inherit;
+}
+.msp-hero-title {
+    margin: 0;
+    font-family: var(--mt-font-display);
+    font-weight: 400;
+    font-size: 112px;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: inherit;
+}
+.msp-hero-sub {
+    margin: 0;
+    max-width: 520px;
+    font-size: 18px;
+    line-height: 1.5;
+    color: #2E2A24;
+}
+.msp-hero.msp-hero-has-image .msp-hero-sub {
+    color: rgba(255, 255, 255, 0.9);
+}
+.msp-hero-actions {
+    display: flex;
+    gap: 12px;
+    flex-shrink: 0;
+}
+.msp-hero.msp-hero-has-image .msp-btn-outline {
+    border-color: #fff;
+    color: #fff;
+}
+@media (max-width: 1023px) {
+    .msp-hero-title {
+        font-size: 84px;
+    }
+    .msp-hero-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 28px;
+    }
+}
+@media (max-width: 767px) {
+    .msp-hero {
+        height: 580px;
+    }
+    .msp-hero-inner {
+        padding-bottom: 32px;
+    }
+    .msp-hero-title {
+        font-size: 60px;
+    }
+    .msp-hero-sub {
+        font-size: 16px;
+    }
+    /* Phone shows the primary button only, full width. */
+    .msp-hero-actions {
+        align-self: stretch;
+    }
+    .msp-hero-actions .msp-btn {
+        flex: 1 1 auto;
+        height: 54px;
+    }
+}
+
+
+/* ===== ModernSinglePage: trust strip ===== */
+.msp-trust {
+    border-bottom: 1px solid var(--mt-color-border);
+}
+.msp-trust-row {
+    list-style: none;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 24px;
+    padding-bottom: 24px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px 24px;
+}
+/* A clearfix ::before/::after (content " ", display table) lands on this list from the stock
+   stylesheets and would take up the first grid cell, pushing the fourth item onto a new row. */
+.msp-trust-row::before,
+.msp-trust-row::after {
+    content: none;
+}
+.msp-trust-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    color: var(--mt-color-ink);
+}
+.msp-trust-item svg {
+    flex-shrink: 0;
+}
+@media (max-width: 767px) {
+    .msp-trust-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+    .msp-trust-item {
+        font-size: 13px;
+        gap: 10px;
+    }
+}
+
+
+/* ===== ModernSinglePage: shop grid ===== */
+.msp-shop-count,
+.msp-shop-empty {
+    margin: 0;
+    font-size: 14px;
+    color: var(--mt-color-muted);
+}
+
+/* Column count comes from categoryCtrl.js's shopGridColumns(): 2-4 / 3 / 4 by product count. */
+.msp-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 48px 24px;
+}
+.msp-grid-cols-1 { grid-template-columns: minmax(0, 1fr); max-width: 440px; }
+.msp-grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.msp-grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.msp-grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 1023px) {
+    .msp-grid-cols-4 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 767px) {
+    .msp-grid,
+    .msp-grid-cols-3,
+    .msp-grid-cols-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 32px 12px;
+    }
+}
+
+.msp-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+.msp-card-media {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    border-radius: 4px;
+    background: #E6DFD3;
+    overflow: hidden;
+    isolation: isolate;
+}
+.msp-grid-item:nth-child(6n+2) .msp-card-media { background: #DCD5C9; }
+.msp-grid-item:nth-child(6n+3) .msp-card-media { background: #E2DDD4; }
+.msp-grid-item:nth-child(6n+4) .msp-card-media { background: #D8DDD4; }
+.msp-grid-item:nth-child(6n+5) .msp-card-media { background: #E5DBCF; }
+.msp-grid-item:nth-child(6n+6) .msp-card-media { background: #DAD6CF; }
+
+.msp-card-image {
+    position: absolute;
+    inset: 0;
+    display: block;
+}
+/* Four51 product shots are mostly on white. Contained with room to breathe, and multiplied
+   into the tile so the white becomes the tile's tone instead of a white box. */
+.msp-card-image img {
+    width: 100%;
+    height: 100%;
+    padding: 12% 10% 22%;
+    box-sizing: border-box;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+    border-radius: 4px;
+    transition: transform 400ms ease;
+}
+.msp-card:hover .msp-card-image img {
+    transform: scale(1.03);
+}
+
+.msp-card-fav {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(244, 241, 236, 0.85);
+    color: var(--mt-color-ink);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+.msp-card-fav[aria-pressed="true"] {
+    color: var(--mt-color-accent);
+}
+
+/* The quick-add pill sits on the image, 14px in. */
+.msp-card-add {
+    position: absolute;
+    left: 14px;
+    right: 14px;
+    bottom: 14px;
+    z-index: 2;
+    height: 46px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--mt-color-bg);
+    color: var(--mt-color-ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 150ms ease, color 150ms ease;
+}
+.msp-card-add:hover,
+.msp-card-add:focus {
+    background: #fff;
+    color: var(--mt-color-ink);
+    text-decoration: none;
+}
+.msp-card-add.msp-card-add-done {
+    background: var(--mt-color-accent);
+    color: #fff;
+}
+.msp-card-add.msp-card-add-done:hover,
+.msp-card-add.msp-card-add-done:focus {
+    background: var(--mt-color-accent-dark);
+    color: #fff;
+}
+.msp-card-add[disabled] {
+    opacity: 0.75;
+    cursor: default;
+}
+.msp-card-add:focus-visible,
+.msp-card-fav:focus-visible,
+.msp-card-info:focus-visible {
+    outline: 2px solid var(--mt-color-accent);
+    outline-offset: 2px;
+}
+.msp-card-add-icon {
+    display: none;
+}
+
+.msp-card-info {
+    margin-top: 14px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    color: var(--mt-color-ink);
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.35;
+}
+.msp-card-info:hover,
+.msp-card-info:focus {
+    color: var(--mt-color-ink);
+    text-decoration: none;
+}
+.msp-card-info:hover .msp-card-name {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+.msp-card-name {
+    min-width: 0;
+}
+.msp-card-price {
+    flex-shrink: 0;
+    font-weight: 400;
+}
+.msp-card-note {
+    margin: 6px 0 0;
+    font-size: 13px;
+    color: var(--mt-color-muted);
+}
+.msp-card-error {
+    color: var(--mt-color-danger);
+}
+
+/* Phone: round "+" in the corner instead of the full-width pill. */
+@media (max-width: 767px) {
+    .msp-card-add {
+        left: auto;
+        right: 10px;
+        bottom: 10px;
+        width: 44px;
+        height: 44px;
+        padding: 0;
+    }
+    .msp-card-add .msp-card-add-label {
+        display: none;
+    }
+    .msp-card-add-icon {
+        display: block;
+    }
+    /* While adding, the spinner takes the icon's place. */
+    .msp-card-add .fa-spinner:not(.ng-hide) ~ .msp-card-add-icon {
+        display: none;
+    }
+    /* Out of stock has no icon; keep its words. */
+    .msp-card-add[disabled] {
+        width: auto;
+        left: 10px;
+        font-size: 13px;
+    }
+    .msp-card-add[disabled] .msp-card-add-label {
+        display: inline;
+    }
+    .msp-card-info {
+        margin-top: 10px;
+        flex-direction: column;
+        gap: 2px;
+        font-size: 14px;
+    }
+    .msp-card-fav {
+        top: 6px;
+        right: 6px;
+    }
+}
+
+
+/* ===== ModernSinglePage: cart drawer ===== */
+.msp-cart {
+    width: 440px;
+    max-width: 100vw;
+}
+.msp-cart-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 18px 12px 28px;
+}
+.msp-cart-title {
+    margin: 0;
+    font-family: var(--mt-font-display);
+    font-weight: 400;
+    font-size: 34px;
+    line-height: 1;
+    color: var(--mt-color-ink);
+}
+.msp-cart-title-count {
+    font-family: var(--mt-font-body);
+    font-size: 15px;
+    color: var(--mt-color-muted);
+}
+
+.msp-shipbar {
+    padding: 8px 28px 22px;
+    border-bottom: 1px solid var(--mt-color-border);
+}
+.msp-shipbar-msg {
+    margin: 0 0 10px;
+    font-size: 14px;
+    color: var(--mt-color-ink);
+}
+.msp-shipbar-track {
+    height: 5px;
+    border-radius: 999px;
+    background: var(--mt-color-border);
+    overflow: hidden;
+}
+.msp-shipbar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--mt-color-accent);
+    transition: width 400ms ease;
+}
+
+.msp-cart-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 0 28px;
+    overscroll-behavior: contain;
+}
+.msp-cart-empty {
+    height: 100%;
+    min-height: 240px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--mt-color-muted);
+    text-align: center;
+}
+.msp-cart-empty-title {
+    margin: 4px 0 0;
+    font-family: var(--mt-font-display);
+    font-size: 28px;
+    color: var(--mt-color-ink);
+}
+.msp-cart-error {
+    margin: 16px 0 0;
+    padding: 10px 14px;
+    border-radius: 6px;
+    background: #F7E4E2;
+    font-size: 14px;
+    color: var(--mt-color-danger);
+}
+
+.msp-cart-lines {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.msp-cart-line {
+    display: flex;
+    gap: 18px;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--mt-color-border);
+}
+.msp-cart-thumb {
+    flex: 0 0 88px;
+    height: 110px;
+    border-radius: 4px;
+    background: #E6DFD3;
+    overflow: hidden;
+}
+.msp-cart-thumb img {
+    width: 100%;
+    height: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+}
+.msp-cart-line-body {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+.msp-cart-line-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+.msp-cart-line-name,
+.msp-cart-line-price {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--mt-color-ink);
+}
+.msp-cart-line-price {
+    flex-shrink: 0;
+    font-weight: 400;
+}
+.msp-cart-line-variant {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: var(--mt-color-muted);
+}
+.msp-cart-line-actions {
+    margin-top: auto;
+    padding-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.msp-cart-line-qty {
+    margin: 0;
+    font-size: 14px;
+    color: var(--mt-color-text);
+}
+.msp-cart-remove {
+    font-size: 13px;
+    color: var(--mt-color-muted);
+}
+
+.msp-stepper {
+    height: 44px;
+    border: 1px solid var(--mt-color-border-strong);
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+}
+.msp-stepper button {
+    width: 40px;
+    height: 42px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    font-size: 18px;
+    line-height: 1;
+    color: var(--mt-color-ink);
+    cursor: pointer;
+}
+.msp-stepper button:hover {
+    background: var(--mt-color-bg-alt);
+}
+.msp-stepper button[disabled] {
+    color: var(--mt-color-border-strong);
+    cursor: default;
+    background: transparent;
+}
+.msp-stepper button:focus-visible {
+    outline: 2px solid var(--mt-color-accent);
+    outline-offset: -2px;
+}
+.msp-stepper span {
+    min-width: 24px;
+    text-align: center;
+    font-size: 15px;
+}
+
+.msp-cart-foot {
+    padding: 22px 28px 20px;
+    background: #EFEBE4;
+    border-top: 1px solid var(--mt-color-border);
+}
+.msp-cart-subtotal {
+    display: flex;
+    justify-content: space-between;
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--mt-color-ink);
+}
+.msp-cart-note {
+    margin: 8px 0 16px;
+    font-size: 13px;
+    color: var(--mt-color-muted);
+}
+.msp-cart-continue {
+    display: block;
+    margin: 14px auto 0;
+}
+
+@media (max-width: 767px) {
+    .msp-cart {
+        width: 360px;
+    }
+    .msp-cart-head,
+    .msp-shipbar,
+    .msp-cart-body,
+    .msp-cart-foot {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    .msp-cart-head {
+        padding-right: 10px;
+    }
+    .msp-cart-title {
+        font-size: 30px;
+    }
+    .msp-cart-thumb {
+        flex-basis: 72px;
+        height: 90px;
+    }
+    .msp-cart-line {
+        gap: 14px;
+    }
 }

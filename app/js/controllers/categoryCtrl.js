@@ -1,5 +1,5 @@
-four51.app.controller('CategoryCtrl', ['$routeParams', '$sce', '$scope', '$451', 'Category', 'Product', 'AppConst', 'Order', 'User', '$modal', 'ProductDisplayService', 'SiteConfig', '$log',
-function ($routeParams, $sce, $scope, $451, Category, Product, AppConst, Order, User, $modal, ProductDisplayService, SiteConfig, $log) {
+four51.app.controller('CategoryCtrl', ['$routeParams', '$sce', '$scope', '$451', 'Category', 'Product', 'AppConst', 'Order', 'User', '$modal', 'ProductDisplayService', 'SiteConfig', '$log', '$rootScope',
+function ($routeParams, $sce, $scope, $451, Category, Product, AppConst, Order, User, $modal, ProductDisplayService, SiteConfig, $log, $rootScope) {
 	$scope.isHome = !$routeParams.categoryInteropID;
 
 	// Computes the home page's "Shop by category" tiles and the "Browse full catalog" tile's
@@ -82,10 +82,30 @@ function ($routeParams, $sce, $scope, $451, Category, Product, AppConst, Order, 
 				$log.warn('Shop: category "' + categoryID + '" has ' + count + ' products; the shop shows the first ' + SHOP_MAX_PRODUCTS);
 
 			$scope.shopProducts = list.slice(0, SHOP_MAX_PRODUCTS);
+			$scope.shopGridCols = shopGridColumns($scope.shopProducts.length);
 			// The current home template still reads featuredProducts.
 			$scope.featuredProducts = $scope.shopProducts;
 		}, 1, SHOP_MAX_PRODUCTS);
 	}
+
+	// Desktop columns for n products, chosen so rows come out full wherever possible (the
+	// handoff README's product-count table): 2-4 fill one row, 5/6/9 go 3-up, the rest 4-up.
+	function shopGridColumns(n) {
+		if (n <= 4) return Math.max(n, 1);
+		return (n === 5 || n === 6 || n === 9) ? 3 : 4;
+	}
+
+	// Whether any line in the cart is this product - flips the card's button to its
+	// "Added - add another" state. Read from the inherited currentOrder, never a copy.
+	$scope.productInCart = function(product) {
+		var order = $scope.currentOrder;
+		if (!order || !order.LineItems || !product) return false;
+		for (var i = 0; i < order.LineItems.length; i++) {
+			var li = order.LineItems[i];
+			if (li.Product && li.Product.InteropID === product.InteropID) return true;
+		}
+		return false;
+	};
 
 	var siteConfigLoaded = false;
 	SiteConfig.loaded.then(function() {
@@ -153,10 +173,13 @@ function ($routeParams, $sce, $scope, $451, Category, Product, AppConst, Order, 
 	function addSimpleProductToCart(product) {
 		var order = $scope.currentOrder || { LineItems: [] };
 		if (!order.LineItems) order.LineItems = [];
+		// A restricted schedule reaching here has exactly one allowed quantity (hasVariantOrSpec
+		// sends the rest to the modal) - use it, since 1 is almost never that quantity.
+		var ps = product.StandardPriceSchedule;
 		var lineItem = {
 			Product: product,
-			PriceSchedule: product.StandardPriceSchedule,
-			Quantity: 1
+			PriceSchedule: ps,
+			Quantity: (ps && ps.RestrictedQuantity && ps.PriceBreaks && ps.PriceBreaks.length) ? ps.PriceBreaks[0].Quantity : 1
 		};
 		var pending = ProductDisplayService.addOrMergeLineItem(order, lineItem);
 		order.Type = lineItem.PriceSchedule.OrderType;
@@ -178,6 +201,8 @@ function ($routeParams, $sce, $scope, $451, Category, Product, AppConst, Order, 
 				User.save($scope.user, function(u) {
 					angular.extend($scope.user, u);
 				});
+				// Opens the cart drawer (navCtrl.js), per the design: any add-to-cart shows it.
+				$rootScope.$broadcast('event:addedToCart');
 			},
 			function(ex) {
 				pending.undo();
@@ -202,11 +227,20 @@ function ($routeParams, $sce, $scope, $451, Category, Product, AppConst, Order, 
 				product: function() { return product; },
 				currentOrder: function() { return $scope.currentOrder; }
 			}
-		}).result.then(angular.noop, angular.noop);
+		}).result.then(function() {
+			// Closed after a successful add (a dismiss lands in the rejection handler instead).
+			$rootScope.$broadcast('event:addedToCart');
+		}, angular.noop);
 	}
 
+	// Also true for a restricted-quantity price schedule with a real choice of quantities:
+	// addSimpleProductToCart always sends Quantity 1, which is never one of the allowed breaks,
+	// and the modal already knows to let the shopper pick one (the restricted-quantity rule in
+	// THEME-DEVELOPMENT-NOTES.md).
 	function hasVariantOrSpec(product) {
 		if (product.VariantCount > 0) return true;
+		var ps = product.StandardPriceSchedule;
+		if (ps && ps.RestrictedQuantity && ps.PriceBreaks && ps.PriceBreaks.length > 1) return true;
 		var found = false;
 		angular.forEach(product.Specs, function(s) {
 			if (s.CanSetForLineItem || s.DefinesVariant) found = true;

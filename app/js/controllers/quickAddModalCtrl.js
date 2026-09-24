@@ -10,7 +10,14 @@ function ($scope, $modalInstance, product, currentOrder, ProductDisplayService, 
 	$scope.modalLoading = true;
 
 	User.get(function (user) {
-		$scope.user = user;
+		// Merge into the inherited user rather than assigning $scope.user: an own property here
+		// shadows Four51Ctrl's user, so confirmAdd's "user.CurrentOrderID = o.ID" landed on a
+		// private copy. For the first item in a new cart, Four51Ctrl's event:orderUpdate guard
+		// (order.ID === user.CurrentOrderID) then never matched - the add succeeded server-side
+		// but the cart drawer and badge stayed empty until a reload. Same fix as categoryCtrl.js's
+		// User.save callback (THEME-DEVELOPMENT-NOTES.md, scope shadowing).
+		if ($scope.user) angular.extend($scope.user, user);
+		else $scope.user = user;
 
 		// Mirrors kitCtrl.js's setup sequence for the same ProductDisplayService calls.
 		ProductDisplayService.setNewLineItemScope($scope);

@@ -1,9 +1,11 @@
-four51.app.controller('Four51Ctrl', ['$scope', '$route', '$rootScope', '$timeout', '$document', '$window', '$location', '$451', 'User', 'Order', 'Security', 'OrderConfig', 'Category', 'AppConst','XLATService', 'GoogleAnalytics', 'FavoriteProducts', 'SiteConfig', 'publicRoutes',
-function ($scope, $route, $rootScope, $timeout, $document, $window, $location, $451, User, Order, Security, OrderConfig, Category, AppConst, XLATService, GoogleAnalytics, FavoriteProducts, SiteConfig, publicRoutes) {
+four51.app.controller('Four51Ctrl', ['$scope', '$route', '$rootScope', '$timeout', '$document', '$window', '$location', '$451', 'User', 'Order', 'Security', 'OrderConfig', 'Category', 'AppConst','XLATService', 'GoogleAnalytics', 'FavoriteProducts', 'SiteConfig', 'SectionNav', 'publicRoutes',
+function ($scope, $route, $rootScope, $timeout, $document, $window, $location, $451, User, Order, Security, OrderConfig, Category, AppConst, XLATService, GoogleAnalytics, FavoriteProducts, SiteConfig, SectionNav, publicRoutes) {
 	$scope.AppConst = AppConst;
 	// This controller sits on <html>, so every view and directive below it -- the
 	// nav logo, the home hero -- reads site.json off the inherited `site` object.
 	$scope.site = SiteConfig.settings;
+	// One-page section links (header, menu, hero, footer) - see sectionNavService.js.
+	$scope.goToSection = SectionNav.goTo;
 	$scope.scroll = 0;
 	$scope.isAnon = $451.isAnon; //need to know this before we have access to the user object
 	$scope.Four51User = Security;
