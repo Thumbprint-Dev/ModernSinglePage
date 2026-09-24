@@ -8,6 +8,18 @@
 		"url": "",
 		"alt": ""
 	},
+	"welcome": {
+		"_help": "Pop-up shown once each time someone signs in (a page reload doesn't show it again). active: true to turn it on, false to turn it off - it also needs a heading or text. image: optional photo shown beside the copy. One button: fill in primaryButtonText and leave secondaryButtonText blank. Button urls: \"#shop\", \"#story\", \"#faq\" or \"#contact\" scroll there; blank just closes the pop-up (e.g. \"Got it\"); a site route (order, favoriteproducts) or full https:// link goes there, https:// in a new tab.",
+		"active": false,
+		"eyebrow": "",
+		"heading": "",
+		"text": "",
+		"image": "",
+		"primaryButtonText": "",
+		"primaryButtonUrl": "",
+		"secondaryButtonText": "",
+		"secondaryButtonUrl": ""
+	},
 	"announcement": {
 		"_help": "messages: short lines for the dark bar above the header, e.g. [\"Free shipping on orders over $75\"]. Empty hides the bar. Phones show the first line only.",
 		"messages": [

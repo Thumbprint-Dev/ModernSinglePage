@@ -6511,3 +6511,117 @@ body.msp-drawer-lock {
     border-color: #fff;
     box-shadow: none;
 }
+
+
+/* ===== ModernSinglePage: sign-in pop-up (site.json welcome) ===== */
+/* Rides on the drawer system: .msp-open from drawer.open == 'welcome', the shared .msp-scrim
+   behind it, visibility switched after the fade so a closed pop-up isn't focusable. */
+.msp-welcome {
+    position: fixed;
+    inset: 0;
+    z-index: 1050;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    box-sizing: border-box;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 250ms ease, visibility 0s linear 250ms;
+}
+.msp-welcome.msp-open {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 250ms ease, visibility 0s;
+}
+.msp-welcome-card {
+    pointer-events: auto;
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+    border-radius: 12px;
+    background: var(--mt-color-bg);
+    color: var(--mt-color-ink);
+    box-shadow: 0 24px 64px rgba(27, 26, 23, 0.25);
+    transform: translateY(12px) scale(0.98);
+    transition: transform 380ms var(--msp-ease-drawer);
+}
+.msp-welcome.msp-open .msp-welcome-card {
+    transform: none;
+}
+.msp-welcome-card.msp-welcome-has-image {
+    max-width: 880px;
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+}
+.msp-welcome-media {
+    position: relative;
+    min-height: 320px;
+    background: #D6CCBC;
+}
+.msp-welcome-media img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.msp-welcome-body {
+    position: relative;
+    padding: 48px 40px 40px;
+}
+.msp-welcome-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+.msp-welcome-title {
+    margin: 0 0 16px;
+    padding-right: 24px;
+    font-family: var(--mt-font-display);
+    font-weight: 400;
+    font-size: 44px;
+    line-height: 1.02;
+    letter-spacing: -0.015em;
+}
+.msp-welcome-text {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--mt-color-text);
+    white-space: pre-line;
+}
+.msp-welcome-actions {
+    margin-top: 28px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+@media (prefers-reduced-motion: reduce) {
+    .msp-welcome,
+    .msp-welcome.msp-open,
+    .msp-welcome-card {
+        transition-duration: 0s;
+        transition-delay: 0s;
+    }
+}
+@media (max-width: 767px) {
+    .msp-welcome-card.msp-welcome-has-image {
+        grid-template-columns: 1fr;
+    }
+    .msp-welcome-media {
+        min-height: 180px;
+    }
+    .msp-welcome-body {
+        padding: 40px 24px 28px;
+    }
+    .msp-welcome-title {
+        font-size: 34px;
+    }
+    .msp-welcome-actions .msp-btn {
+        flex: 1 1 100%;
+    }
+}

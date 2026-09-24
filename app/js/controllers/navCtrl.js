@@ -1,5 +1,5 @@
-four51.app.controller('NavCtrl', ['$location', '$route', '$scope', '$rootScope', '$document', '$451', '$timeout', '$window', 'User', 'Order', 'SpendingAccount', 'AppConst', 'OrderConfig', 'SectionNav',
-function ($location, $route, $scope, $rootScope, $document, $451, $timeout, $window, User, Order, SpendingAccount, AppConst, OrderConfig, SectionNav) {
+four51.app.controller('NavCtrl', ['$location', '$route', '$scope', '$rootScope', '$document', '$451', '$timeout', '$window', 'User', 'Order', 'SpendingAccount', 'AppConst', 'OrderConfig', 'SectionNav', 'SiteConfig', 'Security',
+function ($location, $route, $scope, $rootScope, $document, $451, $timeout, $window, User, Order, SpendingAccount, AppConst, OrderConfig, SectionNav, SiteConfig, Security) {
     // Four51 InteropIDs are unique platform-wide, so Featured/All Products may carry a uniqueness
     // suffix (e.g. "featured-gp") - match by prefix, not exact equality. Mirrors the same
     // exclusion categoryCtrl.js already applies to the home page's "Shop by category" tiles.
@@ -45,6 +45,9 @@ function ($location, $route, $scope, $rootScope, $document, $451, $timeout, $win
     $scope.closeDrawer = function() {
         if (!$scope.drawer.open) return;
         $scope.drawer.open = null;
+        // Release the scroll lock now, not on the next digest's watch: a section link closes the
+        // drawer and scrolls in the same tick, and a still-locked body swallows that scroll.
+        angular.element(document.body).removeClass('msp-drawer-lock');
         $scope.ui.menuAccountOpen = false;
         // Hand focus back to whatever opened the drawer, per the design's accessibility notes.
         if (drawerTrigger && document.body.contains(drawerTrigger)) {
@@ -106,6 +109,66 @@ function ($location, $route, $scope, $rootScope, $document, $451, $timeout, $win
     $scope.doSearch = function(){
         if ($scope.searchTerm)
             $location.path('search/' + $scope.searchTerm);
+    };
+
+    // ===== Sign-in pop-up (site.json welcome) =====
+    // Once per sign-in session, not per page load: remembered against a hash of the session's
+    // auth token, so a new sign-in - through the login form or an AutoLogon link alike - shows it
+    // again, and reloads within the same session don't. Shares the drawers' backdrop, Esc and
+    // focus handling (drawer.open == 'welcome').
+    var WELCOME_KEY = 'msp-welcome-seen.' + $451.apiName;
+    function sessionMark() {
+        var token = Security.auth() || '';
+        var hash = 5381;
+        for (var i = 0; i < token.length; i++) hash = ((hash << 5) + hash + token.charCodeAt(i)) | 0;
+        if (token) return String(hash);
+        // No readable token (e.g. an HttpOnly cookie on some tenant): fall back to once per tab.
+        try {
+            var tab = sessionStorage.getItem(WELCOME_KEY + '.tab');
+            if (!tab) sessionStorage.setItem(WELCOME_KEY + '.tab', tab = String(Date.now()));
+            return 'tab-' + tab;
+        } catch (e) { return 'tab'; }
+    }
+    function welcomeSeen(mark) {
+        try { return localStorage.getItem(WELCOME_KEY) === mark; } catch (e) { return false; }
+    }
+    function rememberWelcome(mark) {
+        try { localStorage.setItem(WELCOME_KEY, mark); } catch (e) { /* private mode: shows once per page load instead */ }
+    }
+    $scope.welcomeHasContent = function() {
+        var w = $scope.site && $scope.site.welcome;
+        return !!(w && w.active && (w.heading || w.text));
+    };
+    var welcomeChecked = false;
+    function maybeShowWelcome() {
+        if (welcomeChecked || !$scope.user || $scope.user.Type == 'TempCustomer') return;
+        welcomeChecked = true;
+        if (!$scope.welcomeHasContent()) return;
+        var mark = sessionMark();
+        if (!mark || welcomeSeen(mark)) return;
+        rememberWelcome(mark);
+        // After the page's first paint, so the pop-up isn't the first thing to flash in.
+        $timeout(function() { if (!$scope.drawer.open) $scope.openDrawer('welcome'); }, 600);
+    }
+    SiteConfig.loaded.then(function() {
+        $scope.$watch('user', function(user) { if (user) maybeShowWelcome(); });
+    });
+
+    // Buttons: "#section" scrolls, blank just closes, anything else navigates.
+    $scope.welcomeHref = function(url) {
+        if (!url || url.charAt(0) == '#') return 'catalog';
+        return url;
+    };
+    $scope.welcomeExternal = function(url) {
+        return !!url && /^https?:/i.test(url);
+    };
+    $scope.welcomeAction = function(url, $event) {
+        if (!url) {
+            if ($event) $event.preventDefault();
+            return $scope.closeDrawer();
+        }
+        if (url.charAt(0) == '#') return $scope.goToSection(url.substr(1), $event);
+        $scope.closeDrawer();
     };
 
     // ===== Cart drawer =====

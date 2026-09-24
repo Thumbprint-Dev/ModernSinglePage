@@ -148,3 +148,30 @@
         <button type="button" class="msp-link-btn msp-cart-continue" ng-click="continueShopping($event)">{{'Continue shopping' | r | xlat}}</button>
     </div>
 </aside>
+
+<!-- Sign-in pop-up: site.json welcome. Centered; shares the drawers' scrim and Esc/focus handling. -->
+<div class="msp-welcome" ng-class="{'msp-open': drawer.open == 'welcome'}" ng-if="welcomeHasContent()"
+     role="dialog" aria-modal="true" aria-labelledby="msp-welcome-title" aria-hidden="{{drawer.open != 'welcome'}}"
+     msp-focus-trap="drawer.open == 'welcome'">
+    <div class="msp-welcome-card" ng-class="{'msp-welcome-has-image': site.welcome.image}">
+        <div class="msp-welcome-media" ng-if="site.welcome.image"><img ng-src="{{site.welcome.image}}" alt="" /></div>
+        <div class="msp-welcome-body">
+            <button type="button" class="msp-icon-btn msp-welcome-close" ng-click="closeDrawer()" aria-label="{{'Close' | r | xlat}}">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+            </button>
+            <p class="msp-eyebrow" ng-if="site.welcome.eyebrow">{{site.welcome.eyebrow | r | xlat}}</p>
+            <h2 id="msp-welcome-title" class="msp-welcome-title" ng-if="site.welcome.heading">{{site.welcome.heading | r | xlat}}</h2>
+            <p class="msp-welcome-text" ng-if="site.welcome.text">{{site.welcome.text | r | xlat}}</p>
+            <div class="msp-welcome-actions" ng-if="site.welcome.primaryButtonText || site.welcome.secondaryButtonText">
+                <a ng-if="site.welcome.primaryButtonText" class="msp-btn msp-btn-accent" data-msp-autofocus
+                   ng-href="{{welcomeHref(site.welcome.primaryButtonUrl)}}" ng-click="welcomeAction(site.welcome.primaryButtonUrl, $event)"
+                   ng-attr-target="{{welcomeExternal(site.welcome.primaryButtonUrl) ? '_blank' : undefined}}"
+                   ng-attr-rel="{{welcomeExternal(site.welcome.primaryButtonUrl) ? 'noopener' : undefined}}">{{site.welcome.primaryButtonText | r | xlat}}</a>
+                <a ng-if="site.welcome.secondaryButtonText" class="msp-btn msp-btn-outline"
+                   ng-href="{{welcomeHref(site.welcome.secondaryButtonUrl)}}" ng-click="welcomeAction(site.welcome.secondaryButtonUrl, $event)"
+                   ng-attr-target="{{welcomeExternal(site.welcome.secondaryButtonUrl) ? '_blank' : undefined}}"
+                   ng-attr-rel="{{welcomeExternal(site.welcome.secondaryButtonUrl) ? 'noopener' : undefined}}">{{site.welcome.secondaryButtonText | r | xlat}}</a>
+            </div>
+        </div>
+    </div>
+</div>

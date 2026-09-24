@@ -79,6 +79,22 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			email: '',
 			items: []
 		},
+		// Pop-up shown once each time someone signs in (not on every page load). active turns it
+		// on and off; it only shows when it also has a heading or text. Leave
+		// secondaryButtonText blank for a single button. A button url of "#shop"/"#story"/
+		// "#faq"/"#contact" scrolls there, a blank url just closes the pop-up, anything else is
+		// followed as a link (full https:// links open in a new tab).
+		welcome: {
+			active: false,
+			eyebrow: '',
+			heading: '',
+			text: '',
+			image: '',
+			primaryButtonText: '',
+			primaryButtonUrl: '',
+			secondaryButtonText: '',
+			secondaryButtonUrl: ''
+		},
 		// Contact band above the footer (the header's Contact link): the Contact Us page's details
 		// plus a short form. The form opens the customer's email app addressed to email, with
 		// their name, email and message filled in - the theme has no server to send mail itself.
