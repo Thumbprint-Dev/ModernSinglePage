@@ -142,13 +142,14 @@ function ($location, $route, $scope, $451, $timeout, $window, User, Order, Spend
         localStorage.clear();
     }
 
-    // currentOrder itself is Four51Ctrl.js's to own and sync (see the matching listener there) -
-    // this only derives the badge count, which is genuinely nav-specific UI state.
-    $scope.$on('event:orderUpdate', function(event, order) {
-        if (!order || order.Status != 'Unsubmitted') {
-            $scope.cartCount = null;
-            return;
-        }
+    // Derived straight from the inherited currentOrder (Four51Ctrl.js owns and syncs it) rather
+    // than from event:orderUpdate payloads. Counting whatever order the last broadcast carried
+    // left the badge blank after a full page load whenever that init broadcast fired before this
+    // controller existed, and wrong whenever an unrelated order was broadcast (Order.get of a
+    // history order, a kit's own save) - while the mini-cart, bound to currentOrder, was right.
+    $scope.$watch(function() {
+        var order = $scope.currentOrder;
+        if (!order || order.Status != 'Unsubmitted') return null;
         // A kit that's still mid-configuration is a real LineItem server-side (the platform
         // requires that to know what needs configuring), but it isn't done yet - don't count it
         // as "added" until KitIsInvalid clears.
@@ -156,6 +157,8 @@ function ($location, $route, $scope, $451, $timeout, $window, User, Order, Spend
         angular.forEach(order.LineItems, function(li) {
             if (!(li.IsKitParent && li.KitIsInvalid)) count++;
         });
+        return count;
+    }, function(count) {
         $scope.cartCount = count;
     });
 }]);
