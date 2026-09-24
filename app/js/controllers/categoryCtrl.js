@@ -162,6 +162,12 @@ function ($routeParams, $sce, $scope, $451, Category, Product, AppConst, Order, 
 	function openQuickAddModal(product) {
 		$scope.quickAddIndicator[product.InteropID] = false;
 		$modal.open({
+			// Without an explicit scope, ui-bootstrap 0.10 parents the modal's scope to $rootScope -
+			// ABOVE Four51Ctrl on <html> - so the modal never inherits $scope.user, and
+			// QuickAddModalCtrl's "$scope.user.CurrentOrderID = o.ID" threw a TypeError right after
+			// the order had already saved server-side: modal stuck on its spinner, mini-cart never
+			// updated (the throw also skipped Order.save's event:orderUpdate broadcast).
+			scope: $scope,
 			templateUrl: 'partials/controls/quickAddModal.html',
 			controller: 'QuickAddModalCtrl',
 			resolve: {

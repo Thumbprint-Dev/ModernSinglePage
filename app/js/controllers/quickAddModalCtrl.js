@@ -1,8 +1,9 @@
 four51.app.controller('QuickAddModalCtrl', ['$scope', '$modalInstance', 'product', 'currentOrder', 'ProductDisplayService', 'Order', 'User',
 function ($scope, $modalInstance, product, currentOrder, ProductDisplayService, Order, User) {
-	// currentOrder is passed in as a snapshot rather than inherited via scope prototypal chaining,
-	// so the result is handed back to the opener explicitly via $modalInstance.close(order) instead
-	// of relying on a child scope reassignment that would never actually reach the caller's scope.
+	// currentOrder is resolved in explicitly; the real, shared currentOrder is kept in sync by
+	// Four51Ctrl's event:orderUpdate listener once Order.save below broadcasts. This scope is a
+	// child of the opening CategoryCtrl scope (categoryCtrl.js passes scope: $scope), which is
+	// what lets $scope.user resolve here at all.
 	$scope.currentOrder = currentOrder;
 	$scope.settings = { currentPage: 1, pageSize: 10 };
 	$scope.LineItem = { Product: product };
