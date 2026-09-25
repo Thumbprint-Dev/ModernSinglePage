@@ -6094,19 +6094,6 @@ body.msp-drawer-lock {
     color: var(--mt-color-danger);
     list-style-type: disc;
 }
-.msp-single-notes {
-    list-style: none;
-    margin: 24px 0;
-    padding: 0;
-}
-.msp-single-notes li {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
-    font-size: 14px;
-    color: var(--mt-color-text);
-}
 @media (max-width: 1023px) {
     .msp-single {
         grid-template-columns: 1fr;

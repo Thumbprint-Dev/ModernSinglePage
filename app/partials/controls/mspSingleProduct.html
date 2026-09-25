@@ -48,15 +48,5 @@
             </ul>
             <p class="msp-card-note msp-card-error" role="alert" ng-show="errorMessage">{{errorMessage}}</p>
         </form>
-
-        <ul class="msp-single-notes" ng-if="site.trust.items.length">
-            <li ng-repeat="item in site.trust.items | limitTo:2">
-                <svg ng-if="$index == 0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h11v9H3z"></path><path d="M14 10h4l3 3v3h-7"></path><circle cx="7" cy="17.5" r="1.5"></circle><circle cx="17" cy="17.5" r="1.5"></circle></svg>
-                <svg ng-if="$index == 1" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.5-5.8"></path><path d="M4 4v4h4"></path></svg>
-                {{item | r | xlat}}
-            </li>
-        </ul>
-
-        <a class="msp-text-link" ng-href="{{productPageUrl()}}">{{'Full product details' | r | xlat}}</a>
     </div>
 </div>

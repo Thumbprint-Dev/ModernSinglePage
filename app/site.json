@@ -43,7 +43,7 @@
 		"secondaryButtonText": "Our story"
 	},
 	"trust": {
-		"_help": "items: up to four short lines under the hero, e.g. [\"Free shipping over $75\", \"30-day returns\", \"Secure checkout\", \"Ships in 3 business days\"]. Icons go by position: truck, returns, lock, clock. The first two also appear under Add to cart in one-product mode. Empty hides the strip.",
+		"_help": "items: up to four short lines under the hero, e.g. [\"Free shipping over $75\", \"30-day returns\", \"Secure checkout\", \"Ships in 3 business days\"]. Icons go by position: truck, returns, lock, clock. Empty hides the strip.",
 		"items": [
 			"",
 			"",
