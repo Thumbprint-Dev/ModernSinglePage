@@ -71,14 +71,17 @@ Template: Howdy
     /* Layout + motion */
     --msp-container-max: 1360px;
     --msp-gutter: 40px;
-    --msp-header-height: 76px;
+    /* The header is 76px, or taller when site.json logo.height needs the room (logo + 24px). */
+    --msp-header-base: 76px;
+    --msp-header-height: max(var(--msp-header-base), calc(var(--msp-logo-h, 40px) + 24px));
     --msp-ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 @media (max-width: 767px) {
     :root {
         --msp-gutter: 20px;
-        --msp-header-height: 60px;
+        --msp-header-base: 60px;
+        --msp-header-height: max(var(--msp-header-base), calc(var(--msp-logo-h-mobile, 32px) + 20px));
     }
 }
 
@@ -4599,7 +4602,8 @@ body.msp-drawer-lock {
 /* Explicit height: an SVG logo with only a viewBox lays out at 0x0 inside a flex container
    (THEME-DEVELOPMENT-NOTES.md, the molly_maid-logo.svg entry). */
 .msp-brand-logo {
-    height: 40px;
+    /* site.json logo.height / logo.mobileHeight (siteConfigService.js). */
+    height: var(--msp-logo-h, 40px);
     width: auto;
     max-width: 100%;
     object-fit: contain;
@@ -4737,7 +4741,7 @@ body.msp-drawer-lock {
         font-size: 26px;
     }
     .msp-brand-logo {
-        height: 32px;
+        height: var(--msp-logo-h-mobile, 32px);
     }
     .msp-cart-btn {
         padding: 0 10px;

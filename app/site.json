@@ -4,9 +4,11 @@
 	"name": "",
 	"favicon": "",
 	"logo": {
-		"_help": "url: overrides the company logo uploaded in Four51 - leave blank to use that logo, or the buyer name as text when none is uploaded. alt: the logo's alt text.",
+		"_help": "url: header logo image - leave blank to use the company logo uploaded in Four51, or the buyer name as text when none is uploaded. alt: the logo's alt text. height / mobileHeight: logo height in pixels on desktop and on phones, as numbers (60, not \"60px\"); the width follows the image's proportions, and a tall logo makes the header taller to fit. Between 16 and 160.",
 		"url": "",
-		"alt": ""
+		"alt": "",
+		"height": 40,
+		"mobileHeight": 32
 	},
 	"welcome": {
 		"_help": "Pop-up shown after sign-in. frequency: \"day\" = once a day per customer (default), \"login\" = once per sign-in, \"once\" = once per message; editing the eyebrow, heading or text shows it again under any of them. active: true to turn it on, false to turn it off - it also needs a heading or text. image: optional photo shown beside the copy. One button: fill in primaryButtonText and leave secondaryButtonText blank. Button urls: \"#shop\", \"#story\", \"#faq\" or \"#contact\" scroll there; blank just closes the pop-up (e.g. \"Got it\"); a site route (order, favoriteproducts) or full https:// link goes there, https:// in a new tab.",

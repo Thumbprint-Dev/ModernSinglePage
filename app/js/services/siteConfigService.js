@@ -16,7 +16,12 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 		favicon: '',
 		logo: {
 			url: '',
-			alt: ''
+			alt: '',
+			// Header logo height in pixels, desktop and phone (below 768px). The width follows the
+			// image's own proportions. A logo taller than the header has room for makes the header
+			// taller rather than overflowing it. Kept between 16 and 160.
+			height: 40,
+			mobileHeight: 32
 		},
 		hero: {
 			// 2400x1360 landscape. mobileImage (1200x1800 portrait) replaces it below 768px;
@@ -300,6 +305,7 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 		var root = $document[0].documentElement;
 
 		applyAccent(root);
+		applyLogoSize(root);
 		applyAnnouncementColors(root);
 		applyHeroColors(root);
 		applyContactColors(root);
@@ -309,6 +315,12 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			settings.story.height = 'fixed';
 		}
 		applyFont(root);
+	}
+
+	function applyLogoSize(root) {
+		function px(value) { return Math.round(Math.min(160, Math.max(16, value))) + 'px'; }
+		root.style.setProperty('--msp-logo-h', px(settings.logo.height));
+		root.style.setProperty('--msp-logo-h-mobile', px(settings.logo.mobileHeight));
 	}
 
 	// Relative luminance of a #rrggbb colour (WCAG), or null for anything else.
