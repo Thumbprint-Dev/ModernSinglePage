@@ -45,9 +45,13 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			items: []
 		},
 		announcement: {
-			// Short lines shown in the ink bar above the header, separated by a dot. Empty
+			// Short lines shown in the bar above the header, separated by a dot. Empty
 			// hides the bar entirely.
-			messages: []
+			messages: [],
+			// Bar colours. Blank keeps the theme's ink bar. Set only background and the text
+			// picks light or dark by itself, whichever reads better on it.
+			background: '',
+			textColor: ''
 		},
 		shop: {
 			eyebrow: 'Shop',
@@ -269,7 +273,42 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 		var root = $document[0].documentElement;
 
 		applyAccent(root);
+		applyAnnouncementColors(root);
 		applyFont(root);
+	}
+
+	// Relative luminance of a #rrggbb colour (WCAG), or null for anything else.
+	function luminance(hex) {
+		var m = /^#?([0-9a-f]{6})$/i.exec((hex || '').trim());
+		if (!m) return null;
+		var channels = [0, 2, 4].map(function(i) {
+			var c = parseInt(m[1].substr(i, 2), 16) / 255;
+			return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+		});
+		return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
+	}
+
+	function applyAnnouncementColors(root) {
+		var bg = (settings.announcement.background || '').trim();
+		var fg = (settings.announcement.textColor || '').trim();
+
+		if (bg && !isColor(bg)) {
+			$log.warn('SiteConfig: announcement.background is not a colour, ignoring -- ' + bg);
+			bg = '';
+		}
+		if (fg && !isColor(fg)) {
+			$log.warn('SiteConfig: announcement.textColor is not a colour, ignoring -- ' + fg);
+			fg = '';
+		}
+		if (bg) {
+			root.style.setProperty('--msp-announcement-bg', bg);
+			// No text colour given: whichever of the theme's ink or ground has more contrast.
+			// Only computable for #rrggbb; a named/rgb() background keeps the default light text.
+			var lum = luminance(bg);
+			// 0.19 is where the two give equal contrast ((L + 0.05)^2 = (0.011 + 0.05)(0.883 + 0.05)).
+			if (!fg && lum !== null) fg = lum > 0.19 ? '#1B1A17' : '#F4F1EC';
+		}
+		if (fg) root.style.setProperty('--msp-announcement-text', fg);
 	}
 
 	function applyAccent(root) {

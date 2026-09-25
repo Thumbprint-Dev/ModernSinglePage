@@ -23,11 +23,13 @@
 		"secondaryButtonUrl": ""
 	},
 	"announcement": {
-		"_help": "messages: short lines for the dark bar above the header, e.g. [\"Free shipping on orders over $75\"]. Empty hides the bar. Phones show the first line only.",
+		"_help": "messages: short lines for the bar above the header, e.g. [\"Free shipping on orders over $75\"]. Empty hides the bar. Phones show the first line only. background: bar colour as #rrggbb (blank keeps the dark ink bar). textColor: text colour; leave blank and it picks dark or light text automatically for the background you chose.",
 		"messages": [
 			"",
 			""
-		]
+		],
+		"background": "",
+		"textColor": ""
 	},
 	"hero": {
 		"_help": "image: 2400x1360 photo; mobileImage: 1200x1800 used below 768px (blank reuses image). Without an image the tinted placeholder shows. headingItalic: italic text after heading. buttonHref: 'catalog' or '#shop' scrolls to the shop, anything else is a link. showButton: true/false. secondaryButtonText: outlined button to the story section, only shown when story.heading is set.",
