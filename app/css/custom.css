@@ -6357,8 +6357,9 @@ body.msp-drawer-lock {
    details and a short form instead. Colours follow --mt-color-accent, so site.json's
    theme.accent recolours it too. */
 .msp-contact {
-    background: var(--mt-color-accent);
-    color: #fff;
+    /* site.json contact.background / textColor land here (siteConfigService.js). */
+    background: var(--msp-contact-bg, var(--mt-color-accent));
+    color: var(--msp-contact-text, #fff);
     padding: 96px 0;
 }
 .msp-contact-row {
@@ -6655,4 +6656,68 @@ body.msp-drawer-lock {
     display: block;
     width: 100%;
     height: auto;
+}
+
+
+/* Contact band colours from site.json. Copy follows --msp-contact-text; secondary copy is the same
+   colour faded, so any textColor works. The white-on-accent defaults above stay for the
+   standard band; .msp-contact-light (a pale contact.background) flips the pieces that were
+   hard-coded white to their dark-on-light versions. */
+.msp-contact .msp-contact-title,
+.msp-contact .msp-contact-hours strong,
+.msp-contact a {
+    color: inherit;
+}
+.msp-contact .msp-eyebrow,
+.msp-contact .msp-contact-text,
+.msp-contact .msp-contact-hours,
+.msp-contact .msp-contact-field label,
+.msp-contact .msp-contact-note {
+    color: inherit;
+    opacity: 0.85;
+}
+.msp-contact-send {
+    background: var(--mt-color-bg);
+    color: var(--mt-color-ink);
+}
+.msp-contact-send:hover,
+.msp-contact-send:focus {
+    background: #fff;
+    color: var(--mt-color-ink);
+}
+.msp-contact-light .msp-contact-send {
+    background: var(--mt-color-ink);
+    color: var(--mt-color-on-ink);
+}
+.msp-contact-light .msp-contact-send:hover,
+.msp-contact-light .msp-contact-send:focus {
+    background: #33312C;
+    color: var(--mt-color-on-ink);
+}
+.msp-contact-light .msp-contact-hours {
+    border-top-color: rgba(27, 26, 23, 0.2);
+}
+.msp-contact-light .msp-contact-field input,
+.msp-contact-light .msp-contact-field textarea,
+.msp-contact.msp-contact-light .msp-contact-field input.ng-invalid,
+.msp-contact.msp-contact-light .msp-contact-field textarea.ng-invalid {
+    border-color: rgba(27, 26, 23, 0.3);
+    background: rgba(255, 255, 255, 0.55);
+    color: var(--mt-color-ink);
+}
+.msp-contact-light .msp-contact-field input:focus,
+.msp-contact-light .msp-contact-field textarea:focus,
+.msp-contact.msp-contact-light .msp-contact-field input.ng-invalid:focus,
+.msp-contact.msp-contact-light .msp-contact-field textarea.ng-invalid:focus {
+    outline-color: var(--mt-color-ink);
+    border-color: var(--mt-color-ink);
+}
+.msp-contact-light .msp-contact-error {
+    background: rgba(179, 38, 30, 0.1);
+    color: var(--mt-color-danger);
+}
+.msp-contact-light.msp-contact .msp-contact-attempted .msp-contact-field input.ng-invalid,
+.msp-contact-light.msp-contact .msp-contact-attempted .msp-contact-field textarea.ng-invalid {
+    border-color: var(--mt-color-danger);
+    box-shadow: 0 0 0 1px var(--mt-color-danger);
 }

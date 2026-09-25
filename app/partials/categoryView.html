@@ -108,7 +108,7 @@
 
     <!-- Contact: the design's accent band (where its newsletter was), with the Contact Us page's
          details and a short form that opens the shopper's email app. -->
-    <div id="contact" class="msp-contact">
+    <div id="contact" class="msp-contact" ng-class="{'msp-contact-light': site.contactIsLight}">
         <div class="msp-container msp-contact-row">
             <div class="msp-contact-info">
                 <p class="msp-eyebrow" ng-if="site.contact.eyebrow">{{site.contact.eyebrow | r | xlat}}</p>
@@ -143,7 +143,7 @@
                     <span ng-if="contactFormCtrl.email.$invalid">{{'Please enter a valid email address.' | r | xlat}}</span>
                 </p>
                 <div class="msp-contact-actions">
-                    <button type="submit" class="msp-btn msp-btn-light">{{'Send message' | r | xlat}}</button>
+                    <button type="submit" class="msp-btn msp-contact-send">{{'Send message' | r | xlat}}</button>
                     <p class="msp-contact-note" aria-live="polite">
                         <span ng-if="!contactForm.sent">{{'Opens your email app, addressed to' | r | xlat}} {{site.contact.email}}.</span>
                         <span ng-if="contactForm.sent">{{'Your email app should now be open with your message - press send there to finish.' | r | xlat}}</span>

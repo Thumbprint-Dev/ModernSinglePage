@@ -127,7 +127,11 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			hours: 'Monday – Friday, 8am to 5pm ET',
 			hoursNote: 'Feel free to contact us outside of these hours and one of our team members will respond as soon as possible!',
 			email: 'support@thumbprint.com',
-			subject: 'Website message'
+			subject: 'Website message',
+			// Band colour (#rrggbb). Blank follows the theme accent. Set only background and the
+			// text, fields and Send button switch to dark-on-light by themselves when it's pale.
+			background: '',
+			textColor: ''
 		},
 		// Site footer, on every page (the header's Contact link). Blank blurb hides it; columns
 		// and legalLinks replace the defaults whole when a site sets them.
@@ -193,8 +197,9 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 		},
 		// Applied to the hero element by ngStyle; recomputed whenever the file lands.
 		heroStyle: {},
-		// Derived from the hero's colours (applyHeroColors), not a site.json key.
-		heroIsDark: false
+		// Derived from the hero's and contact band's colours, not site.json keys.
+		heroIsDark: false,
+		contactIsLight: false
 	};
 
 	// Anything here is written into a CSS custom property, so keep it to values
@@ -290,6 +295,7 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 		applyAccent(root);
 		applyAnnouncementColors(root);
 		applyHeroColors(root);
+		applyContactColors(root);
 		applyFont(root);
 	}
 
@@ -340,6 +346,32 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 
 		if (!fg) fg = settings.heroIsDark ? '#FFFFFF' : '#1B1A17';
 		root.style.setProperty('--msp-hero-text', fg);
+	}
+
+	// --msp-contact-bg / --msp-contact-text, and settings.contactIsLight for the template: a pale
+	// band flips the copy, field outlines and Send button to their dark versions.
+	function applyContactColors(root) {
+		var bg = (settings.contact.background || '').trim();
+		var fg = (settings.contact.textColor || '').trim();
+
+		if (bg && !isColor(bg)) {
+			$log.warn('SiteConfig: contact.background is not a colour, ignoring -- ' + bg);
+			bg = '';
+		}
+		if (fg && !isColor(fg)) {
+			$log.warn('SiteConfig: contact.textColor is not a colour, ignoring -- ' + fg);
+			fg = '';
+		}
+		if (bg) root.style.setProperty('--msp-contact-bg', bg);
+
+		var fgLum = luminance(fg);
+		var bgLum = luminance(bg);
+		if (fg && fgLum !== null) settings.contactIsLight = fgLum <= 0.19;
+		else if (bgLum !== null) settings.contactIsLight = bgLum > 0.19;
+		else settings.contactIsLight = false;
+
+		if (!fg) fg = settings.contactIsLight ? '#1B1A17' : '#FFFFFF';
+		root.style.setProperty('--msp-contact-text', fg);
 	}
 
 	function applyAnnouncementColors(root) {
