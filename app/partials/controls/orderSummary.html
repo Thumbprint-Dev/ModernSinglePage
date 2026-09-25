@@ -1,5 +1,37 @@
-<div class="mt-cart-summary-card">
-    <h2 class="mt-cart-summary-title">{{('Order' | r) + ' ' + ('Summary' | r) | xlat}}</h2>
+<div class="mt-cart-summary-card" id="msp-order-summary">
+    <div class="msp-summary-head">
+        <h2 class="mt-cart-summary-title">{{('Order' | r) + ' ' + ('Summary' | r) | xlat}}</h2>
+        <a href="#" class="msp-summary-edit" ng-click="openCartDrawer($event)" ng-if="currentOrder.isEditable">{{'Edit' | r | xlat}}</a>
+    </div>
+
+    <!-- What's being ordered. The theme goes cart drawer -> checkout with no cart page in
+         between, so this is the one place checkout shows the items. Same track by as the drawer:
+         never item.ID, which a just-added line doesn't have yet. -->
+    <ul class="msp-summary-items">
+        <li class="msp-summary-item" ng-repeat="item in currentOrder.LineItems track by (item.Product.InteropID + (item.Variant ? '-' + item.Variant.InteropID : ''))"
+            ng-if="!(item.IsKitParent && item.KitIsInvalid)">
+            <div class="msp-summary-thumb">
+                <img ng-if="item.Variant.LargeImageUrl || item.Product.SmallImageUrl" ng-src="{{item.Variant.LargeImageUrl || item.Product.SmallImageUrl}}" alt="" />
+                <span class="msp-summary-qty" aria-hidden="true">{{item.Quantity}}</span>
+            </div>
+            <div class="msp-summary-info">
+                <p class="msp-summary-name">{{item.Product.Name}}</p>
+                <p class="msp-summary-detail" ng-if="lineDetail(item)">{{lineDetail(item)}}</p>
+                <p class="msp-summary-detail">{{'Qty' | r | xlat}} {{item.Quantity}}</p>
+                <button type="button" class="msp-summary-kit-toggle" ng-if="item.KitChildren.length"
+                        ng-click="summaryKitOpen[item.ID] = !summaryKitOpen[item.ID]" aria-expanded="{{!!summaryKitOpen[item.ID]}}">
+                    {{item.KitChildren.length}} {{'items in this kit' | r | xlat}}
+                    <span aria-hidden="true">{{summaryKitOpen[item.ID] ? '&minus;' : '+'}}</span>
+                </button>
+                <ul class="msp-summary-kit" ng-if="item.KitChildren.length && summaryKitOpen[item.ID]">
+                    <li ng-repeat="child in item.KitChildren">
+                        {{child.Product.Name}}<span ng-if="lineDetail(child)"> &middot; {{lineDetail(child)}}</span> &times; {{child.Quantity}}
+                    </li>
+                </ul>
+            </div>
+            <p class="msp-summary-price" ng-if="!(user.Permissions.contains('HidePricing'))">{{item.LineTotal | culturecurrency}}</p>
+        </li>
+    </ul>
 
     <loadingindicator ng-show="couponLoadingIndicator" title="{{'Please wait while we verify and apply your promotion code' | r | xlat}}"></loadingindicator>
     <loadingindicator ng-show="couponRemoveIndicator" title="{{'Please wait while we remove your promotion code' | r | xlat}}"></loadingindicator>

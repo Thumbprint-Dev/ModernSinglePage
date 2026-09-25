@@ -14,11 +14,44 @@ function ($scope, $routeParams, $location, $route, $filter, $rootScope, $451, Us
 		angular.forEach(order.LineItems, function(li) { ids.push(li.ID); });
 		return ids.sort().join(',');
 	}
+	// Quantities too, not just which lines exist: the summary lists the items, and a quantity
+	// change made in the cart drawer (which saves the shared order, not this page's copy) would
+	// otherwise leave this page showing the old quantities and totals.
+	function lineItemQuantities(order) {
+		var q = [];
+		angular.forEach(order.LineItems, function(li) { q.push(li.ID + ':' + li.Quantity); });
+		return q.sort().join(',');
+	}
+	// The refresh is a $route.reload, which would also close the drawer mid-edit - so while the
+	// drawer is open, wait and reload once it closes.
+	var reloadPending = false;
+	function reloadWhenDrawerCloses() {
+		if (!$rootScope.cartDrawerOpen) return $route.reload();
+		reloadPending = true;
+	}
+	$scope.$watch(function() { return $rootScope.cartDrawerOpen; }, function(open) {
+		if (!open && reloadPending) {
+			reloadPending = false;
+			$route.reload();
+		}
+	});
 	$scope.$on('event:orderUpdate', function(event, order) {
 		if ($scope.isEditforApproval || $scope.submitClicked || !$scope.currentOrder || order === $scope.currentOrder) return;
-		if (!order || (order.ID === $scope.currentOrder.ID && lineItemIDs(order) !== lineItemIDs($scope.currentOrder)))
-			$route.reload();
+		if (!order) return reloadWhenDrawerCloses();
+		if (order.ID !== $scope.currentOrder.ID) return;
+		if (lineItemIDs(order) !== lineItemIDs($scope.currentOrder) || lineItemQuantities(order) !== lineItemQuantities($scope.currentOrder))
+			reloadWhenDrawerCloses();
 	});
+
+	// Mobile: the summary sits below the forms, so a bar at the top of the page jumps to it.
+	$scope.scrollToSummary = function($event) {
+		if ($event) $event.preventDefault();
+		var el = document.getElementById('msp-order-summary');
+		if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+	};
+	// Kit contents in the summary, collapsed by default. Keyed by line ID; an object so the
+	// ng-repeat scopes write to this one.
+	$scope.summaryKitOpen = {};
 
 	$scope.isEditforApproval = $routeParams.id != null && $scope.user.Permissions.contains('EditApprovalOrder');
 	if ($scope.isEditforApproval) {

@@ -6762,3 +6762,149 @@ body.msp-drawer-lock {
     object-fit: contain;
     margin: 0 0 16px;
 }
+
+
+/* ===== ModernSinglePage: checkout order summary items ===== */
+.msp-summary-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+.msp-summary-head .mt-cart-summary-title {
+    margin: 0;
+}
+.msp-summary-edit {
+    font-size: 14px;
+    color: var(--mt-color-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+.msp-summary-edit:hover {
+    color: var(--mt-color-text-soft);
+}
+
+.msp-summary-items {
+    list-style: none;
+    margin: 0 0 8px;
+    padding: 0;
+    border-bottom: 1px solid var(--mt-color-border-strong);
+}
+.msp-summary-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 0;
+    border-top: 1px solid var(--mt-color-border);
+}
+.msp-summary-item:first-child {
+    border-top: 0;
+    padding-top: 4px;
+}
+/* Thumbnail with the quantity as a small badge, as most checkouts do. */
+.msp-summary-thumb {
+    position: relative;
+    flex: 0 0 56px;
+    height: 70px;
+    border-radius: 4px;
+    background: var(--mt-color-bg);
+}
+.msp-summary-thumb img {
+    width: 100%;
+    height: 100%;
+    padding: 6px;
+    box-sizing: border-box;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+}
+.msp-summary-qty {
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    box-sizing: border-box;
+    border-radius: 11px;
+    background: var(--mt-color-ink);
+    color: var(--mt-color-on-ink);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 22px;
+    text-align: center;
+}
+.msp-summary-info {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+.msp-summary-name {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--mt-color-ink);
+}
+.msp-summary-detail {
+    margin: 2px 0 0;
+    font-size: 13px;
+    color: var(--mt-color-muted);
+}
+.msp-summary-price {
+    flex-shrink: 0;
+    margin: 0;
+    font-size: 14px;
+    color: var(--mt-color-ink);
+}
+.msp-summary-kit-toggle {
+    margin-top: 6px;
+    padding: 0;
+    border: 0;
+    background: none;
+    font-size: 13px;
+    color: var(--mt-color-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+.msp-summary-kit {
+    list-style: none;
+    margin: 6px 0 0;
+    padding: 0 0 0 10px;
+    border-left: 2px solid var(--mt-color-border-strong);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--mt-color-text);
+}
+
+/* Phone-only jump bar at the top of checkout. */
+.msp-checkout-itemsbar {
+    display: none;
+}
+@media (max-width: 767px) {
+    .msp-checkout-itemsbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin: -12px 0 24px;
+        padding: 14px 18px;
+        border-radius: 8px;
+        background: #EFEBE4;
+        font-size: 14px;
+        color: var(--mt-color-ink);
+        text-decoration: none;
+    }
+    .msp-checkout-itemsbar:hover,
+    .msp-checkout-itemsbar:focus {
+        color: var(--mt-color-ink);
+        text-decoration: none;
+    }
+    .msp-checkout-itemsbar-link {
+        text-decoration: underline;
+        text-underline-offset: 3px;
+    }
+    #msp-order-summary {
+        scroll-margin-top: calc(var(--msp-header-height) + 12px);
+    }
+}

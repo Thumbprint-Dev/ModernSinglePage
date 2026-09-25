@@ -9,6 +9,24 @@ function ($scope, $route, $rootScope, $timeout, $document, $window, $location, $
 	$scope.linkHref = SectionNav.href;
 	$scope.followLink = SectionNav.follow;
 	$scope.linkIsExternal = SectionNav.isExternal;
+
+	// The "Color / Size" line under an item in the cart drawer and the checkout summary: the
+	// values the shopper chose for variant-defining or per-line specs, capped so a long
+	// personalization field doesn't take over the row.
+	$scope.lineDetail = function(item) {
+		var parts = [];
+		angular.forEach(item && item.Specs, function(spec) {
+			if (parts.length >= 3 || !spec || !(spec.DefinesVariant || spec.CanSetForLineItem)) return;
+			var value = spec.Value != null ? String(spec.Value).trim() : '';
+			if (value && value.length <= 40) parts.push(value);
+		});
+		return parts.join(' / ');
+	};
+	// Opens the cart drawer (navCtrl.js) from anywhere, e.g. checkout's summary.
+	$scope.openCartDrawer = function($event) {
+		if ($event) $event.preventDefault();
+		$rootScope.$broadcast('event:openCart');
+	};
 	// Footer links to a home-page section the site doesn't have (no FAQ items, no story) hide
 	// rather than scroll to nothing.
 	$scope.footerLinkShown = function(link) {

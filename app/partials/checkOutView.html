@@ -4,6 +4,12 @@
     <div class="mt-container mt-checkout-inner">
         <h1 class="mt-pdp-title">{{'Checkout' | r | xlat}}</h1>
 
+        <!-- Phones: the summary (with the items) sits below the forms; this jumps to it. -->
+        <a href="#" class="msp-checkout-itemsbar" ng-click="scrollToSummary($event)" ng-if="currentOrder.LineItems.length">
+            <span>{{currentOrder.LineItems.length}} {{(currentOrder.LineItems.length == 1 ? 'item' : 'items') | r | xlat}}<span ng-if="!(user.Permissions.contains('HidePricing'))"> &middot; {{currentOrder.Total | culturecurrency}}</span></span>
+            <span class="msp-checkout-itemsbar-link">{{'View items' | r | xlat}}</span>
+        </a>
+
         <div class="mt-checkout-layout">
             <div class="mt-checkout-main" ng-show="currentOrder && currentOrder.isEditable" ng-click="showSuccessAlert = false">
                 <orderdetails ng-show="hasOrderConfig"></orderdetails>

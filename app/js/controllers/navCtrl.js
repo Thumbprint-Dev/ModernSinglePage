@@ -218,17 +218,16 @@ function ($location, $route, $scope, $rootScope, $document, $451, $timeout, $win
         $scope.cartLines = (items || []).filter(function(li) { return !(li.IsKitParent && li.KitIsInvalid); });
     });
 
-    // The design's "Color / Size" line: the values the shopper chose for variant-defining or
-    // per-line specs, capped so a long personalization field doesn't take over the row.
-    $scope.lineDetail = function(item) {
-        var parts = [];
-        angular.forEach(item.Specs, function(spec) {
-            if (parts.length >= 3 || !spec || !(spec.DefinesVariant || spec.CanSetForLineItem)) return;
-            var value = spec.Value != null ? String(spec.Value).trim() : '';
-            if (value && value.length <= 40) parts.push(value);
-        });
-        return parts.join(' / ');
-    };
+    // lineDetail() (the "Color / Size" line) lives on Four51Ctrl, shared with checkout's summary.
+
+    // Checkout's order summary has an "Edit" link that opens this drawer.
+    $scope.$on('event:openCart', function() {
+        $scope.openDrawer('cart');
+    });
+    // Checkout defers its own refresh while the drawer is open (checkOutViewCtrl.js).
+    $scope.$watch('drawer.open', function(open) {
+        $rootScope.cartDrawerOpen = open == 'cart';
+    });
 
     // Allowed quantities for a restricted price schedule, ascending; null when any quantity goes.
     function allowedQuantities(item) {
