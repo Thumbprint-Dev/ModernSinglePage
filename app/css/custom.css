@@ -6639,3 +6639,20 @@ body.msp-drawer-lock {
         flex: 1 1 100%;
     }
 }
+
+/* hero.height "image": the banner is as tall as the photo at full width, so nothing is cropped.
+   The photo goes back into normal flow and sets the height; the copy and buttons still sit on
+   top of it at the bottom. */
+.msp-hero.msp-hero-natural {
+    height: auto;
+}
+.msp-hero.msp-hero-natural .msp-hero-media {
+    position: relative;
+    display: block;
+}
+.msp-hero.msp-hero-natural .msp-hero-media img {
+    position: static;
+    display: block;
+    width: 100%;
+    height: auto;
+}

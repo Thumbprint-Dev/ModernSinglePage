@@ -2,7 +2,7 @@
 
     <!-- Hero: full bleed, copy bottom-left, buttons bottom-right. Photo from site.json
          (hero.image / hero.mobileImage); without one, the tinted placeholder stays. -->
-    <div class="msp-hero" ng-class="{'msp-hero-has-image': site.hero.image, 'msp-hero-dark': site.heroIsDark}">
+    <div class="msp-hero" ng-class="{'msp-hero-has-image': site.hero.image, 'msp-hero-dark': site.heroIsDark, 'msp-hero-natural': site.hero.image && site.hero.height == 'image'}">
         <picture class="msp-hero-media" ng-if="site.hero.image">
             <source ng-if="site.hero.mobileImage" media="(max-width: 767px)" srcset="{{site.hero.mobileImage}}" />
             <img ng-src="{{site.hero.image}}" alt="" />

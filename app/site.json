@@ -1,5 +1,5 @@
 {
-	"_readme": "Every setting this theme reads. To set up a new site, copy this whole file into the site's site.json in Four51 and fill in the blanks - or keep only the keys you change, since anything left out keeps the value shown here. It must stay valid JSON: keep the outer { } and the commas (paste it into a JSON validator if the site looks unconfigured; the browser console also warns). Blank values (\"\") and blank list slots are ignored, so unfilled slots are harmless. null clears text the theme shows by default (e.g. \"eyebrow\": null). Sections merge one level deep; lists replace the default list whole. Keys starting with _ are notes and are ignored. See THEME-DEVELOPMENT-NOTES.md, 'Per-site branding: app/site.json'.",
+	"_readme": "Every setting this theme reads. To set up a new site, copy this whole file into the site's site.json in Four51 and fill in the blanks - or keep only the keys you change, since a key left out keeps the value shown here. An empty value (\"\") hides that text - e.g. \"heading\": \"\" removes the hero heading. It must stay valid JSON: keep the outer { } and the commas (paste it into a JSON validator if the site looks unconfigured; the browser console also warns). Blank list slots are ignored, so unfilled slots are harmless. Sections merge one level deep; lists replace the default list whole. Keys starting with _ are notes and are ignored. See THEME-DEVELOPMENT-NOTES.md, 'Per-site branding: app/site.json'.",
 	"_help_name": "name: leave blank. The header shows the company logo uploaded in Four51 if there is one, otherwise the buyer (company) name as text - and the footer and browser tab use the buyer name. Only set name to override the buyer name, or for the login page, which appears before any buyer is known and otherwise says \"Storefront\". logo.url overrides the uploaded logo. favicon: URL of a .png/.ico; blank keeps storefrontfavicon.ico.",
 	"name": "",
 	"favicon": "",
@@ -32,7 +32,7 @@
 		"textColor": ""
 	},
 	"hero": {
-		"_help": "Full-width banner at the top of the home page. image: 2400x1360 photo; mobileImage: 1200x1800 used below 768px (blank reuses image). background: colour behind the copy when there's no image, as #rrggbb (blank keeps the tan placeholder). textColor: copy colour - blank picks white over a photo or dark/light for the background; the buttons follow it. overlay: darkness of the shading over a photo, 0 (none) to 1, as a number (0.55, not \"0.55\"). eyebrow / heading / headingItalic (italic text after heading) / subheading: the copy; null hides a line. showButton: true/false for the main button. buttonText + buttonHref and secondaryButtonText + secondaryButtonHref: \"#shop\", \"#story\", \"#faq\" or \"#contact\" scroll there, a site route (order) or https:// link goes there. The second button is hidden when its text is blank, or when it points at #story/#faq and the site has no story/FAQ.",
+		"_help": "Full-width banner at the top of the home page. image: photo URL, 2400x1360 or larger. height: \"fixed\" (680px tall, photo cropped to fill) or \"image\" (the banner takes the photo's own proportions - use this for artwork with text or logos built in). mobileImage: 1200x1800 used below 768px (blank reuses image). background: colour behind the copy when there's no image, as #rrggbb (blank keeps the tan placeholder). textColor: copy colour - blank picks white over a photo or dark/light for the background; the buttons follow it. overlay: darkness of the shading over a photo, 0 (none) to 1, as a number (0.55, not \"0.55\"). eyebrow / heading / headingItalic (italic text after heading) / subheading: the copy; \"\" hides a line. showButton: true/false for the main button. buttonText + buttonHref and secondaryButtonText + secondaryButtonHref: \"#shop\", \"#story\", \"#faq\" or \"#contact\" scroll there, a site route (order) or https:// link goes there. The second button is hidden when its text is blank, or when it points at #story/#faq and the site has no story/FAQ.",
 		"image": "",
 		"mobileImage": "",
 		"eyebrow": "Fall 2026 Collection",
@@ -46,7 +46,8 @@
 		"secondaryButtonHref": "#story",
 		"background": "",
 		"textColor": "",
-		"overlay": 0.55
+		"overlay": 0.55,
+		"height": "fixed"
 	},
 	"trust": {
 		"_help": "items: up to four short lines under the hero, e.g. [\"Free shipping over $75\", \"30-day returns\", \"Secure checkout\", \"Ships in 3 business days\"]. Icons go by position: truck, returns, lock, clock. Empty hides the strip.",
@@ -64,7 +65,7 @@
 		"categoryInteropID": ""
 	},
 	"story": {
-		"_help": "The About section: image + copy. heading is required - blank hides the section and the header's About link. paragraphs: one string per paragraph. linkText: link that scrolls to the shop; null hides it.",
+		"_help": "The About section: image + copy. heading is required - blank hides the section and the header's About link. paragraphs: one string per paragraph. linkText: link that scrolls to the shop; \"\" hides it.",
 		"eyebrow": "Our story",
 		"heading": "",
 		"headingItalic": "",
@@ -101,7 +102,7 @@
 		]
 	},
 	"contact": {
-		"_help": "Green band above the footer (the header's Contact link): these details plus a short name/email/message form. Send opens the customer's email app addressed to email, with their message filled in - the theme has no server to send mail itself. Blank email hides the form and the 'Email us at' line. null hides any line.",
+		"_help": "Green band above the footer (the header's Contact link): these details plus a short name/email/message form. Send opens the customer's email app addressed to email, with their message filled in - the theme has no server to send mail itself. Blank email hides the form and the 'Email us at' line. \"\" hides any line.",
 		"eyebrow": "Contact",
 		"heading": "Any questions?",
 		"text": "Questions or need help with an order? Need general site support?",

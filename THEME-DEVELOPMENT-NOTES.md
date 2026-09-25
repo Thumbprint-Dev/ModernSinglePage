@@ -733,8 +733,12 @@ changes - everything left out keeps its default. Generate the template from the 
 than hand-editing it, or the two drift: load the factory in Node with a stub `angular`/`$http`
 and serialise `settings`. Rules worth knowing when filling one in:
 
-- `""` keeps the default (same as leaving the key out); `null` clears a text default - the only
-  way to hide something the theme shows by default, like `hero.eyebrow`.
+- Leaving a key out keeps its default; `""` sets it empty, which is how a site hides text the
+  theme shows by default (`"heading": ""`). This used to be the other way round (`""` kept the
+  default, only `null` cleared) and it tripped up the first real site immediately: blanking the
+  hero copy over artwork with text baked in left the default copy printed on top of it. `null`
+  still clears too, for files written under the old rule. This applies to text only - blank
+  list slots are still dropped, so the template's empty slots stay harmless.
 - Numbers (`shipping.freeShippingThreshold`) take a real number only; `"75"` is ignored with a
   warning, the same rule as quoted booleans.
 - Lists of objects (`faq.items`, `footer.columns`, `footer.legalLinks`) are rebuilt field by

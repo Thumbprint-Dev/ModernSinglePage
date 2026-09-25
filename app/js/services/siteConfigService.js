@@ -35,7 +35,7 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			// 'catalog' (the default) and '#shop' scroll to the shop section; anything else is
 			// followed as a normal link.
 			buttonHref: 'catalog',
-			// Outlined second button. Blank (or null) hides it. Pointed at #story, it only shows
+			// Outlined second button. "" hides it. Pointed at #story, it only shows
 			// when the site has a story section to scroll to.
 			secondaryButtonText: 'Our story',
 			secondaryButtonHref: '#story',
@@ -46,7 +46,11 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			// whichever reads better on the background. Buttons follow it.
 			textColor: '',
 			// Darkness of the shading over a photo, 0 (none) to 1 (black). Only used with image.
-			overlay: 0.55
+			overlay: 0.55,
+			// "fixed": the banner is 680px tall (580 on phones) and the photo is cropped to fill it.
+			// "image": the banner takes the photo's own proportions and shows all of it - for
+			// artwork with text or logos built in, which cropping would cut off.
+			height: 'fixed'
 		},
 		// Icon + text strip under the hero. Icons go by position: truck, returns arrow,
 		// lock, clock. Empty hides the strip.
@@ -317,6 +321,11 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 		}
 		if (bg) root.style.setProperty('--msp-hero-bg', bg);
 
+		if (hero.height !== 'fixed' && hero.height !== 'image') {
+			$log.warn('SiteConfig: hero.height must be "fixed" or "image", using "fixed" -- ' + hero.height);
+			hero.height = 'fixed';
+		}
+
 		var overlay = Math.min(1, Math.max(0, hero.overlay));
 		root.style.setProperty('--msp-hero-overlay', String(overlay));
 
@@ -490,11 +499,11 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 				// Lists are taken whole rather than merged, so a site can shorten one as
 				// well as extend it. Non-string entries are dropped instead of failing
 				// the whole file.
-				else if (angular.isString(override) && override !== '') defaults[key] = override;
-				// null clears a text default ("" can't, since blank means "keep the default") - how
-				// a site hides something the theme shows by default, like the hero eyebrow or the
-				// "Our story" button.
-				else if (override === null && angular.isString(value)) defaults[key] = '';
+				// Text: whatever the site wrote, "" included - an empty value hides that text (the
+				// hero heading, a button). Leaving the key out keeps the default. null also clears,
+				// for files written when "" still meant "keep the default".
+				else if (angular.isString(value) && angular.isString(override)) defaults[key] = override;
+				else if (angular.isString(value) && override === null) defaults[key] = '';
 			});
 		});
 
