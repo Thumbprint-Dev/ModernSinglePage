@@ -139,13 +139,17 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 		// Site footer, on every page (the header's Contact link). Blank blurb hides it; columns
 		// and legalLinks replace the defaults whole when a site sets them.
 		footer: {
+			// The footer shows the same logo as the header (logo.url, then the company logo
+			// uploaded in Four51), else the buyer name as text. The footer is dark, so a dark logo
+			// disappears on it: logoUrl is an optional light version for the footer only.
+			logoUrl: '',
 			blurb: '',
 			// Each column is { "heading": "...", "links": [{ "label": "...", "url": "..." }] }. A url
 			// of "#shop", "#story", "#faq" or "#contact" scrolls to that section; "mailto:" and
 			// "tel:" work too; anything else is a normal link.
 			columns: [
-				{ heading: 'Shop', links: [{ label: 'The collection', url: '#shop' }, { label: 'Order history', url: 'order' }, { label: 'Favorite products', url: 'favoriteproducts' }] },
-				{ heading: 'Help', links: [{ label: 'FAQ', url: '#faq' }, { label: 'Contact us', url: 'contactus' }] }
+				{ heading: 'Shop', links: [{ label: 'The collection', url: '#shop' }, { label: 'Order history', url: 'order' }] },
+				{ heading: 'Help', links: [{ label: 'FAQ', url: '#faq' }, { label: 'Contact us', url: '#contact' }] }
 			],
 			// Links in the bottom row, next to the copyright line.
 			legalLinks: []

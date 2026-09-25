@@ -6746,3 +6746,15 @@ body.msp-drawer-lock {
         aspect-ratio: auto;
     }
 }
+
+
+/* Footer logo: same slot as the store-name text. Height-capped, width follows the image (an SVG
+   with only a viewBox needs the explicit height - THEME-DEVELOPMENT-NOTES.md). */
+.msp-footer-logo {
+    display: block;
+    height: 44px;
+    width: auto;
+    max-width: 260px;
+    object-fit: contain;
+    margin: 0 0 16px;
+}

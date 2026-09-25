@@ -115,7 +115,8 @@
 		"textColor": ""
 	},
 	"footer": {
-		"_help": "On every page. blurb: short line under the store name. columns: [{\"heading\": \"Help\", \"links\": [{\"label\": \"FAQ\", \"url\": \"#faq\"}]}] - #shop, #story, #faq and #contact scroll in-page; mailto:, tel:, site routes (order, contactus) and full URLs also work. legalLinks: [{\"label\": \"Privacy\", \"url\": \"https://...\"}] in the bottom row. Setting columns or legalLinks replaces the default list whole.",
+		"_help": "On every page. logoUrl: optional light logo for the dark footer - blank shows the header's logo (logo.url, then the company logo uploaded in Four51), or the buyer name as text when there's no logo. blurb: short line under the store name. columns: [{\"heading\": \"Help\", \"links\": [{\"label\": \"FAQ\", \"url\": \"#faq\"}]}] - #shop, #story, #faq and #contact scroll in-page; mailto:, tel:, site routes (order, contactus) and full URLs also work. legalLinks: [{\"label\": \"Privacy\", \"url\": \"https://...\"}] in the bottom row. Setting columns or legalLinks replaces the default list whole.",
+		"logoUrl": "",
 		"blurb": "",
 		"columns": [
 			{
@@ -128,10 +129,6 @@
 					{
 						"label": "Order history",
 						"url": "order"
-					},
-					{
-						"label": "Favorite products",
-						"url": "favoriteproducts"
 					}
 				]
 			},
@@ -144,7 +141,7 @@
 					},
 					{
 						"label": "Contact us",
-						"url": "contactus"
+						"url": "#contact"
 					}
 				]
 			},

@@ -9,6 +9,14 @@ function ($scope, $route, $rootScope, $timeout, $document, $window, $location, $
 	$scope.linkHref = SectionNav.href;
 	$scope.followLink = SectionNav.follow;
 	$scope.linkIsExternal = SectionNav.isExternal;
+	// Footer links to a home-page section the site doesn't have (no FAQ items, no story) hide
+	// rather than scroll to nothing.
+	$scope.footerLinkShown = function(link) {
+		var section = SectionNav.sectionOf(link.url);
+		if (section === 'faq') return !!($scope.site.faq.items && $scope.site.faq.items.length);
+		if (section === 'story') return !!$scope.site.story.heading;
+		return true;
+	};
 	$scope.scroll = 0;
 	$scope.isAnon = $451.isAnon; //need to know this before we have access to the user object
 	$scope.Four51User = Security;

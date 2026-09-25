@@ -145,7 +145,6 @@
                 <div class="msp-contact-actions">
                     <button type="submit" class="msp-btn msp-contact-send">{{'Send message' | r | xlat}}</button>
                     <p class="msp-contact-note" aria-live="polite">
-                        <span ng-if="!contactForm.sent">{{'Opens your email app, addressed to' | r | xlat}} {{site.contact.email}}.</span>
                         <span ng-if="contactForm.sent">{{'Your email app should now be open with your message - press send there to finish.' | r | xlat}}</span>
                     </p>
                 </div>
