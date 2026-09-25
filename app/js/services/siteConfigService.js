@@ -7,8 +7,9 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 	// truncated or partially filled file therefore still renders the stock theme
 	// rather than an empty hero.
 	var settings = {
-		// Falls back to Company.Name once a user loads, but the login page has no user yet -
-		// this is what the logo's alt text and its no-logo-uploaded text fallback use there.
+		// Leave blank normally: the header shows the company logo uploaded in Four51, then the
+		// buyer's Company.Name as text. Set only to override that name, or for the login page,
+		// which renders before any user (and so any company) is known.
 		name: '',
 		// Overrides the <link rel="icon"> pair in index.html. Blank keeps the
 		// platform's storefrontfavicon.ico.

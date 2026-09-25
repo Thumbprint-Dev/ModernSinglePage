@@ -1,10 +1,10 @@
 {
 	"_readme": "Every setting this theme reads. To set up a new site, copy this whole file into the site's site.json in Four51 and fill in the blanks - or keep only the keys you change, since anything left out keeps the value shown here. It must stay valid JSON: keep the outer { } and the commas (paste it into a JSON validator if the site looks unconfigured; the browser console also warns). Blank values (\"\") and blank list slots are ignored, so unfilled slots are harmless. null clears text the theme shows by default (e.g. \"eyebrow\": null). Sections merge one level deep; lists replace the default list whole. Keys starting with _ are notes and are ignored. See THEME-DEVELOPMENT-NOTES.md, 'Per-site branding: app/site.json'.",
-	"_help_name": "name: store name for the header logo text, footer and tab title. Blank uses the Four51 company name. favicon: URL of a .png/.ico; blank keeps storefrontfavicon.ico.",
+	"_help_name": "name: leave blank. The header shows the company logo uploaded in Four51 if there is one, otherwise the buyer (company) name as text - and the footer and browser tab use the buyer name. Only set name to override the buyer name, or for the login page, which appears before any buyer is known and otherwise says \"Storefront\". logo.url overrides the uploaded logo. favicon: URL of a .png/.ico; blank keeps storefrontfavicon.ico.",
 	"name": "",
 	"favicon": "",
 	"logo": {
-		"_help": "url: header logo image; blank uses the company logo set in Four51, then the store name as text. alt: its alt text.",
+		"_help": "url: overrides the company logo uploaded in Four51 - leave blank to use that logo, or the buyer name as text when none is uploaded. alt: the logo's alt text.",
 		"url": "",
 		"alt": ""
 	},
