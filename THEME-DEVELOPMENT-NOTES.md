@@ -695,6 +695,20 @@ back in `SortOptions`), so the hand-authored placeholder `<option value="">` mea
 sort selected" had no text and rendered as a blank line in the dropdown. Give it real text
 (`{{'Default Sort' | r | xlat}}`) rather than leaving it empty.
 
+## A product in the category isn't enough - it has to be assigned to the buyer
+
+A new product added to the shop category (`shop.categoryInteropID`) didn't appear: the category
+search came back `{"Count":0,"List":[]}` and a keyword search for it found nothing either. Four51
+only returns products assigned to the buyer (or the user's group) - category membership alone
+doesn't make a product visible. Assigning it to the buyer fixed it immediately.
+
+When the shop shows "No products are available right now" or a category looks empty, check in the
+running app before touching code: `Product.search('<category>', null, null, cb, 1, 12)` via
+`angular.element(document.documentElement).injector()` shows exactly what the platform returns
+for the signed-in user. Count 0 with a valid category means admin setup (buyer assignment, active
+flag/dates, price schedule), not a theme bug. Also clear `451Cache.Tree/Category` from
+localStorage first - see the cache entry above.
+
 ## Self-registration already exists natively at `/admin` - don't assume it needs to be built
 
 Went looking for a "create your own account" flow and initially concluded there wasn't one - no
