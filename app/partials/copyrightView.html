@@ -7,10 +7,13 @@
             <div class="msp-footer-brand">
                 <!-- Same order as the header: footer.logoUrl (a light version for this dark footer),
                      then logo.url, then the company logo uploaded in Four51, then the buyer name. -->
+                <!-- With a logo the name is hidden; if the logo URL fails to load, onerror drops the
+                     broken image and brings the name back so the footer is never left blank. -->
                 <img class="msp-footer-logo" ng-if="site.footer.logoUrl || site.logo.url || user.Company.LogoUrl"
                      ng-src="{{site.footer.logoUrl || site.logo.url || user.Company.LogoUrl}}"
-                     alt="{{site.logo.alt || site.name || user.Company.Name || 'Storefront'}}" />
-                <p class="msp-footer-name" ng-if="!(site.footer.logoUrl || site.logo.url || user.Company.LogoUrl)">{{site.name || user.Company.Name || 'Storefront'}}</p>
+                     alt="{{site.logo.alt || site.name || user.Company.Name || 'Storefront'}}"
+                     onerror="this.style.display='none'; var n=this.parentNode.querySelector('.msp-footer-name'); if (n) n.classList.remove('ng-hide');" />
+                <p class="msp-footer-name" ng-hide="site.footer.logoUrl || site.logo.url || user.Company.LogoUrl">{{site.name || user.Company.Name || 'Storefront'}}</p>
                 <p class="msp-footer-blurb" ng-if="site.footer.blurb">{{site.footer.blurb | r | xlat}}</p>
             </div>
             <nav class="msp-footer-cols" aria-label="{{'Footer' | r | xlat}}" ng-if="site.footer.columns.length">
