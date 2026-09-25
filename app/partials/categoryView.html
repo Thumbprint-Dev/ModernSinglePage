@@ -64,7 +64,7 @@
     </div>
 
     <!-- Story: site.json story. Hidden (with the header's About link) until it has a heading. -->
-    <div id="story" class="msp-story" ng-if="site.story.heading">
+    <div id="story" class="msp-story" ng-class="{'msp-story-natural': site.story.image && site.story.height == 'image'}" ng-if="site.story.heading">
         <div class="msp-story-media">
             <img ng-if="site.story.image" ng-src="{{site.story.image}}" alt="" />
         </div>

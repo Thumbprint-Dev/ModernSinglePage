@@ -65,7 +65,7 @@
 		"categoryInteropID": ""
 	},
 	"story": {
-		"_help": "The About section: image + copy. heading is required - blank hides the section and the header's About link. paragraphs: one string per paragraph. linkText: link that scrolls to the shop; \"\" hides it.",
+		"_help": "The About section: image + copy. heading is required - blank hides the section and the header's About link. paragraphs: one string per paragraph. linkText: link that scrolls to the shop; \"\" hides it. height: \"fixed\" (photo cropped to fill its half of the section) or \"image\" (photo shown whole at its own proportions - use for artwork with text built in).",
 		"eyebrow": "Our story",
 		"heading": "",
 		"headingItalic": "",
@@ -74,7 +74,8 @@
 			""
 		],
 		"image": "",
-		"linkText": "Shop now"
+		"linkText": "Shop now",
+		"height": "fixed"
 	},
 	"faq": {
 		"_help": "items: [{\"question\": \"...\", \"answer\": \"...\"}]. No items hides the section and the header's FAQ link. email: shown after intro under the heading; blank hides that line.",

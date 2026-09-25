@@ -5674,7 +5674,9 @@ body.msp-drawer-lock {
 /* ===== ModernSinglePage: story ===== */
 .msp-story {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    /* minmax(0, 1fr), not 1fr: a bare 1fr lets the copy column's content push it wider than
+       half, so the photo side came out narrower than the design's 50/50. */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     background: var(--mt-color-bg-alt);
     min-height: 640px;
 }
@@ -6720,4 +6722,27 @@ body.msp-drawer-lock {
 .msp-contact-light.msp-contact .msp-contact-attempted .msp-contact-field textarea.ng-invalid {
     border-color: var(--mt-color-danger);
     box-shadow: 0 0 0 1px var(--mt-color-danger);
+}
+
+
+/* story.height "image": the photo sets its own height instead of being cropped to the section.
+   The section grows to fit whichever is taller, photo or copy; if the copy is taller, the photo
+   sits centred in its column on the section's own background. */
+.msp-story.msp-story-natural {
+    min-height: 0;
+}
+.msp-story.msp-story-natural .msp-story-media {
+    background: transparent;
+    align-self: center;
+}
+.msp-story.msp-story-natural .msp-story-media img {
+    position: static;
+    display: block;
+    width: 100%;
+    height: auto;
+}
+@media (max-width: 1023px) {
+    .msp-story.msp-story-natural .msp-story-media {
+        aspect-ratio: auto;
+    }
 }

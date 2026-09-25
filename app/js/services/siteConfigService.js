@@ -85,7 +85,10 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			paragraphs: [],
 			image: '',
 			// Link under the copy that scrolls to the shop. Blank hides it.
-			linkText: 'Shop now'
+			linkText: 'Shop now',
+			// "fixed": the photo is cropped to fill its half of the section. "image": the photo
+			// keeps its own proportions and shows whole - for artwork with text built in.
+			height: 'fixed'
 		},
 		// Accordion (the header's FAQ link). Each item is { "question": "...", "answer": "..." };
 		// no items hides the section and the link.
@@ -296,6 +299,11 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 		applyAnnouncementColors(root);
 		applyHeroColors(root);
 		applyContactColors(root);
+
+		if (settings.story.height !== 'fixed' && settings.story.height !== 'image') {
+			$log.warn('SiteConfig: story.height must be "fixed" or "image", using "fixed" -- ' + settings.story.height);
+			settings.story.height = 'fixed';
+		}
 		applyFont(root);
 	}
 
