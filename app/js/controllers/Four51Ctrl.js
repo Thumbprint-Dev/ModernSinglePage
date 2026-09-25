@@ -6,6 +6,9 @@ function ($scope, $route, $rootScope, $timeout, $document, $window, $location, $
 	$scope.site = SiteConfig.settings;
 	// One-page section links (header, menu, hero, footer) - see sectionNavService.js.
 	$scope.goToSection = SectionNav.goTo;
+	$scope.linkHref = SectionNav.href;
+	$scope.followLink = SectionNav.follow;
+	$scope.linkIsExternal = SectionNav.isExternal;
 	$scope.scroll = 0;
 	$scope.isAnon = $451.isAnon; //need to know this before we have access to the user object
 	$scope.Four51User = Security;

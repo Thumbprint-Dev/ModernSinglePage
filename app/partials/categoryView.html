@@ -2,7 +2,7 @@
 
     <!-- Hero: full bleed, copy bottom-left, buttons bottom-right. Photo from site.json
          (hero.image / hero.mobileImage); without one, the tinted placeholder stays. -->
-    <div class="msp-hero" ng-class="{'msp-hero-has-image': site.hero.image}">
+    <div class="msp-hero" ng-class="{'msp-hero-has-image': site.hero.image, 'msp-hero-dark': site.heroIsDark}">
         <picture class="msp-hero-media" ng-if="site.hero.image">
             <source ng-if="site.hero.mobileImage" media="(max-width: 767px)" srcset="{{site.hero.mobileImage}}" />
             <img ng-src="{{site.hero.image}}" alt="" />
@@ -13,15 +13,18 @@
                 <h1 class="msp-hero-title" ng-if="site.hero.heading">{{site.hero.heading | r | xlat}}<em ng-if="site.hero.headingItalic"> {{site.hero.headingItalic | r | xlat}}</em></h1>
                 <p class="msp-hero-sub" ng-if="site.hero.subheading">{{site.hero.subheading | r | xlat}}</p>
             </div>
-            <div class="msp-hero-actions" ng-if="site.hero.showButton && site.hero.buttonText || site.hero.secondaryButtonText && site.story.heading">
-                <a ng-if="site.hero.showButton && site.hero.buttonText" class="msp-btn msp-btn-ink"
-                   ng-href="{{(site.hero.buttonHref == 'catalog' || site.hero.buttonHref == '#shop') ? 'catalog' : site.hero.buttonHref}}"
-                   ng-click="(site.hero.buttonHref == 'catalog' || site.hero.buttonHref == '#shop') && goToSection('shop', $event)">
+            <div class="msp-hero-actions" ng-if="site.hero.showButton && site.hero.buttonText || heroSecondaryShown()">
+                <a ng-if="site.hero.showButton && site.hero.buttonText" class="msp-btn msp-hero-btn-primary"
+                   ng-href="{{linkHref(site.hero.buttonHref)}}" ng-click="followLink(site.hero.buttonHref, $event)"
+                   ng-attr-target="{{linkIsExternal(site.hero.buttonHref) ? '_blank' : undefined}}"
+                   ng-attr-rel="{{linkIsExternal(site.hero.buttonHref) ? 'noopener' : undefined}}">
                     {{site.hero.buttonText | r | xlat}}
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
                 </a>
-                <a ng-if="site.hero.secondaryButtonText && site.story.heading" href="catalog" class="msp-btn msp-btn-outline msp-hide-phone"
-                   ng-click="goToSection('story', $event)">{{site.hero.secondaryButtonText | r | xlat}}</a>
+                <a ng-if="heroSecondaryShown()" class="msp-btn msp-hero-btn-secondary msp-hide-phone"
+                   ng-href="{{linkHref(site.hero.secondaryButtonHref)}}" ng-click="followLink(site.hero.secondaryButtonHref, $event)"
+                   ng-attr-target="{{linkIsExternal(site.hero.secondaryButtonHref) ? '_blank' : undefined}}"
+                   ng-attr-rel="{{linkIsExternal(site.hero.secondaryButtonHref) ? 'noopener' : undefined}}">{{site.hero.secondaryButtonText | r | xlat}}</a>
             </div>
         </div>
     </div>

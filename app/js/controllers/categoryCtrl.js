@@ -107,6 +107,16 @@ function ($routeParams, $sce, $scope, $451, Category, Product, AppConst, Order, 
 		return false;
 	};
 
+	// The hero's outlined button: needs text, and a section to land on if it points at one.
+	$scope.heroSecondaryShown = function() {
+		var hero = SiteConfig.settings.hero;
+		if (!hero.secondaryButtonText) return false;
+		var section = hero.secondaryButtonHref === 'catalog' ? 'shop' : (hero.secondaryButtonHref || '').charAt(0) === '#' ? hero.secondaryButtonHref.substr(1) : null;
+		if (section === 'story') return !!SiteConfig.settings.story.heading;
+		if (section === 'faq') return !!SiteConfig.settings.faq.items.length;
+		return !!hero.secondaryButtonHref;
+	};
+
 	// FAQ accordion: which item is open (-1 for none). An object so the ng-repeat's child scopes
 	// write to this one rather than each shadowing its own copy.
 	$scope.faqState = { open: 0 };

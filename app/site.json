@@ -32,7 +32,7 @@
 		"textColor": ""
 	},
 	"hero": {
-		"_help": "image: 2400x1360 photo; mobileImage: 1200x1800 used below 768px (blank reuses image). Without an image the tinted placeholder shows. headingItalic: italic text after heading. buttonHref: 'catalog' or '#shop' scrolls to the shop, anything else is a link. showButton: true/false. secondaryButtonText: outlined button to the story section, only shown when story.heading is set.",
+		"_help": "Full-width banner at the top of the home page. image: 2400x1360 photo; mobileImage: 1200x1800 used below 768px (blank reuses image). background: colour behind the copy when there's no image, as #rrggbb (blank keeps the tan placeholder). textColor: copy colour - blank picks white over a photo or dark/light for the background; the buttons follow it. overlay: darkness of the shading over a photo, 0 (none) to 1, as a number (0.55, not \"0.55\"). eyebrow / heading / headingItalic (italic text after heading) / subheading: the copy; null hides a line. showButton: true/false for the main button. buttonText + buttonHref and secondaryButtonText + secondaryButtonHref: \"#shop\", \"#story\", \"#faq\" or \"#contact\" scroll there, a site route (order) or https:// link goes there. The second button is hidden when its text is blank, or when it points at #story/#faq and the site has no story/FAQ.",
 		"image": "",
 		"mobileImage": "",
 		"eyebrow": "Fall 2026 Collection",
@@ -42,7 +42,11 @@
 		"showButton": true,
 		"buttonText": "Shop the collection",
 		"buttonHref": "catalog",
-		"secondaryButtonText": "Our story"
+		"secondaryButtonText": "Our story",
+		"secondaryButtonHref": "#story",
+		"background": "",
+		"textColor": "",
+		"overlay": 0.55
 	},
 	"trust": {
 		"_help": "items: up to four short lines under the hero, e.g. [\"Free shipping over $75\", \"30-day returns\", \"Secure checkout\", \"Ships in 3 business days\"]. Icons go by position: truck, returns, lock, clock. Empty hides the strip.",

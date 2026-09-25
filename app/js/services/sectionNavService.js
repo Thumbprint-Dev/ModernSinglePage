@@ -26,5 +26,22 @@ four51.app.factory('SectionNav', ['$location', '$rootScope', '$timeout', '$windo
 		$location.path('/catalog');
 	}
 
-	return { goTo: goTo };
+	// Buttons whose destination comes from site.json: "#shop" / "#story" / "#faq" / "#contact"
+	// (and the legacy "catalog", meaning the shop) scroll in-page; anything else is a real link.
+	function sectionOf(url) {
+		if (url === 'catalog') return 'shop';
+		return url && url.charAt(0) === '#' ? url.substr(1) : null;
+	}
+	function href(url) {
+		return !url || sectionOf(url) ? 'catalog' : url;
+	}
+	function follow(url, $event) {
+		var section = sectionOf(url);
+		if (section) goTo(section, $event);
+	}
+	function isExternal(url) {
+		return !!url && /^https?:/i.test(url);
+	}
+
+	return { goTo: goTo, href: href, follow: follow, isExternal: isExternal, sectionOf: sectionOf };
 }]);

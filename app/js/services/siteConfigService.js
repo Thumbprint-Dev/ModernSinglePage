@@ -35,9 +35,18 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			// 'catalog' (the default) and '#shop' scroll to the shop section; anything else is
 			// followed as a normal link.
 			buttonHref: 'catalog',
-			// Outlined second button that scrolls to the story section. Only shown when the
-			// site has a story to scroll to. Blank hides it.
-			secondaryButtonText: 'Our story'
+			// Outlined second button. Blank (or null) hides it. Pointed at #story, it only shows
+			// when the site has a story section to scroll to.
+			secondaryButtonText: 'Our story',
+			secondaryButtonHref: '#story',
+			// Colour behind the copy when there is no image (#rrggbb). Blank keeps the theme's
+			// warm tan placeholder.
+			background: '',
+			// Copy colour. Blank picks it: white over an image, otherwise dark or light for
+			// whichever reads better on the background. Buttons follow it.
+			textColor: '',
+			// Darkness of the shading over a photo, 0 (none) to 1 (black). Only used with image.
+			overlay: 0.55
 		},
 		// Icon + text strip under the hero. Icons go by position: truck, returns arrow,
 		// lock, clock. Empty hides the strip.
@@ -179,7 +188,9 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			freeShippingThreshold: 0
 		},
 		// Applied to the hero element by ngStyle; recomputed whenever the file lands.
-		heroStyle: {}
+		heroStyle: {},
+		// Derived from the hero's colours (applyHeroColors), not a site.json key.
+		heroIsDark: false
 	};
 
 	// Anything here is written into a CSS custom property, so keep it to values
@@ -274,6 +285,7 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 
 		applyAccent(root);
 		applyAnnouncementColors(root);
+		applyHeroColors(root);
 		applyFont(root);
 	}
 
@@ -286,6 +298,39 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
 		});
 		return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
+	}
+
+	// Sets --msp-hero-bg / --msp-hero-text / --msp-hero-overlay, and settings.heroIsDark, which
+	// the template uses to switch the buttons to their light-on-dark versions.
+	function applyHeroColors(root) {
+		var hero = settings.hero;
+		var bg = (hero.background || '').trim();
+		var fg = (hero.textColor || '').trim();
+
+		if (bg && !isColor(bg)) {
+			$log.warn('SiteConfig: hero.background is not a colour, ignoring -- ' + bg);
+			bg = '';
+		}
+		if (fg && !isColor(fg)) {
+			$log.warn('SiteConfig: hero.textColor is not a colour, ignoring -- ' + fg);
+			fg = '';
+		}
+		if (bg) root.style.setProperty('--msp-hero-bg', bg);
+
+		var overlay = Math.min(1, Math.max(0, hero.overlay));
+		root.style.setProperty('--msp-hero-overlay', String(overlay));
+
+		// Light copy means a dark hero. An explicit textColor decides; otherwise a photo (under
+		// its shading) is dark, and a plain background is judged by its own luminance.
+		var fgLum = luminance(fg);
+		var bgLum = luminance(bg);
+		if (fg && fgLum !== null) settings.heroIsDark = fgLum > 0.19;
+		else if (hero.image) settings.heroIsDark = overlay >= 0.3;
+		else if (bgLum !== null) settings.heroIsDark = bgLum <= 0.19;
+		else settings.heroIsDark = false;
+
+		if (!fg) fg = settings.heroIsDark ? '#FFFFFF' : '#1B1A17';
+		root.style.setProperty('--msp-hero-text', fg);
 	}
 
 	function applyAnnouncementColors(root) {

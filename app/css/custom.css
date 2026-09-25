@@ -5021,9 +5021,10 @@ body.msp-drawer-lock {
 .msp-hero {
     position: relative;
     height: 680px;
-    background: #C9BBA6;
+    /* site.json hero.background / textColor / overlay land here (siteConfigService.js). */
+    background: var(--msp-hero-bg, #C9BBA6);
     overflow: hidden;
-    color: var(--mt-color-ink);
+    color: var(--msp-hero-text, var(--mt-color-ink));
 }
 .msp-hero-media,
 .msp-hero-media img {
@@ -5035,15 +5036,12 @@ body.msp-drawer-lock {
 .msp-hero-media img {
     object-fit: cover;
 }
-/* A photo gets a bottom scrim and white copy, so the text reads on any image. */
+/* A photo gets a bottom scrim (hero.overlay sets its strength), so the text reads on any image. */
 .msp-hero.msp-hero-has-image::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, rgba(27, 26, 23, 0.55), rgba(27, 26, 23, 0) 60%);
-}
-.msp-hero.msp-hero-has-image {
-    color: #fff;
+    background: linear-gradient(to top, rgba(27, 26, 23, var(--msp-hero-overlay, 0.55)), rgba(27, 26, 23, 0) 60%);
 }
 .msp-hero-inner {
     position: absolute;
@@ -5081,19 +5079,46 @@ body.msp-drawer-lock {
     max-width: 520px;
     font-size: 18px;
     line-height: 1.5;
-    color: #2E2A24;
-}
-.msp-hero.msp-hero-has-image .msp-hero-sub {
-    color: rgba(255, 255, 255, 0.9);
+    color: inherit;
+    opacity: 0.9;
 }
 .msp-hero-actions {
     display: flex;
     gap: 12px;
     flex-shrink: 0;
 }
-.msp-hero.msp-hero-has-image .msp-btn-outline {
-    border-color: #fff;
-    color: #fff;
+/* Buttons follow the hero's copy colour: an ink pill and an outline in the copy colour, or on a
+   dark hero (photo, dark background, light textColor) a light pill instead. */
+.msp-hero-btn-primary {
+    background: var(--mt-color-ink);
+    color: var(--mt-color-on-ink);
+}
+.msp-hero-btn-primary:hover,
+.msp-hero-btn-primary:focus {
+    background: #33312C;
+    color: var(--mt-color-on-ink);
+}
+.msp-hero-dark .msp-hero-btn-primary {
+    background: var(--mt-color-bg);
+    color: var(--mt-color-ink);
+}
+.msp-hero-dark .msp-hero-btn-primary:hover,
+.msp-hero-dark .msp-hero-btn-primary:focus {
+    background: #fff;
+    color: var(--mt-color-ink);
+}
+.msp-hero-btn-secondary {
+    border-color: currentColor;
+    background: transparent;
+    color: inherit;
+}
+.msp-hero-btn-secondary:hover,
+.msp-hero-btn-secondary:focus {
+    background: rgba(127, 127, 127, 0.14);
+    color: inherit;
+}
+.msp-hero-dark .msp-btn:focus-visible {
+    outline-color: currentColor;
 }
 @media (max-width: 1023px) {
     .msp-hero-title {
