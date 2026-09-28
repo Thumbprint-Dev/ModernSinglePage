@@ -63,6 +63,8 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			items: []
 		},
 		announcement: {
+			// false hides the bar while keeping the messages in the file, ready to switch back on.
+			show: true,
 			// Short lines shown in the bar above the header, separated by a dot. Empty
 			// hides the bar entirely.
 			messages: [],

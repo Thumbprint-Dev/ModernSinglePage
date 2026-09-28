@@ -50,7 +50,7 @@
     </section>
     <section ng-if="Four51User.isAuthenticated()" id="content">
         <!-- Scrolls away above the sticky header, so it sits outside the sticky wrap. -->
-        <section class="hidden-print msp-announcement" ng-if="user.Type != 'TempCustomer' && site.announcement.messages.length">
+        <section class="hidden-print msp-announcement" ng-if="user.Type != 'TempCustomer' && site.announcement.show && site.announcement.messages.length">
             <span ng-repeat-start="message in site.announcement.messages">{{message | r | xlat}}</span>
             <span class="msp-announcement-sep" aria-hidden="true" ng-repeat-end ng-if="!$last">&middot;</span>
         </section>
