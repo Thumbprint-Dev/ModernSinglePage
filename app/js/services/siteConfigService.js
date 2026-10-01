@@ -150,6 +150,9 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			// uploaded in Four51), else the buyer name as text. The footer is dark, so a dark logo
 			// disappears on it: logoUrl is an optional light version for the footer only.
 			logoUrl: '',
+			// The name the footer uses - the copyright line ("(c) 2026 <name>"), and the text shown
+			// when there's no logo. Blank uses name above, then the buyer's company name.
+			name: '',
 			blurb: '',
 			// Each column is { "heading": "...", "links": [{ "label": "...", "url": "..." }] }. A url
 			// of "#shop", "#story", "#faq" or "#contact" scrolls to that section; "mailto:" and
