@@ -5008,8 +5008,10 @@ body.msp-drawer-lock {
 }
 
 .msp-section {
-    padding-top: 120px;
-    padding-bottom: 120px;
+    /* One rhythm for every home-page section (shop, FAQ): 64px desktop, 40px phone. Was 120 / 64,
+       which read as empty bands between sections. */
+    padding-top: 64px;
+    padding-bottom: 64px;
 }
 .msp-section-head {
     display: flex;
@@ -5020,8 +5022,8 @@ body.msp-drawer-lock {
 }
 @media (max-width: 767px) {
     .msp-section {
-        padding-top: 64px;
-        padding-bottom: 64px;
+        padding-top: 40px;
+        padding-bottom: 40px;
     }
     .msp-section-head {
         margin-bottom: 32px;
@@ -5707,7 +5709,7 @@ body.msp-drawer-lock {
 .msp-story-copy {
     align-self: center;
     max-width: 560px;
-    padding: 96px 80px;
+    padding: 64px 80px;
     box-sizing: content-box;
 }
 .msp-story-title {
@@ -5747,6 +5749,10 @@ body.msp-drawer-lock {
     }
 }
 @media (max-width: 767px) {
+    .msp-story-copy {
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
     .msp-story-title {
         font-size: 42px;
     }
@@ -6374,7 +6380,8 @@ body.msp-drawer-lock {
     /* site.json contact.background / textColor land here (siteConfigService.js). */
     background: var(--msp-contact-bg, var(--mt-color-accent));
     color: var(--msp-contact-text, #fff);
-    padding: 96px 0;
+    /* Same rhythm as .msp-section. */
+    padding: 64px 0;
 }
 .msp-contact-row {
     display: grid;
@@ -6503,7 +6510,7 @@ body.msp-drawer-lock {
 }
 @media (max-width: 767px) {
     .msp-contact {
-        padding: 64px 0;
+        padding: 40px 0;
     }
     .msp-contact-title {
         font-size: 42px;
@@ -6914,16 +6921,5 @@ body.msp-drawer-lock {
     }
     #msp-order-summary {
         scroll-margin-top: calc(var(--msp-header-height) + 12px);
-    }
-}
-
-/* The shop follows the hero + trust strip directly, so the full 120px section padding read as an
-   empty band above "The Collection". Tighter top only; the bottom keeps the section rhythm. */
-.msp-section.msp-shop {
-    padding-top: 64px;
-}
-@media (max-width: 767px) {
-    .msp-section.msp-shop {
-        padding-top: 40px;
     }
 }
