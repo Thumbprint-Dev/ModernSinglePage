@@ -2,18 +2,34 @@
 // and the footer all scroll to a section of the home page (shop, story, faq, contact) instead of
 // changing route. Four51Ctrl puts goTo on its scope as goToSection, so every view inherits it.
 four51.app.factory('SectionNav', ['$location', '$rootScope', '$timeout', '$window', function($location, $rootScope, $timeout, $window) {
+	// The sticky header's real height right now (it varies with logo.height), measured rather than
+	// taken from the CSS --msp-header-height estimate, which misses the header's 1px border.
+	function headerHeight() {
+		var header = document.querySelector('.mt-header-sticky-wrap');
+		return header ? header.getBoundingClientRect().height : 0;
+	}
+	// Page offset that lands the section just below the sticky header. Most sections have their
+	// own generous top padding; one without (the story: image and tint start at its edge) would
+	// sit flush against the header and read as scrolled too far, so stop short enough to leave
+	// about LAND_GAP of air above its content either way.
+	var LAND_GAP = 32;
+	function targetTop(el) {
+		var padding = parseFloat($window.getComputedStyle(el).paddingTop) || 0;
+		var gap = Math.max(0, LAND_GAP - padding);
+		return Math.max(0, Math.round(el.getBoundingClientRect().top + $window.pageYOffset - headerHeight() - gap));
+	}
+
 	function scrollTo(id) {
 		if (id === 'top') return $window.scrollTo({ top: 0, behavior: 'smooth' });
 		var el = document.getElementById(id);
-		if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+		if (el) $window.scrollTo({ top: targetTop(el), behavior: 'smooth' });
 	}
 
 	function settle(id) {
 		var el = document.getElementById(id);
 		if (!el) return;
-		var header = document.querySelector('.mt-header-sticky-wrap');
-		var target = header ? header.getBoundingClientRect().height : 0;
-		if (Math.abs(el.getBoundingClientRect().top - target) > 24) el.scrollIntoView({ block: 'start' });
+		var top = targetTop(el);
+		if (Math.abs($window.pageYOffset - top) > 4) $window.scrollTo({ top: top });
 	}
 
 	// Links using this keep a real href to catalog, so opening one in a new tab still works; only

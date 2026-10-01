@@ -6916,3 +6916,14 @@ body.msp-drawer-lock {
         scroll-margin-top: calc(var(--msp-header-height) + 12px);
     }
 }
+
+/* The shop follows the hero + trust strip directly, so the full 120px section padding read as an
+   empty band above "The Collection". Tighter top only; the bottom keeps the section rhythm. */
+.msp-section.msp-shop {
+    padding-top: 64px;
+}
+@media (max-width: 767px) {
+    .msp-section.msp-shop {
+        padding-top: 40px;
+    }
+}
