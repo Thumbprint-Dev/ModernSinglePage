@@ -994,6 +994,16 @@ watches also copy `FirstName`/`LastName` onto the order or its line items under
 the callback, silently misses in-place edits. Anywhere the theme does this, saving needs
 to push the new object in as well.
 
+## Focusing inside a fixed overlay can still scroll the page
+
+The sign-in pop-up (a `position: fixed` overlay) moved keyboard focus to its main button on open,
+and Chrome scrolled the *page* underneath to "reveal" it: a recorder patched onto `focus()`,
+`scrollTo` and `scrollIntoView` before signing in logged `focus <a "Get Your Backpacks"> y=0`,
+then `y=1332` one millisecond later, so the pop-up opened over the middle of the home page.
+It only showed after a real sign-in, when the page behind had fully rendered by the time focus
+moved. Every focus call in the drawer/pop-up code now passes `{ preventScroll: true }` - use it
+for any programmatic focus inside an overlay.
+
 ## Debugging techniques that paid off this session
 
 - **Verify a deploy from the running app, not with `curl`.** The theme's

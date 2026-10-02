@@ -52,7 +52,8 @@ function ($location, $route, $scope, $rootScope, $document, $451, $timeout, $win
         // Hand focus back to whatever opened the drawer, per the design's accessibility notes.
         if (drawerTrigger && document.body.contains(drawerTrigger)) {
             var trigger = drawerTrigger;
-            $timeout(function() { trigger.focus(); });
+            // preventScroll: returning focus must not move the page (see mspFocusTrap in nav.js).
+            $timeout(function() { trigger.focus({ preventScroll: true }); });
         }
         drawerTrigger = null;
     };

@@ -49,10 +49,13 @@ four51.app.directive('mspFocusTrap', ['$timeout', function($timeout) {
 			scope.$watch(attrs.mspFocusTrap, function(open) {
 				active = !!open;
 				if (!active) return;
-				// After the open class lands, so the drawer is visible and focusable.
+				// After the open class lands, so the drawer is visible and focusable. preventScroll:
+				// the drawer floats over the page, but Chrome still scrolled the PAGE to "reveal" the
+				// focused button - recorded live: the sign-in pop-up's button focus jumped the home
+				// page from y=0 to y=1332, so the pop-up opened over the middle of the page.
 				$timeout(function() {
 					var target = el.querySelector('[data-msp-autofocus]') || focusables()[0];
-					if (target) target.focus();
+					if (target) target.focus({ preventScroll: true });
 				}, 50);
 			});
 
@@ -63,11 +66,11 @@ four51.app.directive('mspFocusTrap', ['$timeout', function($timeout) {
 				var first = nodes[0], last = nodes[nodes.length - 1];
 				if (e.shiftKey && document.activeElement === first) {
 					e.preventDefault();
-					last.focus();
+					last.focus({ preventScroll: true });
 				}
 				else if (!e.shiftKey && document.activeElement === last) {
 					e.preventDefault();
-					first.focus();
+					first.focus({ preventScroll: true });
 				}
 			});
 		}
