@@ -64,47 +64,46 @@ function productlightbox() {
 
 LightboxCtrl.$inject = ['$scope', 'Lightbox'];
 function LightboxCtrl($scope, Lightbox) {
+    // Builds LineItem.images: the product's LightboxImages static spec images when it has any,
+    // otherwise its own variant/product image. It used to run only when the line item had specs
+    // or the product had static spec groups, and was only re-run by the StaticSpecGroups, Color
+    // and Variant watches - so a product with no static specs at all never got an image (one
+    // with only text static specs did, by accident of the StaticSpecGroups watch firing). It
+    // now runs whenever the product itself is loaded, whatever specs it has.
     function LightboxImageScope($scope) {
-        if ($scope.LineItem.Specs && $scope.LineItem.Specs.Color) {
-            var varSpecName = "Color";
-        }
-        var specGroupName = "LightboxImages";
+        var li = $scope.LineItem;
+        if (!li || !li.Product) return;
 
-        if ($scope.LineItem.Specs || $scope.LineItem.Product && $scope.LineItem.Product.StaticSpecGroups) {
+        var colorSpec = li.Specs && li.Specs.Color;
+        var specOption = colorSpec && colorSpec.Value;
+        var group = li.Product.StaticSpecGroups && li.Product.StaticSpecGroups.LightboxImages;
 
-            $scope.LineItem.images = [];
-            var count = 0;
-
-            if ($scope.LineItem.Product.StaticSpecGroups && $scope.LineItem.Product.StaticSpecGroups[specGroupName]) {
-                if (varSpecName) {
-                    var specOption = $scope.LineItem.Specs[varSpecName].Value;
-                }
-                angular.forEach($scope.LineItem.Product.StaticSpecGroups[specGroupName].Specs, function (staticSpecs) {
-                    var image = {};
-                    image.Number = count;
-                    image.url = staticSpecs.FileURL;
-                    image.Selected = false;
-                    image.Name = staticSpecs.Name;
-                    var staticSpec = staticSpecs.Name; // this assumes that the name will match the variable spec value
-                    if (staticSpec.indexOf(specOption) > -1) {
-                        image.Selected = true;
-                    }
-                    $scope.LineItem.images.push(image);
-                    count++;
+        li.images = [];
+        if (group) {
+            angular.forEach(group.Specs, function (staticSpec) {
+                if (!staticSpec.FileURL) return; // a text spec in the group has no image to show
+                var name = staticSpec.Name || '';
+                li.images.push({
+                    Number: li.images.length,
+                    url: staticSpec.FileURL,
+                    // assumes the spec's name contains the matching Color spec value
+                    Selected: !!specOption && name.indexOf(specOption) > -1,
+                    Name: name
                 });
-            }
-
-            // No LightboxImages spec group configured for this product - fall back to the
-            // single product/variant image instead of an empty gallery.
-            if (!$scope.LineItem.images.length) {
-                var fallbackUrl = ($scope.LineItem.Variant && ($scope.LineItem.Variant.PreviewUrl || $scope.LineItem.Variant.LargeImageUrl)) ||
-                    ($scope.LineItem.Product && $scope.LineItem.Product.LargeImageUrl);
-                if (fallbackUrl) {
-                    $scope.LineItem.images.push({ Number: 0, url: fallbackUrl, Selected: true, Name: '' });
-                }
-            }
-            $scope.imageLoaded = true;
+            });
         }
+
+        // No LightboxImages images for this product - fall back to the single product/variant
+        // image instead of an empty gallery.
+        if (!li.images.length) {
+            var fallbackUrl = (li.Variant && (li.Variant.PreviewUrl || li.Variant.LargeImageUrl)) ||
+                li.Product.LargeImageUrl || li.Product.SmallImageUrl;
+            if (fallbackUrl) {
+                li.images.push({ Number: 0, url: fallbackUrl, Selected: true, Name: '' });
+            }
+        }
+        if ($scope.index >= li.images.length) $scope.index = 0;
+        $scope.imageLoaded = true;
     }
 
     //trigger the click for the first image
@@ -130,8 +129,10 @@ function LightboxCtrl($scope, Lightbox) {
 
     LightboxImageScope($scope);
 
-    $scope.$watch('LineItem.Product.StaticSpecGroups', function(n,o){
-        if ( n!= o) {
+    // Rebuild once the product loads (and if it's ever swapped), not just when its
+    // StaticSpecGroups change - a product with no static specs never changes those.
+    $scope.$watch('LineItem.Product', function(n,o){
+        if ( n!== o) {
             LightboxImageScope($scope);
         }
     });
