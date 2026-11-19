@@ -384,11 +384,18 @@ function lightboxSrc($window, ImageLoader, Lightbox) {
     var imageWidth = 0;
     var imageHeight = 0;
 
+    // Small images are scaled up so their longer side is at least this many pixels (still capped
+    // to the window below) - otherwise a 235px product image opened in the lightbox at 235px,
+    // smaller than the same image already shows on the product page.
+    var MIN_LONG_SIDE = 600;
+
     return {
         'link': function (scope, element, attrs) {
             var resize = function () {
                 var windowWidth = $window.innerWidth;
                 var windowHeight = $window.innerHeight;
+                var longSide = Math.max(imageWidth, imageHeight);
+                var upscale = longSide > 0 && longSide < MIN_LONG_SIDE ? MIN_LONG_SIDE / longSide : 1;
                 var imageDimensionLimits = Lightbox.calculateImageDimensionLimits({
                     'windowWidth': windowWidth,
                     'windowHeight': windowHeight,
@@ -397,8 +404,8 @@ function lightboxSrc($window, ImageLoader, Lightbox) {
                 });
                 var imageDisplayDimensions = calculateImageDisplayDimensions(
                     angular.extend({
-                        'width': imageWidth,
-                        'height': imageHeight,
+                        'width': Math.round(imageWidth * upscale),
+                        'height': Math.round(imageHeight * upscale),
                         'minWidth': 1,
                         'minHeight': 1,
                         'maxWidth': 3000,
@@ -420,11 +427,10 @@ function lightboxSrc($window, ImageLoader, Lightbox) {
                 ).css({
                         'width': modalDimensions.width + 'px'
                     });
-                angular.element(
-                    document.querySelector('.mt-lightbox-modal .modal-content')
-                ).css({
-                        'height': modalDimensions.height + 'px'
-                    });
+                // No fixed modal-content height: its contents (image, plus the Previous/Next bar
+                // when there are several images) size it, so the padding stays even. The
+                // calculated height added a flat 66px for the bar, leaving a strip of empty space
+                // under single images.
             };
             scope.$watch(function () {
                 return attrs.lightboxSrc;
