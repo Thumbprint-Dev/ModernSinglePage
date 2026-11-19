@@ -1444,6 +1444,10 @@ body {
 }
 
 .mt-lightbox-images a {
+    /* block, not the theme-wide a{display:inline-block}: an inline-block link shrinks to the
+       image's natural width, so a small product image showed at its own size instead of
+       filling the column like every other product */
+    display: block;
     cursor: pointer;
 }
 
