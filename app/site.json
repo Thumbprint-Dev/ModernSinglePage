@@ -26,7 +26,7 @@
 	},
 	"announcement": {
 		"_help": "show: true or false (no quotes) - false hides the bar but keeps the messages for later. messages: short lines for the bar above the header, e.g. [\"Free shipping on orders over $75\"]. Empty hides the bar. Phones show the first line only. background: bar colour as #rrggbb (blank keeps the dark ink bar). textColor: text colour; leave blank and it picks dark or light text automatically for the background you chose.",
-		"show": true,
+		"show": false,
 		"messages": [
 			"",
 			""
@@ -42,7 +42,7 @@
 		"heading": "Gear your team for the season ahead.",
 		"headingItalic": "",
 		"subheading": "New apparel, drinkware and print kits, priced for your group.",
-		"showButton": true,
+		"showButton": false,
 		"buttonText": "Shop the collection",
 		"buttonHref": "catalog",
 		"secondaryButtonText": "Our story",

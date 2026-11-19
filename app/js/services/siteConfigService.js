@@ -34,8 +34,9 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 			headingItalic: '',
 			subheading: 'New apparel, drinkware and print kits, priced for your group.',
 			// false hides the hero's call-to-action button while keeping its
-			// buttonText/buttonHref in the file, ready to switch back on.
-			showButton: true,
+			// buttonText/buttonHref in the file, ready to switch back on. Off until a site turns
+			// it on, like every optional feature (the repo site.json is the new-site template).
+			showButton: false,
 			buttonText: 'Shop the collection',
 			// 'catalog' (the default) and '#shop' scroll to the shop section; anything else is
 			// followed as a normal link.
@@ -64,7 +65,8 @@ four51.app.factory('SiteConfig', ['$http', '$log', '$document', function($http, 
 		},
 		announcement: {
 			// false hides the bar while keeping the messages in the file, ready to switch back on.
-			show: true,
+			// Off until a site turns it on, like every optional feature.
+			show: false,
 			// Short lines shown in the bar above the header, separated by a dot. Empty
 			// hides the bar entirely.
 			messages: [],
